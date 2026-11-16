@@ -695,8 +695,7 @@ function vReady(){
    <section><h2>Last 7 days</h2><div class="card stack">
     <div class="spark" aria-label="Readiness over the last 7 days">${days.map(x=>{const v=rScore(jGet(x).ready);return `<span class="${v==null?"none":""}" style="height:${v==null?6:Math.max(10,v*20)}%" title="${fmtDate(x)}: ${v==null?"no check-in":v.toFixed(1)+"/5"}"></span>`}).join("")}</div>
     <div class="row" style="justify-content:space-between">${days.map(x=>`<span class="stamp" style="flex:1;text-align:center">${dow(x)[0]}</span>`).join("")}</div>
-    <button class="btn ghost block" data-rshare="1">Write update for ${esc(CONFIG.rdFirst)}</button>
-    ${draft.rShare?`<div class="copybox" id="r-copy">${esc(draft.rShare)}</div><div class="row" style="flex-wrap:wrap"><button class="btn" data-copy="r-copy">Copy</button><a class="btn ghost" href="${CONFIG.whatsappLink}?text=${encodeURIComponent(draft.rShare)}" target="_blank" rel="noopener">Send to ${esc(CONFIG.rdFirst)}</a></div>`:""}
+    <p class="stamp">Each check-in is saved to your Performance Journal on this phone.</p>
    </div></section>
    <p class="src">Why: self-reported wellness tends to pick up training stress earlier and more reliably than many objective markers. Source: Saw, Main & Gastin, Br J Sports Med 2016.</p></div>`;
 }
@@ -1134,7 +1133,7 @@ function vHome(){
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
    ["season","","Season","22 matches, fueling notes",I.cal],
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
-   ["journal","","Food journal","Log meals, photos and energy",I.journal],
+   ["journal","","Performance journal","Meals, water, training, energy",I.journal],
    ["rd","","Book the RD","Labs, body tissue, supplements",I.cal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
@@ -1287,7 +1286,7 @@ async function publishData(){
     else{render();toast("Couldn't publish ("+(c||"error")+"). Your edits are still here; try again")}}
 }
 
-/* ===== Food journal (kept on this phone only; no calories or macros by design) ===== */
+/* ===== Performance journal (kept on this phone only; no calories or macros by design) ===== */
 const OCC=["Breakfast","Lunch","Dinner","Snack","Pre-match","During match","Post-match","Pre-training","Post-training","Travel"];
 const TRAIN=["Rest","Practice","Lift","Match","Travel","Rehab"];
 const GUT=["Good","OK","Upset"];
@@ -1305,7 +1304,7 @@ function vJournal(){
   const d=jGet(jDate), today=isoToday();
   const list=[...d.entries].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const m=SCHEDULE.find(x=>x.d===jDate);
-  return `<div class="view"><div><p class="eyebrow">Mission log · saved on this phone</p><h1 style="margin-top:6px">Journal</h1></div>
+  return `<div class="view"><div><p class="eyebrow">Saved on this phone</p><h1 style="margin-top:6px">Performance Journal</h1></div>
    <div class="datebar"><button class="btn ghost sm" data-jday="-1" aria-label="Previous day">‹</button><b>${jLabel(jDate)}</b><button class="btn ghost sm" data-jday="1" aria-label="Next day" ${jDate>=today?"disabled":""}>›</button></div>
    ${m?`<p class="chip ${m.home?"accent":"violet"}" style="align-self:flex-start">Match day: ${m.home?"vs":"at"} ${esc(m.opp)}</p>`:""}
    <div class="card stack">
@@ -1321,12 +1320,7 @@ function vJournal(){
       ${e.energy||e.notes?`<p class="muted" style="font-size:.82rem">${e.energy?`Energy ${e.energy}/5`:""}${e.energy&&e.notes?" · ":""}${esc(e.notes||"")}</p>`:""}
      </button>`).join("")}</div>`:`<div class="card stack"><p>Nothing logged for ${jLabel(jDate)==="Today"?"today":jLabel(jDate)} yet.</p><p class="muted" style="font-size:.88rem">Log meals, snacks and drinks as you go. A quick photo plus a few words is enough.</p></div>`}
     <button class="btn block" data-jnew="1">Log a meal or drink</button></section>
-   <section><h2>Share with ${esc(CONFIG.rdFirst)}</h2><div class="card stack">
-    <p class="muted" style="font-size:.88rem">Turns your journal into a message you can send before a session.</p>
-    <div class="choice mini">${[[1,"This day"],[3,"Last 3 days"],[7,"Last 7 days"]].map(([n,l])=>`<button type="button" data-jrange="${n}" aria-pressed="${jRange===n}">${l}</button>`).join("")}</div>
-    <button class="btn ghost block" data-jshare="1">Write summary</button>
-    ${jShareText?`<div class="copybox" id="j-copy">${esc(jShareText)}</div><div class="row" style="flex-wrap:wrap"><button class="btn" data-copy="j-copy">Copy</button><a class="btn ghost" href="${CONFIG.whatsappLink}?text=${encodeURIComponent(jShareText)}" target="_blank" rel="noopener">Send on WhatsApp</a></div><p class="stamp">Photos stay on your phone. Attach them in WhatsApp if you want them seen.</p>`:""}
-   </div></section></div>`;
+   <p class="stamp">Everything you log stays in your Performance Journal on this phone.</p></div>`;
 }
 function vJournalForm(){
   const e=jEdit, isNew=!jGet(jDate).entries.some(x=>x.id===e.id);
@@ -1398,7 +1392,7 @@ function jSubmit(){
   if(!jEdit.what.trim()&&!jEdit.photo){toast("Add a few words or a photo");return}
   const d=jGet(jDate),i=d.entries.findIndex(x=>x.id===jEdit.id);
   if(i>=0)d.entries[i]={...jEdit};else d.entries.push({...jEdit});
-  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;jShareText="";render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged to your mission log")}
+  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;jShareText="";render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged to your Performance Journal")}
 }
 
 /* ===== Render & events ===== */
