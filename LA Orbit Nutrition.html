@@ -766,11 +766,11 @@ function rSummary(){
 function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"journal"},{k:"recover",n:"Recover",tap:1},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
 function habitDone(k,iso){const d=jGet(iso);
   if(k==="ready")return rScore(d.ready)!=null;
-  if(k==="fuel")return d.entries.length>=2;
+  if(k==="fuel")return d.entries.length>=1;
   if(k==="water")return d.water>=4;
   if(k==="recover"||k==="sleep")return !!(d.habits&&d.habits[k]);
   return false}
-const HINT={ready:"15-second check-in",fuel:"2+ meals logged",water:"4+ bottles",recover:"Tap once you've had your recovery",sleep:"Tap if you slept 7+ hours",rehab:"Today's rehab done"};
+const HINT={ready:"15-second check-in",fuel:"Any meal or snack logged",water:"4+ bottles",recover:"Tap once you've had your recovery",sleep:"Tap if you slept 7+ hours",rehab:"Today's rehab done"};
 function orbitHTML(){
   const t=isoToday(), H=habits(), n=H.length, lit=H.filter(h=>habitDone(h.k,t)).length;
   const label=profile.num?"#"+esc(profile.num):esc((profile.first[0]||"")+(profile.last[0]||""));
@@ -793,6 +793,7 @@ const CONST=[
  {n:"The Net",p:[[8,46],[8,18],[30,18],[50,18],[70,18],[92,18],[92,46]]}
 ];
 function mondayOf(iso){const d=new Date(iso+"T12:00:00");return jShift(iso,-((d.getDay()+6)%7))}
+function starHint(iso){const n=habits().filter(h=>habitDone(h.k,iso)).length;return n>=3?"":` · ${3-n} more moon${3-n>1?"s":""} for tonight's star`}
 function starLit(iso){return habits().filter(h=>habitDone(h.k,iso)).length>=3}
 function constFor(mon){const w=Math.floor(daysBetween("2026-11-09",mon)/7);return CONST[((w%CONST.length)+CONST.length)%CONST.length]}
 function constSVG(mon,big){
@@ -1626,7 +1627,7 @@ function jSubmit(){
   if(!jEdit.what.trim()&&!jEdit.photo){toast("Add a few words or a photo");return}
   const d=jGet(jDate),i=d.entries.findIndex(x=>x.id===jEdit.id);
   if(i>=0)d.entries[i]={...jEdit};else d.entries.push({...jEdit});
-  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;jShareText="";render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged to your Performance Journal")}
+  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;jShareText="";render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged"+(jDate===isoToday()?starHint(jDate):""))}
 }
 
 /* ===== Render & events ===== */
@@ -1654,7 +1655,7 @@ document.addEventListener("click",e=>{
   const pk=b.closest("[data-pack]");
   if(pk){const k=pk.dataset.pack,v=ds.v,L=PACKS[k]||[];PACKS[k]=L.includes(v)?L.filter(x=>x!==v):[...L,v];store.set("packs",PACKS);const n=PACKS[k].length;b.setAttribute("aria-pressed",PACKS[k].includes(v));if(n===PACK.length)logStamp("Packed. Safe travels");return}
   if(ds.habit||ds.logpost){const k=ds.habit||"recover",t=isoToday(),d=jGet(t),was=starLit(t);d.habits={...(d.habits||{})};d.habits[k]=!d.habits[k];
-    if(jPut(t,d)){render();const on=d.habits[k];if(on)logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":(k==="sleep"?"Sleep logged":"Recovery logged"));else toast((k==="sleep"?"Sleep":"Recovery")+" unmarked")}return}
+    if(jPut(t,d)){render();const on=d.habits[k];if(on)logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":(k==="sleep"?"Sleep logged":"Recovery logged")+starHint(t));else toast((k==="sleep"?"Sleep":"Recovery")+" unmarked")}return}
   if(b.closest("[data-learntab]")){learnTab=ds.v;learnLesson=null;editPath=false;render();return}
   if(b.closest("[data-libtrack]")){libTrack=ds.v;render();return}
   const ep=b.closest("[data-ep]");
@@ -1706,7 +1707,7 @@ document.addEventListener("submit",e=>{
   if(f.id==="ready-form"){
     if(!rDraft.sleepH||RQ.some(q=>rDraft[q.k]==null)){toast("Answer all six, it's 15 seconds");return}
     const t=isoToday(),d=jGet(t),was=starLit(t);d.ready={...rDraft,note:$("#r-note").value.trim()};
-    if(jPut(t,d)){render();scrollTo({top:0});logStamp(!was&&starLit(t)?"Check-in saved. Tonight's star is lit":"Check-in saved")}return}
+    if(jPut(t,d)){render();scrollTo({top:0});logStamp(!was&&starLit(t)?"Check-in saved. Tonight's star is lit":"Check-in saved"+starHint(t))}return}
   if(f.id==="onb"){
     const first=$("#f-first").value.trim(),last=$("#f-last").value.trim(),name=(first+" "+last).trim();
     if(!first||!last){toast("Add your first and last name");return}
