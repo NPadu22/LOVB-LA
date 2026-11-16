@@ -423,7 +423,7 @@ const TRAVEL=[
  {n:"Road kit",d:"Oatmeal cups, nut butter packets (if no nut allergy on your team), bars you've tested, dried fruit, pretzels, electrolyte packets, tuna or chicken pouches, a shaker bottle with your protein."},
  {n:"Hotel breakfast",d:"Build carb + protein + fruit: oatmeal with eggs and fruit, a bagel with yogurt, or a waffle with eggs and juice. Grab fruit for later."},
  {n:"Heading east",d:"Miami and Atlanta are 3 hours ahead, Central cities 2, Salt Lake 1. Switch meals to local time as soon as you land, get morning light, and keep caffeine to the local morning. Before a night match, use a low dose or skip it so it doesn't wreck your sleep.",s:"Janse van Rensburg et al., Sports Med 2021: travel fatigue and jet lag consensus"},
- {n:"Team meals on the road",d:"Tell your dietitian about allergies before the trip so the order is safe. Use Food requests in this app to ask for a pre-match meal you know works for you."}
+ {n:"Ordering on the road",d:"Before the trip, find a place near the hotel that serves a pre-match meal you've already tested at home. If you have an allergy, call ahead and confirm with staff every time."}
 ];
 const DINNERS={
  out:[
@@ -572,11 +572,11 @@ const GAME={
   {rel:-1440,t:"Day before",n:"Travel day",d:"Use Fuel › Travel: eat before the airport, sip through the flight, pack 2–3 snacks. Switch to local meal times as soon as you land."},
   {rel:-660,t:"Hotel breakfast",n:"Build carb + protein + fruit",d:"Oatmeal with eggs and fruit, or a waffle with eggs and juice. Pocket a banana for later."},
   {rel:-420,t:"Lunch out",n:"Order what you know",d:"Fast-casual bowl, pasta or a sandwich: carbs up, sauces light. If you have an allergy, confirm with the restaurant every time; don't rely on the menu."},
-  {rel:-210,t:"Pre-match meal",n:"Team meal or your tested order",d:"Carb-forward, lower fat and fiber. Tell your dietitian about allergies before the trip so the team order is safe for you."},
+  {rel:-210,t:"Pre-match meal",n:"Your tested order",d:"Carb-forward, lower fat and fiber. Plan where you'll get it before the trip. If you have an allergy, confirm with the restaurant every time."},
   {rel:-75,t:"Top-off snack",n:"From your road kit",d:"Pretzels, a bar or dried fruit, plus fluid. Arena concessions aren't a plan."},
   {rel:0,t:"First serve",n:"Between sets",d:"Sip at every break; sports drink or chews in a long match."},
   {rel:150,t:"Within an hour",n:"Recovery is in your bag",d:"Late kitchens close. Pack your recovery and have it in the locker room.",shake:1,ex:["Shelf-stable chocolate milk + bar","Tuna or chicken pouch + crackers"]},
-  {rel:225,t:"Hotel",n:"Late dinner, then sleep",d:"Team food, room service or what staff pre-ordered: carbs + protein. After an east trip your body clock says it's earlier, so dim the lights and screens anyway."},
+  {rel:225,t:"Hotel",n:"Late dinner, then sleep",d:"Room service, a nearby restaurant or food you packed: carbs + protein. Check what's open late before the trip. After an east trip your body clock says it's earlier, so dim the lights and screens anyway."},
   {rel:900,t:"Travel home",n:"Fuel the trip back",d:"Breakfast before the bus, a full bottle and snacks for the flight. The first meal home comes from the freezer or a batch-cook."}
  ]
 };
@@ -735,11 +735,11 @@ const LESSONS=[
   take:["Recovery is packed before you leave, not found after.","Protein + carbs within an hour.","Protein snack before bed on match nights."],
   doIt:["Pack your recovery in your bag before every match.","Log a Post-match entry to light your Recover moon."],
   src:"Thomas, Erdman & Burke, ACSM/AND/DC joint position stand, 2016; Res et al., Med Sci Sports Exerc 2012; Snijders et al., J Nutr 2015 (pre-sleep protein); Parr et al., PLoS One 2014 (alcohol and muscle protein synthesis)"},
- {id:"c-road",tr:"core",t:"Road-trip eating",min:5,sum:"Airports, hotels, team meals and allergies away from home.",
+ {id:"c-road",tr:"core",t:"Road-trip eating",min:5,sum:"Airports, hotels, restaurants and allergies away from home.",
   secs:[["Pack the kit","Never rely on what the arena or airport has. A road kit of oatmeal cups, bars you've tested, pretzels, dried fruit, tuna or chicken pouches, shelf-stable milk, electrolyte packets and your protein covers most gaps. The Home screen shows a packing list before each road trip."],
    ["Airports and flights","Order a bowl, sandwich or Greek yogurt with fruit; skip the fried combo before a match day. Fill a bottle past security and drink through the flight, because cabin air is dry."],
    ["Hotels and restaurants","Build hotel breakfasts as carb + protein + fruit. At restaurants, order something you'd eat at home: rice or pasta with lean protein, sauces on the side the day before a match."],
-   ["Allergies away from home","Every kitchen is new. Tell staff about allergies before the trip so team orders are safe, carry your own safe snacks, and confirm with the restaurant every time."],
+   ["Allergies away from home","Every kitchen is new. Carry your own safe snacks, call ahead when you can, and confirm with the restaurant every time."],
    ["Time zones","Heading east, switch to local meal times as soon as you land; morning light helps your body clock shift."]],
   take:["The kit is your safety net.","Order like it's a normal home meal.","Allergies: plan before, confirm every time."],
   doIt:["Tick off the packing list on Home before your next road trip.","Save two airport orders that work for you in your journal."],
@@ -1035,7 +1035,7 @@ function suppTool(){
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
   return `<div class="view">
-   <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens in team meals and the app.</p><div class="grain"></div><div class="horizon"></div></div>
+   <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens across the app.</p><div class="grain"></div><div class="horizon"></div></div>
    <form id="onb" class="stack card">
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
     <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
@@ -1047,10 +1047,10 @@ function vOnboard(){
 }
 function vStop(){
   return `<div class="view"><div class="stopbox">
-   <p class="eyebrow">Before team meals and road trips</p>
+   <p class="eyebrow">Before road trips and eating out</p>
    <h3>Book a quick allergy review</h3>
-   <p>You listed ${esc([...myAllergens(),profile.other].filter(Boolean).join(", "))}. Catering, hotels and restaurants on the road carry cross-contact risk, and the tags in this app cover the nine major allergens only.</p>
-   <p>Meet with the dietitian so team meals and travel orders are set up safely for you.</p>
+   <p>You listed ${esc([...myAllergens(),profile.other].filter(Boolean).join(", "))}. Hotels and restaurants on the road carry cross-contact risk, and the tags in this app cover the nine major allergens only.</p>
+   <p>Meet with the dietitian so you have a safe plan for travel and eating out.</p>
    <button class="btn block" data-go="rd" data-session="Onboarding HHQ">Request allergy review</button>
    <button class="btn ghost block" data-ack="1">I've already met with the RD</button></div></div>`;
 }
@@ -1078,7 +1078,7 @@ function vHome(){
    ["rd","","Book the RD","Labs, body tissue, supplements",I.cal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
-   ["fuel","requests","Food requests","Team meals, rate a meal",I.chat]
+   ["fuel","requests","Food requests","Rate a meal, report an issue",I.chat]
   ];
   return `<div class="view">
    <header class="hero">
@@ -1119,7 +1119,7 @@ function vFuel(){
     <div class="card" style="padding-block:2px">${L.map(x=>`<div class="item"><div class="meal-top"><h3>${x.n}</h3>${x.t?`<span class="nums">${x.t}</span>`:""}</div><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>`;
   }else{
     body=formBlock("feedback",[
-      `<div class="stack" style="gap:6px"><span class="eyebrow">Type</span><div class="choice" data-pick="fbType">${["Team meal request","Rate a meal","Report an issue"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.fbType===t}">${t}</button>`).join("")}</div></div>`,
+      `<div class="stack" style="gap:6px"><span class="eyebrow">Type</span><div class="choice" data-pick="fbType">${["Rate a meal","Report an issue"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.fbType===t}">${t}</button>`).join("")}</div></div>`,
       `<label for="fb-meal">Which meal, trip or item<input id="fb-meal" placeholder="e.g. Pre-match meal in Miami"></label>`,
       `<div class="stack" style="gap:6px"><span class="eyebrow">Rating (optional)</span><div class="choice" data-pick="fbRate">${["1","2","3","4","5"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.fbRate===t}" aria-label="${t} of 5">${t}</button>`).join("")}</div></div>`,
       `<label for="fb-note">Details<textarea id="fb-note" placeholder="What worked, what didn't, what you'd like on the next trip"></textarea></label>`
