@@ -1233,7 +1233,7 @@ function vLearn(){
   if(learnTab==="path"){
     body=(!EDU.setup||editPath)?setupHTML():`
      <div class="card row"><span class="grow"><span class="eyebrow">Your path</span><br><b style="font-family:var(--display);font-stretch:125%">${shown.filter(x=>EDU.learned.includes(x.id)).length} of ${shown.length} done</b></span><button class="linkbtn" data-editpath="1">Edit</button></div>
-     ${EDU.cycle==="absent"?`<div class="stopbox"><h3>Worth a check</h3><p style="font-size:.9rem">Going 3+ months without a period is a health signal, not a badge of hard training. Please book a confidential session and see the team doctor.</p><button class="btn block" data-go="rd" data-session="General sports performance">Book with ${esc(CONFIG.rdFirst)}</button></div>`:""}
+     ${EDU.cycle==="absent"?`<div class="stopbox"><h3>Worth a check</h3><p style="font-size:.9rem">Going 3+ months without a period is a health signal, not a badge of hard training. Please talk with your dietitian or the team doctor in confidence.</p></div>`:""}
      <div class="stack" style="gap:10px">${shown.map((x,i)=>{const l=lessonById(x.id),d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":String(i+1).padStart(2,"0")}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(x.why)} · ${l.min} min</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div>
      ${fuelTool()}`;
   }else if(learnTab==="library"){
@@ -1495,8 +1495,7 @@ function vStop(){
    <h3>Book a quick allergy review</h3>
    <p>You listed ${esc([...myAllergens(),profile.other].filter(Boolean).join(", "))}. Hotels and restaurants on the road carry cross-contact risk, and the tags in this app cover the nine major allergens only.</p>
    <p>Meet with the dietitian so you have a safe plan for travel and eating out.</p>
-   <button class="btn block" data-go="rd" data-session="Onboarding HHQ">Request allergy review</button>
-   <button class="btn ghost block" data-ack="1">I've already met with the RD</button></div></div>`;
+   <button class="btn block" data-ack="1">Got it</button></div></div>`;
 }
 function launchCard(m,compact){
   if(!m)return `<div class="card muted">Season's done. See you next year.</div>`;
