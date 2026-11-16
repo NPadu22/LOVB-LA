@@ -1,4 +1,4 @@
-// Renders the LA Orbit Sports Performance app icon at the sizes Pages needs.
+// Renders the Orbit Performance app icon at the sizes Pages needs.
 // Usage: node scripts/render-icons.js   (writes icon-180/192/512.png to the repo root)
 const {chromium}=require('playwright');
 const path=require('path');
@@ -13,7 +13,7 @@ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="
  <ellipse cx="50" cy="57" rx="26" ry="7.4" fill="none" stroke="#FFC857" stroke-width="1.5" transform="rotate(-18 50 57)"/>
  <circle cx="72.7" cy="48.6" r="2.4" fill="#FFC857"/>
  <text font-family="Archivo,'Arial Black',Arial,sans-serif" font-stretch="125%" font-size="9" font-weight="800" fill="#FFFFFF" letter-spacing="1.6"><textPath href="#top" startOffset="50%" text-anchor="middle">LA ORBIT</textPath></text>
- <text font-family="Archivo,'Arial Black',Arial,sans-serif" font-stretch="125%" font-size="5.6" font-weight="800" fill="#FFFFFF" letter-spacing=".7"><textPath href="#bot" startOffset="50%" text-anchor="middle">SPORTS PERFORMANCE</textPath></text>
+ <text font-family="Archivo,'Arial Black',Arial,sans-serif" font-stretch="125%" font-size="7.2" font-weight="800" fill="#FFFFFF" letter-spacing="1.2"><textPath href="#bot" startOffset="50%" text-anchor="middle">PERFORMANCE</textPath></text>
 </svg>`;
 (async()=>{
   const b=await chromium.launch();

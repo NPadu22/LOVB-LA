@@ -14,8 +14,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "LA Orbit Nutrition.html"
 OUT = ROOT / "index.html"
 PAGES_URL = "https://npadu22.github.io/LOVB-LA/"
-NAME = "LA Orbit Sports Performance"
-SHORT = "LA Orbit"
+NAME = "Orbit Performance"
+SHORT = "Orbit Performance"
 DESC = "Fuel, recovery, travel and nutrition education for the LA Orbit."
 
 s = SRC.read_text(encoding="utf-8")
