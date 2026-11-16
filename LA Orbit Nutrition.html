@@ -763,15 +763,14 @@ function rSummary(){
 }
 
 /* ===== Her orbit: she's the center; daily habits are moons that light up ===== */
-function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"journal"},{k:"recover",n:"Recover",go:"journal"},{k:"sleep",n:"Sleep 7h+",go:"ready"}];return H}
+function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"journal"},{k:"recover",n:"Recover",tap:1},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
 function habitDone(k,iso){const d=jGet(iso);
   if(k==="ready")return rScore(d.ready)!=null;
   if(k==="fuel")return d.entries.length>=2;
   if(k==="water")return d.water>=4;
-  if(k==="recover")return d.entries.some(e=>/^Post-/.test(e.occ));
-  if(k==="sleep")return !!(d.ready&&+d.ready.sleepH>=7);
+  if(k==="recover"||k==="sleep")return !!(d.habits&&d.habits[k]);
   return false}
-const HINT={ready:"15-second check-in",fuel:"2+ meals logged",water:"4+ bottles",recover:"Post-match or post-training food logged",sleep:"7+ hours last night",rehab:"Today's rehab done"};
+const HINT={ready:"15-second check-in",fuel:"2+ meals logged",water:"4+ bottles",recover:"Tap once you've had your recovery",sleep:"Tap if you slept 7+ hours",rehab:"Today's rehab done"};
 function orbitHTML(){
   const t=isoToday(), H=habits(), n=H.length, lit=H.filter(h=>habitDone(h.k,t)).length;
   const label=profile.num?"#"+esc(profile.num):esc((profile.first[0]||"")+(profile.last[0]||""));
@@ -779,7 +778,7 @@ function orbitHTML(){
     <svg class="orbit-rings" viewBox="0 0 340 250" aria-hidden="true"><ellipse cx="170" cy="125" rx="150" ry="104"/><ellipse class="r2" cx="170" cy="125" rx="96" ry="66"/></svg>
     <div class="core"><b>${label}</b><span>${lit}/${n}</span></div>
     ${H.map((h,i)=>{const a=-Math.PI/2+i*2*Math.PI/n, x=50+44*Math.cos(a), y=50+41.6*Math.sin(a), on=habitDone(h.k,t);
-      return `<button class="moon ${on?"on":""}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" data-go="${h.go}"${h.seg?` data-seg="${h.seg}"`:""} aria-label="${h.n}: ${on?"done":"not yet"} (${HINT[h.k]})"><i></i><span>${h.n}</span></button>`}).join("")}
+      return `<button class="moon ${on?"on":""}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" ${h.tap?`data-habit="${h.k}"`:`data-go="${h.go}"`} aria-label="${h.n}: ${on?"done":"not yet"} (${HINT[h.k]})"><i></i><span>${h.n}</span></button>`}).join("")}
    </div>
    <p class="stamp" style="text-align:center">${lit===n?"Full orbit today. Every moon is lit.":lit?`${n-lit} moon${n-lit>1?"s":""} still dark. Tap one to light it.`:"Tap a moon to start your day."} Light 3 or more to add tonight's star.</p>`;
 }
@@ -1213,7 +1212,7 @@ function matchDayCard(){
     <div class="step"><span class="when">${clock(end+75).replace(" ","<br>")}</span><b>Late dinner</b><p>Carbs, protein and vegetables. Lighter on grease; skip alcohol.</p></div>
     <div class="step"><span class="when">BED</span><b>Protein snack before sleep</b><p>Greek yogurt, cottage cheese or milk, 30–60 minutes before bed.</p></div>
    </div>
-   <button class="btn block ${done?"ghost":""}" data-logpost="1">${done?"Recovery logged ✓":"Log my recovery"}</button>
+   <button class="btn block ${done?"ghost":""}" data-logpost="1">${done?"Recovery logged ✓ (tap to undo)":"Log my recovery"}</button>
    <button class="linkbtn" data-lesson="c-late">Why this matters ›</button></section>`;
 }
 const PACK=["Empty water bottle","Electrolyte packets","Protein powder + shaker","Shelf-stable milk or recovery drinks","Oatmeal cups","Bars you've tested","Pretzels or crackers","Dried fruit","Tuna or chicken pouches","Nut butter packets (if safe for you)","Plane snacks for both flights","Your own allergy-safe foods"];
@@ -1471,15 +1470,15 @@ function vMe(){
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
+   <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
+   <section><h2>Text size</h2>
+    <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
    <section><h2>App feedback</h2><form class="card stack" id="fb-app">
     <p class="muted" style="font-size:.88rem">Something broken, confusing or missing? Tell us how to make the app better.</p>
     <div class="choice mini" data-pick="appFbType">${["Idea","Something's broken","Content is wrong","Other"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.appFbType===t}">${t}</button>`).join("")}</div>
     <label for="fb-app-note">Your feedback<textarea id="fb-app-note" placeholder="What happened, where in the app, and what you expected">${esc(draft.appFbNote||"")}</textarea></label>
     <button class="btn block" type="submit" ${CONFIG.feedbackEmail?"":"disabled"}>Send by email</button>
-    <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form></section>
-   <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
-   <section><h2>Text size</h2>
-    <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section></div>`;
+    <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form></section></div>`;
 }
 
 /* ===== Announcements editor (only for people who can edit this page once it's published) ===== */
@@ -1527,7 +1526,7 @@ const TRAIN=["Rest","Practice","Lift","Match","Travel","Rehab"];
 const GUT=["Good","OK","Upset"];
 let J=store.get("journal",{days:{}}); if(!J||!J.days)J={days:{}};
 let jDate=isoToday(), jEdit=null, jDelAsk=false, jRange=1, jShareText="";
-const jBlank=()=>({training:[],water:0,entries:[],prehab:[],ready:null});
+const jBlank=()=>({training:[],water:0,entries:[],prehab:[],ready:null,habits:{}});
 function jGet(d){return Object.assign(jBlank(),J.days[d]||{})}
 function jPut(d,v){J.days[d]=v;if(store.set("journal",J))return true;toast("Phone storage is full. Remove photos from older entries to save more.");return false}
 function jLabel(iso){const t=isoToday();return iso===t?"Today":iso===jShift(t,-1)?"Yesterday":fmtDate(iso)}
@@ -1654,7 +1653,8 @@ document.addEventListener("click",e=>{
   if(ds.editpath){editPath=true;render();return}
   const pk=b.closest("[data-pack]");
   if(pk){const k=pk.dataset.pack,v=ds.v,L=PACKS[k]||[];PACKS[k]=L.includes(v)?L.filter(x=>x!==v):[...L,v];store.set("packs",PACKS);const n=PACKS[k].length;b.setAttribute("aria-pressed",PACKS[k].includes(v));if(n===PACK.length)logStamp("Packed. Safe travels");return}
-  if(ds.logpost){tab="journal";jDate=isoToday();jEdit={id:Date.now().toString(36),occ:"Post-match",time:nowHM(),what:"",photo:"",energy:"",gut:"",notes:""};jDelAsk=false;render();scrollTo({top:0});return}
+  if(ds.habit||ds.logpost){const k=ds.habit||"recover",t=isoToday(),d=jGet(t),was=starLit(t);d.habits={...(d.habits||{})};d.habits[k]=!d.habits[k];
+    if(jPut(t,d)){render();const on=d.habits[k];if(on)logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":(k==="sleep"?"Sleep logged":"Recovery logged"));else toast((k==="sleep"?"Sleep":"Recovery")+" unmarked")}return}
   if(b.closest("[data-learntab]")){learnTab=ds.v;learnLesson=null;editPath=false;render();return}
   if(b.closest("[data-libtrack]")){libTrack=ds.v;render();return}
   const ep=b.closest("[data-ep]");
