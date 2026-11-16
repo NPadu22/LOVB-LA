@@ -403,23 +403,23 @@ const SCHEMES=[
 const SCHEDULE=[
  ["2026-12-18","19:00",0,"LOVB Houston","Cypress, TX",0,"Berry Center"],
  ["2027-01-06","21:00",1,"LOVB Nebraska","Inglewood, CA",-2,"Intuit Dome"],
- ["2027-01-09","19:00",0,"LOVB Madison","Madison, WI",0,""],
+ ["2027-01-09","19:00",0,"LOVB Madison","Madison, WI",0,"Alliant Energy Center"],
  ["2027-01-14","21:00",1,"San Francisco Signal","Inglewood, CA",-2,"Intuit Dome"],
- ["2027-01-21","19:00",0,"LOVB Austin","Austin, TX",0,""],
+ ["2027-01-21","19:00",0,"LOVB Austin","Austin, TX",0,"H-E-B Center"],
  ["2027-01-23","16:00",0,"LOVB Salt Lake","Salt Lake City, UT",-1,""],
  ["2027-01-30","21:00",1,"LOVB Minnesota","Inglewood, CA",-2,"Intuit Dome"],
  ["2027-02-02","18:00",0,"LOVB Miami","Miami, FL",1,""],
  ["2027-02-05","21:00",1,"LOVB Atlanta","Inglewood, CA",-2,"Intuit Dome"],
  ["2027-02-09","18:30",0,"LOVB Nebraska","Omaha, NE",0,"Baxter Arena"],
  ["2027-02-21","19:00",1,"LOVB Houston","Inglewood, CA",-2,"Intuit Dome"],
- ["2027-02-26","21:00",0,"San Francisco Signal","San Francisco, CA",-2,""],
+ ["2027-02-26","21:00",0,"San Francisco Signal","San Francisco, CA",-2,"Bill Graham Civic Auditorium"],
  ["2027-03-03","20:30",0,"LOVB Salt Lake","Salt Lake City, UT",-1,""],
  ["2027-03-07","19:00",1,"LOVB Austin","Inglewood, CA",-2,"Intuit Dome"],
- ["2027-03-10","19:00",0,"LOVB Minnesota","Minneapolis, MN",0,""],
+ ["2027-03-10","19:00",0,"LOVB Minnesota","Minneapolis, MN",0,"Maturi Pavilion"],
  ["2027-03-14","19:00",1,"LOVB Madison","Inglewood, CA",-2,"Intuit Dome"],
  ["2027-03-19","21:00",1,"LOVB Miami","Inglewood, CA",-2,"Intuit Dome"],
- ["2027-03-24","21:00",0,"San Francisco Signal","San Francisco, CA",-2,""],
- ["2027-03-27","16:00",0,"LOVB Atlanta","Atlanta, GA",1,""],
+ ["2027-03-24","21:00",0,"San Francisco Signal","San Francisco, CA",-2,"Bill Graham Civic Auditorium"],
+ ["2027-03-27","16:00",0,"LOVB Atlanta","Atlanta, GA",1,"Gateway Center Arena"],
  ["2027-03-31","21:00",1,"LOVB Salt Lake","Inglewood, CA",-2,"Intuit Dome"],
  ["2027-04-07","19:00",1,"LOVB Austin","Inglewood, CA",-2,"Intuit Dome"],
  ["2027-04-09","21:00",1,"LOVB Houston","Inglewood, CA",-2,"Intuit Dome"]
@@ -608,12 +608,72 @@ const CITY={
  "Omaha, NE":"2 hours ahead. Cold, dry winter air still pulls fluid; keep sipping.",
  "San Francisco, CA":"Same time zone, short flight. Easy trip: snacks and a bottle for the plane."
 };
+/* ===== Road city food guides: how to order the local food for a match day. Chains and specific restaurants change, so guides teach the order, not the address. ===== */
+const CITYFOOD={
+ "Cypress, TX":{venue:"Berry Center",air:"IAH (Bush) or HOU (Hobby)",url:"https://www.fly2houston.com",
+  pre:"Tex-Mex done right: chicken or shrimp fajitas with rice and tortillas, beans on the side, light on cheese, sour cream and queso. Or a Vietnamese broken-rice plate (cơm tấm) with grilled chicken.",
+  late:"Pho with extra chicken or beef: noodles, protein and broth in one bowl, and it helps you rehydrate. Many pho shops close by 9 or 10 pm, so check hours or pack your recovery.",
+  tips:["Houston's Vietnamese food is some of the best in the country. Pho, broken rice and banh mi are carbs and protein in one order.","Save the chips-and-queso round for after the match."]},
+ "Austin, TX":{venue:"H-E-B Center, Cedar Park",air:"AUS",url:"https://www.flyaustin.com",
+  am:"Breakfast tacos are the local move: egg and potato or egg and bean on flour tortillas, with fruit on the side.",
+  pre:"A rice bowl or pasta, or lean turkey or chicken from a barbecue spot with potatoes and bread. Keep brisket, sausage and creamy sides for after the match.",
+  late:"Now's the time for barbecue: brisket or turkey with beans, potato and bread, plus water. Plenty of taco spots stay open late too.",
+  tips:["The arena is in Cedar Park, about 30 minutes north of downtown Austin. Plan food near where you're staying."]},
+ "Madison, WI":{venue:"Alliant Energy Center",air:"MSN",url:"https://www.flymsn.com",
+  pre:"Pasta, a sandwich with fruit, or a rice or noodle bowl. State Street downtown has plenty of Thai, Asian and Mediterranean counters.",
+  late:"Wisconsin dairy works for you: chocolate milk or Greek yogurt in the locker room, then a real meal.",
+  tips:["Cheese curds and the Friday fish fry are fried. Great after the season, not before a match.","Cold, dry air still pulls fluid. Keep a bottle with you."]},
+ "Salt Lake City, UT":{air:"SLC",url:"https://slcairport.com",
+  pre:"A bowl, pasta, or a turkey sandwich with fruit, plus a bigger glass of fluid than usual because of the altitude.",
+  late:"Kitchens tend to close earlier than in LA. Find what's open late before you land, or pack your recovery and a backup meal.",
+  tips:["About 4,200 ft: drink ahead of thirst and don't skip snacks.","Fry sauce is mayo plus ketchup. Skip it before matches."]},
+ "Miami, FL":{air:"MIA",url:"https://www.miami-airport.com",
+  pre:"Order the Cuban plate the smart way: pollo a la plancha (grilled chicken), white rice and black beans. A few maduros (sweet plantains) add carbs.",
+  late:"The same plate works late. Skip the cafecito after the match: it's a strong shot of caffeine and will cost you sleep.",
+  tips:["Croquetas and pastelitos are fried treats, not pre-match fuel.","Warm and humid even in winter: extra fluid and a salty snack on travel days."]},
+ "Omaha, NE":{venue:"Baxter Arena",air:"OMA",url:"https://www.flyoma.com",
+  pre:"Omaha is a steak town. A lunch of sirloin or chicken with a baked potato and bread works well 5 or 6 hours out. Closer to the match, switch to pasta or a rice bowl.",
+  late:"A Runza (Nebraska's beef-and-cabbage bread pocket) with milk is a decent late option if that's what's open. Add fruit.",
+  tips:["Cold, dry winter air still pulls fluid. Keep sipping."]},
+ "San Francisco, CA":{venue:"Bill Graham Civic Auditorium",air:"SFO",url:"https://www.flysfo.com",
+  pre:"Mission-style burritos are huge. Get a burrito bowl or eat half: rice, beans, grilled chicken and salsa, easy on the cheese and sour cream.",
+  late:"Noodle soup or a rice plate. At dim sum, pick steamed dumplings over fried.",
+  tips:["Same time zone and a short flight, so eat on your normal schedule."]},
+ "Minneapolis, MN":{venue:"Maturi Pavilion, University of Minnesota",air:"MSP",url:"https://www.mspairport.com",
+  pre:"The campus neighborhoods around the arena (Stadium Village and Dinkytown) are full of quick bowls, noodles and sandwiches.",
+  late:"Walleye is the local fish: get it grilled or broiled. Wild rice soup is a warm carb-and-fluid option.",
+  tips:["Very cold: warm oatmeal and soup count toward your fluid too."]},
+ "Atlanta, GA":{venue:"Gateway Center Arena, College Park",air:"ATL",url:"https://www.atl.com",
+  pre:"Southern meat-and-three: baked or grilled chicken, rice, a roll and a vegetable. Keep the mac and cheese to a small scoop.",
+  late:"Fried chicken and waffles is a post-match treat, not pre-match fuel.",
+  tips:["A 4 pm ET first serve is 1 pm on your LA body clock. Eat a real breakfast and have the pre-match meal around noon.","The arena is in College Park, a few minutes from the airport."]}
+};
+const AIRPORT_ORDERS=[
+ {n:"Leaving LAX",d:"Eat before you leave home or buy food after security, where you can sit down. Fill your bottle at a refill station past security. Terminal dining maps are on <a class=\"linkbtn\" href=\"https://www.flylax.com\" target=\"_blank\" rel=\"noopener\">flylax.com</a>."},
+ {n:"Coffee chains",d:"Oatmeal with fruit or nuts, egg bites or an egg sandwich, a banana and a latte or milk. A pastry on its own won't last the flight."},
+ {n:"Grab-and-go market",d:"A turkey or chicken wrap, Greek yogurt, a fruit cup, hummus with pretzels, string cheese or nuts, and a big water."},
+ {n:"Mexican or bowl counter",d:"Rice bowl with chicken, beans and salsa. Easy on the cheese, sour cream and chips."},
+ {n:"Asian counter",d:"Steamed rice with teriyaki or grilled chicken and vegetables. Skip fried dishes like orange chicken on a match-week travel day."},
+ {n:"Sandwich or deli",d:"Turkey or chicken on bread with fruit on the side. Mustard over mayo."},
+ {n:"Burger or chicken spot",d:"A grilled chicken sandwich or grilled nuggets with fruit. Save the fries for the trip home."},
+ {n:"On the plane",d:"Sip through the flight; cabin air is dry. A pale-yellow color when you land means you kept up."}
+];
+let travelCity=null;
+function cityGuideHTML(city){
+  const g=CITYFOOD[city];if(!g)return "";
+  const rows=[...(g.am?[["Match-day breakfast",g.am]]:[]),["Pre-match meal",g.pre],["After the match",g.late]];
+  return `<div class="card stack"><div class="sec-head"><h3>Eating in ${esc(city.split(",")[0])}</h3>${g.venue?`<span class="stamp">${esc(g.venue)}</span>`:""}</div>
+   ${rows.map(([h,t])=>`<div><span class="eyebrow">${h}</span><p style="font-size:.9rem;margin-top:3px">${esc(t)}</p></div>`).join("")}
+   ${g.tips.map(t=>`<p class="muted" style="font-size:.86rem">• ${esc(t)}</p>`).join("")}
+   <p class="stamp">Airport: ${esc(g.air)} · <a class="linkbtn" href="${g.url}" target="_blank" rel="noopener">Dining map ›</a></p></div>`;
+}
 function nextOf(home){const t=isoToday();return SCHEDULE.find(m=>m.d>=t&&m.home===home)||null}
 function gamePlanHTML(kind){
   const m=nextOf(kind==="home"), start=m?m.local:19*60, tz=m?TZ[m.off]:"PT";
   const L=GAME[kind];
   return `<p class="muted" style="font-size:.9rem">${m?`Times are set for your next ${kind==="home"?"home":"road"} match: ${m.home?"vs":"at"} ${esc(m.opp)}, ${fmtDate(m.d)}, first serve ${matchLocal(m)}.`:"Times assume a 7 pm first serve."}</p>
    ${kind==="road"&&m&&CITY[m.city]?`<div class="card row" style="align-items:flex-start"><span class="chip violet">${esc(m.city.split(",")[0])}</span><p style="font-size:.88rem">${esc(CITY[m.city])}</p></div>`:""}
+   ${kind==="road"&&m?cityGuideHTML(m.city):""}
    <div class="plan">${planHead(kind==="home"?"Home game day":"Road game day",m?`${dow(m.d)} ${mmdd(m.d)}`:"")}
     ${L.map(x=>{const lbl=x.rel<=-1440?"DAY<br>BEFORE":x.rel>=780?"NEXT<br>DAY":clock(start+x.rel).replace(" ","<br>");const ex=x.shake?[`${shakeName()[0].toUpperCase()+shakeName().slice(1)} + banana`,...(x.ex||[])]:x.ex;
      return `<div class="step"><span class="when">${lbl}</span><span class="eyebrow">${x.t}${x.rel>-1440&&x.rel<780?" · "+tz:""}</span><b>${x.n}</b><p>${x.d}</p>${ex?`<ul>${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:""}${x.s?`<p class="src">Source: ${x.s}</p>`:""}</div>`}).join("")}
@@ -1090,7 +1150,7 @@ function vHome(){
    ["fuel","match","Game-day fuel","Home and road, hour by hour",I.plate],
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
    ["season","","Season","22 matches, fueling notes",I.cal],
-   ["fuel","travel","Travel fuel","Flights, hotels, time zones",I.plane],
+   ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["journal","","Food journal","Log meals, photos and energy",I.journal],
    ["rd","","Book the RD","Labs, body tissue, supplements",I.cal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
@@ -1129,7 +1189,12 @@ function vFuel(){
   }else if(fuelSeg==="travel"){
     const away=SCHEDULE.filter(x=>!x.home&&x.d>=isoToday()).slice(0,3);
     body=`<div class="card" style="padding-block:2px">${TRAVEL.map(x=>`<div class="item"><h3>${x.n}</h3><p class="muted" style="font-size:.9rem">${x.d}</p>${x.s?`<p class="src">Source: ${x.s}</p>`:""}</div>`).join("")}</div>
-    ${away.length?`<section><h2>Coming road trips</h2><div class="card" style="padding-block:2px">${away.map(x=>`<div class="item"><div class="meal-top"><b>${esc(x.city)}</b><span class="nums">${fmtDate(x.d)}</span></div><p class="muted" style="font-size:.86rem">${esc([CITY[x.city]||"",...matchNotes(x).slice(1)].filter(Boolean).join(" ")||"Pack the road kit.")}</p></div>`).join("")}</div></section>`:""}`;
+    ${away.length?`<section><h2>Coming road trips</h2><div class="card" style="padding-block:2px">${away.map(x=>`<div class="item"><div class="meal-top"><b>${esc(x.city)}</b><span class="nums">${fmtDate(x.d)}</span></div><p class="muted" style="font-size:.86rem">${esc([CITY[x.city]||"",...matchNotes(x).slice(1)].filter(Boolean).join(" ")||"Pack the road kit.")}</p></div>`).join("")}</div></section>`:""}
+    ${(()=>{let cities=[...new Set(SCHEDULE.filter(x=>!x.home&&x.d>=isoToday()).map(x=>x.city))];if(!cities.length)cities=[...new Set(SCHEDULE.filter(x=>!x.home).map(x=>x.city))];cities=cities.filter(c=>CITYFOOD[c]);
+      if(!travelCity||!cities.includes(travelCity))travelCity=cities[0];
+      return cities.length?`<section><h2>City food guides</h2><div class="seg" data-segset="city">${cities.map(c=>`<button data-v="${esc(c)}" aria-pressed="${travelCity===c}">${esc(c.split(",")[0])}</button>`).join("")}</div>${cityGuideHTML(travelCity)}</section>`:""})()}
+    <section><h2>Airport orders</h2><div class="card" style="padding-block:2px">${AIRPORT_ORDERS.map(x=>`<div class="item"><h3>${x.n}</h3><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>
+     <p class="stamp">Airport restaurants change often, so these are orders that work at almost any counter. Each city guide links to that airport's official dining map.</p></section>`;
   }else if(fuelSeg==="out"||fuelSeg==="homecook"){
     const L=DINNERS[fuelSeg==="out"?"out":"home"];
     body=`<p class="muted">${fuelSeg==="out"?"How to order around LA so it works for training and matches.":"Fast staples and recipes for the days between road trips."}</p>
@@ -1362,6 +1427,7 @@ function render(){
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="rd"&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
   app.innerHTML={ready:vReady,sky:vSky,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();
 }
 document.addEventListener("click",e=>{
@@ -1386,7 +1452,7 @@ document.addEventListener("click",e=>{
   if(rq){const k=rq.dataset.rq,v=k==="sleepH"?ds.v:+ds.v;rDraft[k]=rDraft[k]===v?undefined:v;rq.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(k==="sleepH"?x.dataset.v:+x.dataset.v)===String(rDraft[k])));return}
   if(ds.rshare){draft.rShare=rSummary();render();return}
   const segset=b.closest("[data-segset]");
-  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;render();return}
+  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;render();return}
   if(ds.edadd){ED.announcements.push({t:"",d:"",tag:"Nutrition",when:isoToday()});render();return}
   if(ds.edrm!==undefined){ED.announcements.splice(+ds.edrm,1);render();return}
   if(ds.eddiscard){ED=clone(DATA);render();toast("Changes discarded");return}
