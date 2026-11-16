@@ -440,6 +440,7 @@ const CONFIG = {
   whatsappLink: "https://npadu22.github.io/LOVB-LA/",
   bookingLink: "https://calendly.com/welcometolbc/usav-rd-meeting-with-nick",
   atName: "Emma Stratomen", atFirst: "Emma", atTitle: "Athletic Trainer",
+  trainingCenter: "Seal Beach, CA",            // where the team trains
   atBookingLink: "",                           // Emma's booking link (Calendly etc.), when ready
   atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
   rdName: "Nick, Sports Dietitian",
@@ -627,7 +628,7 @@ const I={
  learn:s24('<path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.5 3 5 3s5-1.5 5-3V9"/><path d="M21 7v6"/>')
 };
 const TABS=[["home","Home"],["fuel","Fuel"],["at","Training"],["learn","Learn"],["journal","Journal"],["me","Me"]];
-function renderTabs(){const cur=["rd","edit","ready","sky","season"].includes(tab)?"home":tab;$("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${k===cur?'aria-current="page"':""}>${I[k]}${l}</button>`).join("")}
+function renderTabs(){const cur=["rd","edit","ready","sky","season","feedback"].includes(tab)?"home":tab;$("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${k===cur?'aria-current="page"':""}>${I[k]}${l}</button>`).join("")}
 
 /* Mission patch: original artwork (ball at the center of gravity, orbit ring, satellite), not the team logo */
 const PATCH=`<svg class="patch" viewBox="0 0 100 100" role="img" aria-label="Orbit mission patch">
@@ -1380,6 +1381,51 @@ function vWelcome(){
    <button class="btn block" data-welcomego="home">Go to Home</button></div>`;
 }
 
+/* ===== Home areas: athletes pick where they live; Eating out and At home adapt. Neighborhood food scenes, not specific restaurants. ===== */
+const AREAS=[
+ {k:"sealbeach",n:"Seal Beach · Long Beach · Los Alamitos",short:"Seal Beach & Long Beach",
+  eat:[{n:"Little Saigon",t:"Westminster & Garden Grove, next to Seal Beach",d:"Pho with extra chicken or beef, broken-rice plates (cơm tấm) and banh mi are carbs plus protein in one order, and pho broth helps you rehydrate."},
+   {n:"Main Street & 2nd Street",t:"Seal Beach · Belmont Shore",d:"Walkable strips with poke, bowls, tacos and sandwiches. Build rice or tortillas + lean protein + vegetables; go easy on fried sides before a match."},
+   {n:"Cambodia Town",t:"Anaheim Street, Long Beach",d:"Rice and noodle dishes with grilled meats. Ask for extra rice on heavy training days."}],
+  shop:"Trader Joe's, Sprouts, Ralphs and Costco are all close by. The Asian supermarkets in Little Saigon are great for rice, noodles, tofu, eggs and produce."},
+ {k:"hb",n:"Huntington Beach · Fountain Valley · Westminster · Garden Grove",short:"Huntington Beach area",
+  eat:[{n:"Little Saigon",t:"Westminster & Garden Grove",d:"Pho, broken-rice plates and banh mi: carbs plus protein in one order. Pho broth helps you rehydrate."},
+   {n:"OC Koreatown",t:"Garden Grove Blvd",d:"Korean BBQ (pick leaner cuts, fill up on rice and banchan) and soft-tofu soup with rice."},
+   {n:"Beach-town bowls & tacos",t:"Main Street & PCH",d:"Grilled fish or chicken tacos with rice and beans, or a poke bowl with extra rice."}],
+  shop:"Trader Joe's, Sprouts, Costco and Stater Bros are nearby; Korean and Vietnamese markets carry rice, tofu and produce for less."},
+ {k:"irvine",n:"Irvine · Costa Mesa · Newport Beach · Tustin",short:"Irvine & Costa Mesa",
+  eat:[{n:"Irvine's Asian food scene",t:"Plazas across Irvine",d:"Taiwanese, Korean, Japanese and Chinese spots: rice or noodle bowls with lean protein, steamed dumplings, and soups."},
+   {n:"Bowls & Mediterranean",t:"Costa Mesa & Newport",d:"Fast-casual bowl chains, poke and Mediterranean plates: double the grain on heavy days."}],
+  shop:"Trader Joe's, Sprouts and Costco, plus large Asian supermarkets in Irvine for rice, noodles, tofu and frozen dumplings."},
+ {k:"southbay",n:"South Bay · Torrance · Redondo · Manhattan Beach · El Segundo",short:"South Bay",
+  eat:[{n:"Torrance & Gardena Japanese spots",t:"Torrance · Gardena",d:"Teishoku sets (grilled fish or chicken, rice, miso soup), onigiri and rice bowls. Ramen works after matches; it's salty, so drink water with it."},
+   {n:"Beach cities",t:"Manhattan · Hermosa · Redondo",d:"Poke, bowls and breakfast burritos. Egg-and-potato burritos make a solid pre-practice breakfast."}],
+  shop:"Trader Joe's, Whole Foods, Ralphs and Costco, plus Japanese markets in Torrance and Gardena for rice, onigiri, tofu and fish."},
+ {k:"westside",n:"Inglewood · Westchester · Culver City · West LA",short:"Westside & Inglewood",
+  eat:[{n:"Near Intuit Dome",t:"Inglewood · Westchester",d:"On home match days eat your pre-match meal before you leave; traffic near the arena builds early. Bowls, Mediterranean and Mexican spots fill Westchester and Culver City."},
+   {n:"Sawtelle Japantown",t:"West LA",d:"Noodle shops and rice bowls. Pick grilled or steamed over fried before training."}],
+  shop:"Trader Joe's, Ralphs, Whole Foods and Costco are close; Sawtelle's Japanese markets have rice, onigiri and fish."},
+ {k:"central",n:"Downtown · Koreatown · Mid-City · Hollywood",short:"Central LA",
+  eat:[{n:"Koreatown",t:"Wilshire & Western",d:"Korean BBQ (leaner cuts, rice, banchan vegetables) and soft-tofu soup. Keep it earlier if you train in the morning."},
+   {n:"Little Tokyo",t:"Downtown",d:"Rice bowls, teishoku sets and udon: easy carbs with fish, chicken or tofu."},
+   {n:"Thai Town",t:"East Hollywood",d:"Rice plates and noodle dishes with chicken or tofu; ask for less oil before a match."}],
+  shop:"Trader Joe's, Ralphs and Vons, plus Korean markets in Koreatown for rice, tofu, eggs and produce."},
+ {k:"sgv",n:"San Gabriel Valley · Pasadena",short:"San Gabriel Valley",
+  eat:[{n:"SGV Chinese, Taiwanese & Vietnamese",t:"Alhambra · San Gabriel · Rosemead",d:"Steamed dumplings, noodle soups, rice plates and beef noodle soup. Choose steamed over fried before training."},
+   {n:"Pasadena",t:"Old Town & Lake Ave",d:"Bowl chains, sandwiches and Mediterranean plates."}],
+  shop:"Asian supermarkets across the SGV for rice, noodles, tofu and produce, plus Trader Joe's and Sprouts."}
+];
+function myArea(){return AREAS.find(a=>a.k===(profile&&profile.area))||null}
+function areaPicker(){return `<label for="area-pick" class="card" style="gap:8px">Where do you live? Recommendations adapt to your area.<select id="area-pick" data-areapick="1"><option value="">Choose your area</option>${AREAS.map(a=>`<option value="${a.k}" ${profile.area===a.k?"selected":""}>${esc(a.n)}</option>`).join("")}<option value="other" ${profile.area==="other"?"selected":""}>Somewhere else</option></select></label>`}
+function areaListHTML(a,title){return `<section><div class="sec-head"><h2>${esc(title)}</h2></div><div class="card" style="padding-block:2px">${a.eat.map(x=>`<div class="item"><div class="meal-top"><h3>${esc(x.n)}</h3>${x.t?`<span class="nums">${esc(x.t)}</span>`:""}</div><p class="muted" style="font-size:.9rem">${esc(x.d)}</p></div>`).join("")}</div></section>`}
+function feedbackHTML(){return `<form class="card stack" id="fb-app">
+    <p class="muted" style="font-size:.88rem">Something broken, confusing or missing? Tell us how to make the app better.</p>
+    <div class="choice mini" data-pick="appFbType">${["Idea","Something's broken","Content is wrong","Other"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.appFbType===t}">${t}</button>`).join("")}</div>
+    <label for="fb-app-note">Your feedback<textarea id="fb-app-note" placeholder="What happened, where in the app, and what you expected">${esc(draft.appFbNote||"")}</textarea></label>
+    <button class="btn block" type="submit" ${CONFIG.feedbackEmail?"":"disabled"}>Send by email</button>
+    <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form>`}
+function vFeedback(){return `<div class="view"><div><p class="eyebrow">Help make the app better</p><h1 style="margin-top:6px">App feedback</h1></div>${feedbackHTML()}</div>`}
+
 /* ===== Views ===== */
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
@@ -1388,6 +1434,7 @@ function vOnboard(){
    <form id="onb" class="stack card">
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
     <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
+    <label for="f-area">Where do you live? (optional)<select id="f-area"><option value="">Choose your area</option>${AREAS.map(a=>`<option value="${a.k}" ${p.area===a.k?"selected":""}>${esc(a.n)}</option>`).join("")}<option value="other" ${p.area==="other"?"selected":""}>Somewhere else</option></select></label>
     <label for="f-role" id="role-wrap" ${p.position==="Staff"?"":"hidden"}>Your staff role<input id="f-role" value="${esc(p.role||"")}" placeholder="e.g. Athletic trainer, assistant coach, S&C"></label>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
@@ -1427,7 +1474,9 @@ function vHome(){
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["journal","","Performance journal","Meals, water, training, energy",I.journal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
-   ["sky","","Constellations","Your week in stars",I.home]  ];
+   ["sky","","Constellations","Your week in stars",I.home],
+   ["feedback","","App feedback","Ideas, bugs and fixes",I.chat]
+  ];
   return `<div class="view">
    <header class="hero">
     <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
@@ -1468,9 +1517,14 @@ function vFuel(){
     <section><h2>Airport orders</h2><div class="card" style="padding-block:2px">${AIRPORT_ORDERS.map(x=>`<div class="item"><h3>${x.n}</h3><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>
      <p class="stamp">Airport restaurants change often, so these are orders that work at almost any counter. Each city guide links to that airport's official dining map.</p></section>`;
   }else if(fuelSeg==="out"||fuelSeg==="homecook"){
-    const L=DINNERS[fuelSeg==="out"?"out":"home"];
-    body=`<p class="muted">${fuelSeg==="out"?"How to order around LA so it works for training and matches.":"Fast staples and recipes for the days between road trips."}</p>
-    <div class="card" style="padding-block:2px">${L.map(x=>`<div class="item"><div class="meal-top"><h3>${x.n}</h3>${x.t?`<span class="nums">${x.t}</span>`:""}</div><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>`;
+    const L=DINNERS[fuelSeg==="out"?"out":"home"],A=myArea(),TC=AREAS[0];
+    const list=t=>`<div class="card" style="padding-block:2px">${L.map(x=>`<div class="item"><div class="meal-top"><h3>${x.n}</h3>${x.t?`<span class="nums">${x.t}</span>`:""}</div><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>`;
+    body=fuelSeg==="out"?`<p class="muted">How to order near home and practice so it works for training and matches.</p>${areaPicker()}
+     ${A?areaListHTML(A,"Near you: "+A.short):""}
+     ${!A||A.k!=="sealbeach"?areaListHTML(TC,"Near practice: "+CONFIG.trainingCenter.split(",")[0]):""}
+     <section><h2>Anywhere in LA</h2>${list()}</section>`
+     :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
+     ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
   return `<div class="view"><div><p class="eyebrow">Fuel · match, travel, home</p><h1 style="margin-top:6px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
@@ -1514,6 +1568,7 @@ function vMe(){
    <div class="card stack">
     <div class="row"><span class="grow muted">Team</span><b>Los Angeles Orbit</b></div>
     <div class="row"><span class="grow muted">Position</span><b>${esc(posLabel()||"—")}</b></div>
+    <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
     <div class="row"><span class="grow muted">Jersey</span><b>${profile.num?"#"+esc(profile.num):"—"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
@@ -1524,12 +1579,7 @@ function vMe(){
     <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">On match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
-   <section><h2>App feedback</h2><form class="card stack" id="fb-app">
-    <p class="muted" style="font-size:.88rem">Something broken, confusing or missing? Tell us how to make the app better.</p>
-    <div class="choice mini" data-pick="appFbType">${["Idea","Something's broken","Content is wrong","Other"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.appFbType===t}">${t}</button>`).join("")}</div>
-    <label for="fb-app-note">Your feedback<textarea id="fb-app-note" placeholder="What happened, where in the app, and what you expected">${esc(draft.appFbNote||"")}</textarea></label>
-    <button class="btn block" type="submit" ${CONFIG.feedbackEmail?"":"disabled"}>Send by email</button>
-    <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form></section></div>`;
+</div>`;
 }
 
 /* ===== Announcements editor (only for people who can edit this page once it's published) ===== */
@@ -1690,7 +1740,7 @@ function render(){
   if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();return}
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="rd"&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={welcome:vWelcome,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();
 }
@@ -1765,7 +1815,7 @@ document.addEventListener("submit",e=>{
     const first=$("#f-first").value.trim(),last=$("#f-last").value.trim(),name=(first+" "+last).trim();
     if(!first||!last){toast("Add your first and last name");return}
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
-    const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
+    const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
     store.set("profile",profile);draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)logStamp("Welcome to the Orbit");else toast("Profile saved");return}
@@ -1790,7 +1840,7 @@ document.addEventListener("submit",e=>{
     draft.feedbackSent=`Food · ${draft.fbType}\n${profile.name} · LA Orbit\nItem: ${$("#fb-meal").value.trim()||"—"}${draft.fbRate?"\nRating: "+draft.fbRate+"/5":""}${$("#fb-note").value.trim()?"\n"+$("#fb-note").value.trim():""}`;
     render();toast("Message ready");return}
 });
-document.addEventListener("change",e=>{if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
   if(t.dataset&&t.dataset.ed&&ED){const [i,k]=t.dataset.ed.split(".");ED.announcements[+i][k]=t.value;edStatus();return}
   if(t.id==="q"){draft.q=t.value;const f=$("#faq");if(f)f.innerHTML=faqHTML()}});
