@@ -410,6 +410,9 @@ const CONFIG = {
   whatsappUser: "22Padula",
   whatsappLink: "https://wa.me/18188005065",
   bookingLink: "https://calendly.com/welcometolbc/usav-rd-meeting-with-nick",
+  atName: "Emma Stratomen", atFirst: "Emma", atTitle: "Athletic Trainer",
+  atBookingLink: "",                           // Emma's booking link (Calendly etc.), when ready
+  atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
   rdName: "Nick, Sports Dietitian",
   rdFirst: "Nick",
   appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
@@ -418,7 +421,7 @@ const CONFIG = {
 
 /* ===== Editable content lives in the af-data block (announcements) ===== */
 let DATA;try{DATA=JSON.parse(document.getElementById("af-data").textContent)}catch(e){DATA=null}
-DATA=Object.assign({updated:"",announcements:[]},DATA||{});
+DATA=Object.assign({updated:"",announcements:[],atAnnouncements:[]},DATA||{});
 
 const ALLERGENS=["Dairy","Egg","Wheat/Gluten","Peanut","Tree nut","Soy","Fish","Shellfish","Sesame"];
 const POSITIONS=["Outside hitter","Opposite","Middle blocker","Setter","Libero","Staff"];
@@ -590,10 +593,11 @@ const I={
  shield:s24('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>'),
  plus:s24('<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="10" stroke-width="1.2"/>'),
  moon:s24('<path d="M20 14a8 8 0 1 1-10-10 6 6 0 0 0 10 10z"/>'),
+ at:s24('<path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z"/>'),
  learn:s24('<path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.5 3 5 3s5-1.5 5-3V9"/><path d="M21 7v6"/>')
 };
-const TABS=[["home","Home"],["fuel","Fuel"],["season","Season"],["learn","Learn"],["journal","Journal"],["me","Me"]];
-function renderTabs(){const cur=["rd","edit","ready","sky"].includes(tab)?"home":tab;$("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${k===cur?'aria-current="page"':""}>${I[k]}${l}</button>`).join("")}
+const TABS=[["home","Home"],["fuel","Fuel"],["at","Training"],["learn","Learn"],["journal","Journal"],["me","Me"]];
+function renderTabs(){const cur=["rd","edit","ready","sky","season"].includes(tab)?"home":tab;$("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" ${k===cur?'aria-current="page"':""}>${I[k]}${l}</button>`).join("")}
 
 /* Mission patch: original artwork (ball at the center of gravity, orbit ring, satellite), not the team logo */
 const PATCH=`<svg class="patch" viewBox="0 0 100 100" role="img" aria-label="Orbit mission patch">
@@ -815,7 +819,7 @@ function vSky(){
 
 
 /* ===== Nutrition education: lessons, personalized path, tools ===== */
-const TRACKS=[["core","Fuel basics"],["female","Female athlete health"],["position","Your position"],["mom","Pregnancy & postpartum"],["supp","Supplements"]];
+const TRACKS=[["core","Fuel basics"],["female","Female athlete health"],["position","Your position"],["mom","Pregnancy & postpartum"],["supp","Supplements"],["at","Athletic training"]];
 const LESSONS=[
  {id:"c-fuel",tr:"core",t:"Fuel for the work",min:5,sum:"Match carbs and protein to the day's load.",tool:"fuel",
   secs:[["Periodize your plate","Your needs aren't the same every day. Carbohydrate is the fuel that moves most with training load: lighter days need less, two-a-days and matches need more. Protein stays fairly steady."],
@@ -985,7 +989,37 @@ const LESSONS=[
    ["Probably skip","Most 'recovery', 'detox', 'fat-burner' and 'immune boost' blends lack evidence and carry contamination risk."]],
   take:["Test vitamin D, don't guess.","Fish first, fish oil maybe.","Skip proprietary blends."],
   doIt:["Ask for vitamin D at your next labs.","Add salmon or sardines this week."],
-  src:"AIS Sports Supplement Framework; Maughan et al., IOC consensus on dietary supplements, 2018"}
+  src:"AIS Sports Supplement Framework; Maughan et al., IOC consensus on dietary supplements, 2018"},
+
+ {id:"a-when",tr:"at",t:"When to see the athletic trainer",min:3,sum:"Report early. Small problems are easier to fix.",
+  secs:[["Why early matters","Most volleyball overuse problems, like sore knees, shoulders and backs, start small. Reporting when something first changes how you train gives more options and usually means less time missed."],
+   ["See Emma the same day for","Pain that changes how you jump, land or hit. Swelling, a pop, or a joint that gives way. Numbness, tingling or weakness. Pain that wakes you at night, lasts more than two days or keeps getting worse. Any hit to the head followed by symptoms."],
+   ["Go to emergency care for","Severe pain or an obvious deformity, a head impact with worsening headache, repeated vomiting, confusion or loss of consciousness, or trouble breathing."]],
+  take:["Pain that changes your movement is a reason to report.","Same day beats \"I'll see how it feels.\"","Emergencies go to emergency care first."],
+  doIt:["Save the treatment-room hours in your phone.","Tell Emma about any old injury that still bothers you."],
+  src:"Clarsen et al., OSTRC overuse injury questionnaire, Br J Sports Med 2013; Patricios et al., Amsterdam concussion consensus, Br J Sports Med 2023"},
+ {id:"a-concussion",tr:"at",t:"Concussion: recognize and report",min:4,sum:"Ball to the head, a collision or a fall can all cause one.",
+  secs:[["How it happens in volleyball","Getting hit by a spike or serve, colliding with a teammate, or hitting your head on the floor can all cause a concussion. You don't have to be knocked out."],
+   ["Signs to report","Headache or pressure, dizziness, nausea, blurry vision, sensitivity to light or noise, feeling foggy or slowed down, trouble concentrating or remembering, or just not feeling right."],
+   ["What happens next","If a concussion is suspected you come out and don't return that day. Return to class, training and matches happens step by step with the medical team. Hiding symptoms makes recovery longer."],
+   ["Emergency signs","Worsening headache, repeated vomiting, seizure, loss of consciousness, weakness or numbness, increasing confusion, or severe neck pain. Call 911."]],
+  take:["You don't need to black out to have a concussion.","Suspected concussion means no return that day.","Report teammates' symptoms too."],
+  doIt:["Know the signs well enough to spot them in a teammate.","Tell Emma about any past concussions."],
+  src:"Patricios et al., Amsterdam International Consensus on Concussion in Sport, Br J Sports Med 2023; CDC HEADS UP"},
+ {id:"a-ankle",tr:"at",t:"Ankles: the net is the risk",min:3,sum:"Why ankle sprains happen and what prevents them.",
+  secs:[["Where sprains happen","Most volleyball ankle sprains happen at the net, landing on a teammate's or opponent's foot after a block or attack."],
+   ["Biggest risk factor","A previous sprain. The ankle's balance and position sense take longer to recover than the pain does."],
+   ["What helps","Balance training has reduced ankle sprains in volleyball players, especially those with a past sprain. Taping or bracing also lowers repeat sprains. Emma will set up the program and support that fit you."]],
+  take:["Past sprain = higher risk, even when it feels fine.","Balance training works.","Ask Emma about taping or bracing."],
+  doIt:["Tell Emma about every ankle sprain you've had.","Do the balance work Emma gives you, even in season."],
+  src:"Bahr & Bahr, Scand J Med Sci Sports 1997 (volleyball ankle sprains); Verhagen et al., Am J Sports Med 2004 (balance training in volleyball)"},
+ {id:"a-knee",tr:"at",t:"Jumper's knee: manage the load",min:4,sum:"Patellar tendon pain is common in volleyball, and rest alone rarely fixes it.",
+  secs:[["What it is","Pain just below the kneecap, often worse with jumping, landing or after sitting. Volleyball has one of the highest rates of patellar tendon pain of any sport."],
+   ["Load, not just rest","Tendons get stronger when they're loaded progressively. Complete rest can ease pain but leaves the tendon less ready for jumping. The goal is the right amount of load, adjusted week to week."],
+   ["A common guide","Many programs allow mild pain during exercise (around 3 out of 10 or less) as long as it settles by the next morning. Emma will set your limits."]],
+  take:["Report knee pain early.","Progressive loading beats total rest.","Pain that settles overnight is the usual guide."],
+  doIt:["Track knee pain each morning in your check-in note.","Ask Emma about a loading program before it gets worse."],
+  src:"Lian et al., Am J Sports Med 2005 (jumper's knee prevalence); Malliaras et al., Sports Med 2015 (patellar tendinopathy loading); Silbernagel et al., Am J Sports Med 2007 (pain-monitoring model)"}
 ];
 const GOALS=["Performance & power","Build strength","Iron & energy","Bone health","Hydration","Game-day stomach","Supplements","Plant-based"];
 const STAGES=[["none","Not applicable"],["planning","Planning a pregnancy"],["pregnant","Pregnant"],["postpartum","Postpartum"],["breastfeeding","Breastfeeding"],["skip","Prefer not to say"]];
@@ -1018,7 +1052,7 @@ function myPath(){
   if(g.includes("Build strength")){add("s-creat","You chose strength")}
   if(g.includes("Performance & power")){add("s-caff","You chose performance");add("c-gut","Game-day performance")}
   if(g.includes("Plant-based")){add("f-iron","Plant-based eaters watch iron");add("s-rest","Plant-based: vitamin D and omega-3")}
-  add("f-reds","Every athlete should know this");add("c-injury","If you get hurt");add("c-sweat","Know your fluid needs");add("f-iron","Common in women athletes");add("s-tiers","Before you buy anything");add("f-cycle","Your period as a health signal");add("f-bone","Built to last");
+  add("a-when","Know when to see the athletic trainer");add("f-reds","Every athlete should know this");add("c-injury","If you get hurt");add("c-sweat","Know your fluid needs");add("f-iron","Common in women athletes");add("s-tiers","Before you buy anything");add("f-cycle","Your period as a health signal");add("f-bone","Built to last");
   return out;
 }
 
@@ -1129,7 +1163,7 @@ function lessonHTML(l){
    ${l.help?`<div class="stopbox"><p style="font-size:.9rem">${esc(l.help)}</p></div>`:""}
    <p class="src">Sources: ${esc(l.src)}</p>
    <button class="btn block ${done?"ghost":""}" data-learned="${l.id}">${done?"Learned ✓ (tap to undo)":"Mark as learned"}</button>
-   <button class="btn ghost block" data-go="rd" data-session="General sports performance">Talk it through with ${esc(CONFIG.rdFirst)}</button></div>`;
+   ${l.tr==="at"?`<button class="btn ghost block" data-tab="at">Go to the training room</button>`:`<button class="btn ghost block" data-go="rd" data-session="General sports performance">Talk it through with ${esc(CONFIG.rdFirst)}</button>`}</div>`;
 }
 function setupHTML(){
   return `<form class="card stack" id="edu-form"><span class="eyebrow">Personalize your path · optional · stays on this phone</span>
@@ -1207,6 +1241,90 @@ function suppTool(){
    <p class="stamp">Look products up at nsfsport.com before buying. Under anti-doping rules you're responsible for anything in your body, even from a contaminated product.</p></form>`;
 }
 
+/* ===== Athletic training (Emma) ===== */
+/* Emma's programs, added exactly as she writes them. Template:
+   {id:"ankle-prehab", name:"Ankle prehab", who:"Everyone", when:"Before practice, 3x a week", note:"",
+    ex:[{n:"Single-leg balance", dose:"3 x 30 s each leg", cue:"Soft knee, eyes up"}]} */
+const AT_PROGRAMS=[];
+const REM_PRESETS=["Treatment with Emma","Rehab exercises","Prehab routine","Ice / recovery"];
+let REMS=store.get("rems",[]);
+let remDraft=null;
+function remNext(r,from){
+  from=from||new Date();const [H,M]=(r.time||"09:00").split(":").map(Number);
+  const d=new Date(r.date+"T00:00:00");d.setHours(H,M,0,0);
+  if(r.repeat==="none")return d;
+  const step=r.repeat==="daily"?1:7;
+  while(d<from)d.setDate(d.getDate()+step);
+  return d;
+}
+function remWhen(r){const n=remNext(r);if(r.repeat==="none"&&n<new Date())return "Past";
+  const today=isoToday(),iso=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0");
+  const day=iso===today?"Today":iso===jShift(today,1)?"Tomorrow":fmtDate(iso);
+  return `${day}, ${clock(n.getHours()*60+n.getMinutes())}${r.repeat!=="none"?` · ${r.repeat==="daily"?"every day":"every week"}`:""}`}
+function remToday(){const t=isoToday();return REMS.filter(r=>{const n=remNext(r,new Date(t+"T00:00:00"));return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")===t})}
+function icsFor(r){
+  const n=remNext(r,new Date(r.date+"T00:00:00")),p=x=>String(x).padStart(2,"0");
+  const dt=`${n.getFullYear()}${p(n.getMonth()+1)}${p(n.getDate())}T${p(n.getHours())}${p(n.getMinutes())}00`;
+  const end=new Date(n.getTime()+30*60000),de=`${end.getFullYear()}${p(end.getMonth()+1)}${p(end.getDate())}T${p(end.getHours())}${p(end.getMinutes())}00`;
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const clean=s=>String(s).replace(/[\\;,]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//LA Orbit//Training room//EN","BEGIN:VEVENT",`UID:${r.id}@la-orbit`,`DTSTAMP:${stamp}`,`DTSTART:${dt}`,`DTEND:${de}`,
+    `SUMMARY:${clean(r.title)}`,`DESCRIPTION:${clean("LA Orbit training room reminder"+(r.note?" — "+r.note:""))}`,
+    ...(r.repeat==="daily"?["RRULE:FREQ=DAILY"]:r.repeat==="weekly"?["RRULE:FREQ=WEEKLY"]:[]),
+    "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${clean(r.title)}`,"TRIGGER:-PT10M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+}
+function remCalendar(r){
+  const blob=new Blob([icsFor(r)],{type:"text/calendar"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=(r.title.replace(/[^a-z0-9]+/gi,"-").toLowerCase()||"reminder")+".ics";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);toast("Open the file to add it to your calendar");
+}
+function progDone(pid,i){return (jGet(isoToday()).prehab||[]).includes(pid+":"+i)}
+function todayRemCard(){const L=remToday().sort((a,b)=>remNext(a)-remNext(b));if(!L.length)return "";
+  return `<section><div class="sec-head"><h2>Today's reminders</h2><button class="linkbtn" data-tab="at">Training room</button></div><div class="card" style="padding-block:2px">${L.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${clock(+r.time.split(":")[0]*60+ +r.time.split(":")[1])}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}</div>`).join("")}</div></section>`}
+function vAT(){
+  const anns=DATA.atAnnouncements||[];
+  const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
+  const L=LESSONS.filter(l=>l.tr==="at");
+  return `<div class="view"><div><p class="eyebrow">Athletic training · ${esc(CONFIG.atName)}, ${esc(CONFIG.atTitle)}</p><h1 style="margin-top:6px">Training room</h1></div>
+   <section><h2>See ${esc(CONFIG.atFirst)}</h2><div class="card stack">
+    ${CONFIG.atHours?`<div class="row" style="align-items:flex-start"><span class="chip violet">Hours</span><p style="font-size:.9rem">${esc(CONFIG.atHours)}</p></div>`:""}
+    ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
+    ${!CONFIG.atHours&&!CONFIG.atBookingLink?`<p>Booking and treatment-room hours are coming soon. Until then, find ${esc(CONFIG.atFirst)} in the training room or ask a coach.</p>`:""}
+    <p class="stamp">Hurt or worried about something? <button class="linkbtn" data-lesson="a-when">When to see the athletic trainer ›</button></p></div></section>
+   <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
+    ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
+   <section><h2>Prehab & rehab</h2>
+    ${AT_PROGRAMS.length?AT_PROGRAMS.map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
+      ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([pg.who,pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
+      ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
+     :`<div class="card stack"><p>${esc(CONFIG.atFirst)}'s prehab and rehab programs will appear here.</p><p class="muted" style="font-size:.86rem">Rehab is individual. Follow the plan ${esc(CONFIG.atFirst)} gives you in person, and set a reminder below so you don't miss a session.</p></div>`}</section>
+   <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
+    ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
+      <div class="row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-remcal="${r.id}">Add to calendar</button><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
+    ${remDraft?`<form class="card stack" id="rem-form">
+      <div class="choice mini">${REM_PRESETS.map(t=>`<button type="button" data-rempreset="${esc(t)}" aria-pressed="${remDraft.title===t}">${esc(t)}</button>`).join("")}</div>
+      <label for="rem-title">Reminder<input id="rem-title" value="${esc(remDraft.title||"")}" placeholder="e.g. Ankle rehab"></label>
+      <div class="namerow"><label for="rem-date">Date<input id="rem-date" type="date" value="${remDraft.date}"></label><label for="rem-time">Time<input id="rem-time" type="time" value="${remDraft.time}"></label></div>
+      <div class="stack" style="gap:6px"><span class="eyebrow">Repeat</span><div class="choice mini" data-remrep="1">${[["none","Once"],["daily","Every day"],["weekly","Every week"]].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${remDraft.repeat===v}">${l}</button>`).join("")}</div></div>
+      <label for="rem-note">Note (optional)<input id="rem-note" value="${esc(remDraft.note||"")}" placeholder="e.g. Bring tape, 3 sets each side"></label>
+      <button class="btn block" type="submit">Save reminder</button><button type="button" class="btn ghost block" data-remcancel="1">Cancel</button></form>`
+     :`<button class="btn block ${sorted.length?"ghost":""}" data-remnew="1">Add a reminder</button>`}
+    <p class="stamp">"Add to calendar" puts the reminder in your phone's calendar with an alert 10 minutes before.</p></section>
+   <section><h2>Learn</h2><div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div></section></div>`;
+}
+function atClick(b){
+  const ds=b.dataset;
+  if(ds.remnew){const n=new Date();n.setMinutes(n.getMinutes()+60,0,0);remDraft={title:"",date:isoToday(),time:String(n.getHours()).padStart(2,"0")+":00",repeat:"none",note:""};render();return true}
+  if(ds.remcancel){remDraft=null;render();return true}
+  if(ds.rempreset){remSync();remDraft.title=ds.rempreset;render();return true}
+  if(b.closest("[data-remrep]")){remSync();remDraft.repeat=ds.v;render();return true}
+  if(ds.remcal){const r=REMS.find(x=>x.id===ds.remcal);if(r)remCalendar(r);return true}
+  if(ds.remdel){REMS=REMS.filter(x=>x.id!==ds.remdel);store.set("rems",REMS);render();toast("Reminder deleted");return true}
+  if(ds.prog){const t=isoToday(),d=jGet(t);d.prehab=d.prehab||[];d.prehab=d.prehab.includes(ds.prog)?d.prehab.filter(x=>x!==ds.prog):[...d.prehab,ds.prog];if(jPut(t,d)){render();if(d.prehab.includes(ds.prog))logStamp("Logged")}return true}
+  return false;
+}
+function remSync(){if(!remDraft)return;const g=id=>document.getElementById(id);["title","date","time","note"].forEach(k=>{if(g("rem-"+k))remDraft[k]=g("rem-"+k).value})}
+
 /* ===== Views ===== */
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
@@ -1249,6 +1367,7 @@ function vHome(){
   const go=[
    ["fuel","match","Game-day fuel","Home and road, hour by hour",I.plate],
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
+   ["at","","Training room","Emma: rehab, reminders, booking",I.at],
    ["season","","Season","22 matches, fueling notes",I.cal],
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["journal","","Performance journal","Meals, water, training, energy",I.journal],
@@ -1263,7 +1382,7 @@ function vHome(){
     <div class="grain"></div><div class="horizon"></div>
    </header>
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
-   ${matchDayCard()}${roadTripCard()}
+   ${matchDayCard()}${roadTripCard()}${todayRemCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
    ${!habitDone("ready",isoToday())?`<button class="rcard" data-go="ready"><span class="ring">15″</span><span class="stack" style="gap:2px"><b>Morning check-in</b><span>Sleep, soreness, energy, mood, stress</span></span><span class="linkbtn">Start</span></button>`:""}
@@ -1511,7 +1630,7 @@ function render(){
   $("nav.tabs").hidden=false;
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="rd"&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={ready:vReady,sky:vSky,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();
 }
@@ -1519,6 +1638,7 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("button,a");if(!b)return;
   const ds=b.dataset;
   if(jClick(b))return;
+  if(atClick(b))return;
   if(ds.tab){tab=ds.tab;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}if(ds.session)draft.session=ds.session;render();scrollTo({top:0});return}
   if(ds.lesson!==undefined){learnLesson=ds.lesson||null;tab="learn";render();scrollTo({top:0});return}
@@ -1586,6 +1706,11 @@ document.addEventListener("submit",e=>{
     const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     store.set("profile",profile);draft={};tab="home";render();toast("Profile saved");return}
+  if(f.id==="rem-form"){remSync();const r=remDraft;
+    if(!r.title.trim()){toast("Name the reminder");return}
+    if(!r.date||!r.time){toast("Pick a date and time");return}
+    const item={id:Date.now().toString(36),title:r.title.trim(),date:r.date,time:r.time,repeat:r.repeat,note:(r.note||"").trim()};
+    REMS.push(item);store.set("rems",REMS);remDraft=null;render();logStamp("Reminder saved");return}
   if(f.id==="fb-app"){const note=$("#fb-app-note").value.trim();draft.appFbNote=note;
     if(!note){toast("Write a few words first");return}
     if(!CONFIG.feedbackEmail){toast("Feedback email isn't set up yet");return}
