@@ -1290,6 +1290,14 @@ function icsFor(r){
     ...(r.repeat==="daily"?["RRULE:FREQ=DAILY"]:r.repeat==="weekly"?["RRULE:FREQ=WEEKLY"]:[]),
     "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${clean(r.title)}`,"TRIGGER:-PT10M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
 }
+const IN_CLAUDE=/claudeusercontent\.com$/.test(location.hostname);
+function gcalHref(r){
+  const n=remNext(r,new Date(r.date+"T00:00:00")),p=x=>String(x).padStart(2,"0"),f=d=>`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+  const end=new Date(n.getTime()+30*60000);
+  const q=new URLSearchParams({action:"TEMPLATE",text:r.title,dates:f(n)+"/"+f(end),details:"LA Orbit training room reminder"+(r.note?" — "+r.note:"")});
+  if(r.repeat!=="none")q.set("recur","RRULE:FREQ="+(r.repeat==="daily"?"DAILY":"WEEKLY"));
+  return "https://calendar.google.com/calendar/render?"+q.toString();
+}
 function remCalendar(r){
   const blob=new Blob([icsFor(r)],{type:"text/calendar"}),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download=(r.title.replace(/[^a-z0-9]+/gi,"-").toLowerCase()||"reminder")+".ics";document.body.appendChild(a);a.click();a.remove();
@@ -1317,7 +1325,7 @@ function vAT(){
      :`<div class="card stack"><p>${esc(CONFIG.atFirst)}'s prehab and rehab programs will appear here.</p><p class="muted" style="font-size:.86rem">Rehab is individual. Follow the plan ${esc(CONFIG.atFirst)} gives you in person, and set a reminder below so you don't miss a session.</p></div>`}</section>
    <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
     ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
-      <div class="row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-remcal="${r.id}">Add to calendar</button><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
+      <div class="row" style="flex-wrap:wrap;gap:8px">${IN_CLAUDE?"":`<button class="btn sm" data-remcal="${r.id}">Add to calendar</button>`}<a class="btn ${IN_CLAUDE?"":"ghost "}sm" href="${gcalHref(r)}" target="_blank" rel="noopener">Google Calendar</a><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
     ${remDraft?`<form class="card stack" id="rem-form">
       <div class="choice mini">${REM_PRESETS.map(t=>`<button type="button" data-rempreset="${esc(t)}" aria-pressed="${remDraft.title===t}">${esc(t)}</button>`).join("")}</div>
       <label for="rem-title">Reminder<input id="rem-title" value="${esc(remDraft.title||"")}" placeholder="e.g. Ankle rehab"></label>
@@ -1326,7 +1334,7 @@ function vAT(){
       <label for="rem-note">Note (optional)<input id="rem-note" value="${esc(remDraft.note||"")}" placeholder="e.g. Bring tape, 3 sets each side"></label>
       <button class="btn block" type="submit">Save reminder</button><button type="button" class="btn ghost block" data-remcancel="1">Cancel</button></form>`
      :`<button class="btn block ${sorted.length?"ghost":""}" data-remnew="1">Add a reminder</button>`}
-    <p class="stamp">"Add to calendar" puts the reminder in your phone's calendar with an alert 10 minutes before.</p></section>
+    <p class="stamp">${IN_CLAUDE?"\"Google Calendar\" adds the reminder to your Google calendar. The installed team app can also add it to Apple Calendar with an alert.":"\"Add to calendar\" puts the reminder in your phone's calendar (Apple, Outlook and others) with an alert 10 minutes before. \"Google Calendar\" adds it there instead."}</p></section>
    <section><h2>Learn</h2><div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div></section></div>`;
 }
 function atClick(b){
