@@ -1081,7 +1081,7 @@ function vHome(){
   ];
   return `<div class="view">
    <header class="hero">
-    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Los Angeles Orbit${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
+    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">Fuel <span>·</span> Learn</p>
     <p class="hello">Welcome back, ${esc(first)}.</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(profile.position)}</span>`:""}</div>
