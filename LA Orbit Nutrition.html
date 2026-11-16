@@ -333,6 +333,52 @@ body{font-stretch:100%}
 .ntab th{font:600 .66rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 0;border-bottom:1px solid var(--line)}
 .ntab td{padding:9px 0;border-bottom:1px solid var(--line)}
 .ntab td:last-child,.ntab th:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* ===== Lesson infographics. Two validated chart hues (OKLCH band + CVD checked per mode) ===== */
+:root{--viz-1:#5E82F0;--viz-2:#F0560F;--grid:color-mix(in srgb,var(--fg) 12%,transparent)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--viz-1:#4D72E3}}
+:root[data-theme="light"]{--viz-1:#4D72E3}
+.fig{position:relative;display:flex;flex-direction:column;gap:12px}
+.fig-title{font:700 1rem/1.2 var(--display);font-stretch:125%}
+.fig .src{margin-top:2px}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{position:relative;display:grid;grid-template-columns:92px 1fr;gap:12px;padding:0 0 16px}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:97px;top:18px;bottom:-2px;width:2px;background:var(--line)}
+.tl li:last-child::before{display:none}
+.tl .t{font:700 .7rem/1.3 var(--mono);color:var(--muted);text-align:right;padding-top:2px;letter-spacing:.03em}
+.tl .b{position:relative;padding-left:16px}
+.tl .b::before{content:"";position:absolute;left:-1px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--viz-2)}
+.tl b{display:block;font-size:.92rem}
+.tl span{font-size:.84rem;color:var(--muted)}
+.urine{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}
+.urine i{height:46px;border-radius:4px;box-shadow:inset 0 0 0 1px rgb(0 0 0 / .12);display:flex;align-items:flex-end;justify-content:center;font:700 .66rem var(--mono);color:#3a3000;padding-bottom:4px;font-style:normal}
+.ugroups{display:grid;grid-template-columns:3fr 2fr 3fr;gap:6px;font-size:.78rem}
+.ugroups div{border-top:2px solid var(--line);padding-top:5px;color:var(--muted)}
+.ugroups b{display:block;color:var(--fg);font-size:.82rem}
+.eabar{display:flex;gap:2px;height:34px}
+.eabar span{border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 .72rem var(--body);color:#fff;white-space:nowrap;overflow:hidden;padding:0 6px;min-width:0}
+.eabar .tr{background:var(--viz-1)}.eabar .bd{background:var(--viz-2)}
+.earow{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;font-size:.82rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.bb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bb>div{background:var(--surface-2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bb h4{margin:0;font:700 .85rem var(--display);font-stretch:125%;display:flex;align-items:center;gap:6px}
+.bb .ic{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font:800 .8rem var(--mono);color:#fff}
+.bb ul{margin:0;padding-left:16px;font-size:.82rem;display:grid;gap:4px}
+.tiers{display:flex;flex-direction:column;gap:2px}
+.tiers>div{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;background:var(--surface-2);padding:10px 12px}
+.tiers>div:first-child{border-radius:12px 12px 4px 4px}.tiers>div:last-child{border-radius:4px 4px 12px 12px}
+.tiers .g{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font:800 1.1rem var(--display);color:#fff}
+.tiers b{font-size:.9rem}.tiers p{font-size:.8rem;color:var(--muted);margin-top:2px}
+.caff svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.caff .tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);border-radius:8px;padding:6px 9px;font-size:.78rem;line-height:1.3;opacity:0;transition:opacity .12s;white-space:nowrap}
+.caff .tip b{font-size:.9rem}
+.figtable summary{padding:6px 0;font-size:.82rem;color:var(--muted)}
+.figtable{background:none;padding:0}
+.figtable table{width:100%;border-collapse:collapse;font-size:.8rem}
+.figtable td,.figtable th{padding:4px 0;border-bottom:1px solid var(--line);text-align:left}
+.figtable td:last-child,.figtable th:last-child{text-align:right;font-family:var(--mono)}
 
 </style>
 <div class="app" id="app"></div>
@@ -771,7 +817,7 @@ const LESSONS=[
   take:["Carbs move with the training day; protein stays steady.","Spread protein over 4–5 eating times.","Under-fueling on rest days slows recovery for the next session."],
   doIt:["Look at tomorrow's schedule tonight and pick the plate that fits.","Add a carb + protein snack between lift and practice."],
   src:"Thomas, Erdman & Burke, ACSM/AND/DC joint position stand, 2016; Jäger et al., ISSN protein position stand, 2017; USOPC & University of Colorado Athlete's Plates"},
- {id:"c-sweat",tr:"core",t:"Hydration & your sweat rate",min:4,sum:"Measure your sweat once and you'll know your fluid plan.",tool:"sweat",
+ {id:"c-sweat",tr:"core",t:"Hydration & your sweat rate",min:4,sum:"Measure your sweat once and you'll know your fluid plan.",tool:"sweat",fig:"urine",
   secs:[["Why measure","Sweat rates vary several-fold between athletes in the same practice. Measuring yours turns 'drink more' into a number."],
    ["The goal","Try to keep body-mass loss during a session under about 2%; bigger losses can hurt performance and decision-making. Don't overdrink to the point of gaining weight either."],
    ["After practice","Replace about 1.25–1.5 L of fluid for every kg you lost, over the next few hours, with salty food or an electrolyte drink if you're a salty sweater (white streaks on your gear)."]],
@@ -786,7 +832,7 @@ const LESSONS=[
   doIt:["Pick one pre-match meal and eat it before your next two practices.","Log stomach comfort in your journal."],
   src:"Jeukendrup, Sports Med 2017 (Training the gut for athletes); Lis et al., Med Sci Sports Exerc 2018 (low-FODMAP in athletes)"},
 
- {id:"c-late",tr:"core",t:"Late-match recovery",min:5,sum:"Night matches end late. Recovery still has to happen.",
+ {id:"c-late",tr:"core",t:"Late-match recovery",min:5,fig:"recovery",sum:"Night matches end late. Recovery still has to happen.",
   secs:[["The problem","Most matches start at 7 pm or later, so you finish around 9–10 pm with a drive or bus ahead, low appetite and closed kitchens. Skipping recovery shows up in the next practice, and it adds up on road trips with matches 2–3 days apart."],
    ["First hour","Get about 20–40 g of protein with carbohydrate and fluid in the locker room. When the next session is less than a day away, faster carb refueling matters most: about 1–1.2 g of carbs per kg per hour for the first few hours. With 2–3 days between matches, total carbs across the day matter more than speed."],
    ["Before bed","A protein-rich snack 30–60 minutes before sleep (about 30–40 g, like Greek yogurt, cottage cheese or milk) supports overnight muscle repair. Keep the late meal lighter on grease so it doesn't fight your sleep."],
@@ -811,7 +857,7 @@ const LESSONS=[
   doIt:["Book an injury nutrition session.","Plan a protein snack for right after each rehab session."],
   src:"Tipton, Sports Med 2015; Shaw et al., Am J Clin Nutr 2017; Smith-Ryan et al., Br J Sports Med 2020"},
 
- {id:"f-reds",tr:"female",t:"Energy availability & REDs",min:6,sum:"What happens when fuel doesn't cover training, and how to spot it.",
+ {id:"f-reds",tr:"female",t:"Energy availability & REDs",min:6,fig:"ea",sum:"What happens when fuel doesn't cover training, and how to spot it.",
   secs:[["The idea","Energy availability is what's left for your body after training is paid for. When it runs too low for too long, the body starts cutting back on 'non-essential' systems: hormones, bone building, immunity, recovery."],
    ["Adaptable vs problematic","The 2023 IOC consensus describes a spectrum. Short, mild dips are usually adaptable. Prolonged or severe ones are problematic and can lead to REDs (Relative Energy Deficiency in Sport). Low carbohydrate availability adds to the risk even when total calories look OK."],
    ["Signs to watch","Missed or irregular periods, frequent colds, bone stress injuries, stalled strength, always being tired or cold, low mood, GI issues, and slow recovery."],
@@ -827,7 +873,7 @@ const LESSONS=[
   take:["3+ months without a period: get checked.","Pill bleeds don't prove you're fueled.","Personal patterns beat generic phase rules."],
   doIt:["Track your cycle and symptoms for 2–3 months.","Note heavy periods; they raise iron needs."],
   src:"Mountjoy et al., IOC REDs consensus 2023; McNulty et al., Sports Med 2020 (menstrual cycle and performance meta-analysis)"},
- {id:"f-iron",tr:"female",t:"Iron for jumpers",min:6,sum:"Ferritin, food, timing and when supplements help.",
+ {id:"f-iron",tr:"female",t:"Iron for jumpers",min:6,fig:"iron",sum:"Ferritin, food, timing and when supplements help.",
   secs:[["Why athletes run low","Menstrual losses, sweat, training-related inflammation and low energy intake all chip away at iron. Low iron can mean fatigue and worse training even before anemia shows up."],
    ["Know your numbers","Ask for ferritin with your bloodwork, not just hemoglobin. In athletes, ferritin below about 35 µg/L is commonly treated as iron depletion. Don't take iron without a blood test: too much is harmful."],
    ["Food first","Heme iron (red meat, poultry, fish) absorbs best. Plant iron (beans, lentils, tofu, fortified cereals, spinach) absorbs better with vitamin C. Keep coffee, tea and calcium away from iron-rich meals by about an hour."],
@@ -905,14 +951,14 @@ const LESSONS=[
   doIt:["Feed or pump before practice for comfort.","Keep an extra bottle in your bag."],
   src:"Wu Tsai Human Performance Alliance (Farnsworth), postpartum nutrition tips; Institute of Medicine DRIs; NIH LactMed"},
 
- {id:"s-tiers",tr:"supp",t:"Supplement evidence tiers",min:5,sum:"How to judge any supplement in 30 seconds.",
+ {id:"s-tiers",tr:"supp",t:"Supplement evidence tiers",min:5,fig:"tiers",sum:"How to judge any supplement in 30 seconds.",
   secs:[["The framework","The Australian Institute of Sport sorts supplements into groups. Group A has strong evidence: medical supplements like iron, calcium and vitamin D, and performance supplements like caffeine, creatine, beta-alanine, bicarbonate and nitrate. Group B is emerging evidence (for example collagen, fish oils). Group C has little support. Group D is banned or high-risk for contamination."],
    ["Strict liability","Under the WADA code, you're responsible for anything in your body, even from a contaminated product."],
    ["Third-party testing","Only use products certified by NSF Certified for Sport or Informed Sport, and check before every new purchase."]],
   take:["Group A is a short list.","Most supplements are Group C.","Certified products only."],
   doIt:["Send your dietitian a photo of everything you take.","Search NSF Certified for Sport before buying."],
   src:"AIS Sports Supplement Framework; Maughan et al., IOC consensus on dietary supplements, Br J Sports Med 2018; WADA Code"},
- {id:"s-caff",tr:"supp",t:"Caffeine, done right",min:4,sum:"Dose, timing and the night-match trade-off.",
+ {id:"s-caff",tr:"supp",t:"Caffeine, done right",min:4,fig:"caff",sum:"Dose, timing and the night-match trade-off.",
   secs:[["What it does","Caffeine reliably improves performance in many types of exercise, including power and repeated efforts."],
    ["Dose and timing","Studies typically use about 3–6 mg per kg about an hour before exercise. Lower doses (around 2–3 mg/kg) often work with fewer jitters. More isn't better."],
    ["Night matches","Caffeine can disturb sleep for hours. In a 2023 meta-analysis, a coffee-sized dose (about 100 mg) had to be taken roughly 9 hours before bed to avoid cutting sleep, and a pre-workout-sized dose (about 200 mg) roughly 13 hours. Before a 7 pm first serve, any caffeine will cost some sleep. If you use it, keep the dose low, test it in practice first, and log your sleep that night."]],
@@ -990,12 +1036,86 @@ function sweatTool(){
    <p class="stamp">Weigh in minimal dry clothing, after peeing, before and right after. One-off estimate; repeat in different conditions.</p></form>`;
 }
 
+/* ===== Lesson infographics ===== */
+const CAFF={dose:200,taken:18,peak:19,half:5,from:17,to:31};
+function caffMg(t){const c=CAFF;if(t<c.taken)return 0;if(t<c.peak)return c.dose*(t-c.taken)/(c.peak-c.taken);return c.dose*Math.pow(.5,(t-c.peak)/c.half)}
+function hourLabel(t){const h=((Math.round(t*2)/2)%24+24)%24,hh=Math.floor(h),m=h%1?":30":"";return (hh%12||12)+m+(hh<12?" am":" pm")}
+function figHTML(id){
+  if(id==="recovery")return `<figure class="card fig" style="margin:0"><span class="fig-title">Match night, in order</span>
+   <ol class="tl">${[["LAST POINT","Pack it before you leave","Recovery drink or shake, a bar or banana, a full bottle."],["WITHIN 1 HR","Protein + carbs + fluid","About 20–40 g protein in the locker room, before the drive or bus."],["1–2 HRS AFTER","Late dinner","Carbs, protein and vegetables. Lighter on grease; no alcohol."],["30–60 MIN BEFORE BED","Protein snack","Greek yogurt, cottage cheese or milk (about 30–40 g protein)."],["LIGHTS OUT","Sleep is recovery too","Dim screens, cool dark room, water by the bed."]].map(([t,h,d])=>`<li><span class="t">${t}</span><div class="b"><b>${h}</b><span>${d}</span></div></li>`).join("")}</ol>
+   <p class="src">Thomas, Erdman & Burke 2016; Jäger et al., ISSN 2017; Res et al. 2012 (pre-sleep protein)</p></figure>`;
+  if(id==="urine"){const C=["#FBF9DC","#F7F2B8","#F2E890","#EEDC6A","#E6CB48","#D7B22E","#C29722","#A47A17"];
+   return `<figure class="card fig" style="margin:0"><span class="fig-title">Check your color</span>
+   <div class="urine" role="img" aria-label="Urine color scale from 1, very pale, to 8, dark amber. 1 to 3 well hydrated, 4 to 5 drink more, 6 to 8 drink now.">${C.map((c,i)=>`<i style="background:${c}">${i+1}</i>`).join("")}</div>
+   <div class="ugroups"><div><b>1–3 · On track</b>Pale straw to light yellow</div><div><b>4–5 · Drink more</b>Before practice</div><div><b>6–8 · Drink now</b>And add sodium</div></div>
+   <p class="stamp">A guide, not a test: first-morning urine runs darker, B vitamins turn it bright yellow, and screens show color differently. Pair it with the sweat test below.</p>
+   <p class="src">Armstrong et al., Int J Sport Nutr 1994 (urine color scale)</p></figure>`}
+  if(id==="ea")return `<figure class="card fig" style="margin:0"><span class="fig-title">What's left after training</span>
+   <div class="legend"><span><i style="background:var(--viz-1)"></i>Training cost</span><span><i style="background:var(--viz-2)"></i>Left for your body</span></div>
+   <div class="earow"><span>Fueled</span><div class="eabar" title="Fueled: training is covered and plenty is left for hormones, bone, immunity and recovery"><span class="tr" style="flex:45">Training</span><span class="bd" style="flex:55">Your body</span></div></div>
+   <div class="earow"><span>Under-fueled</span><div style="display:flex;gap:2px"><div class="eabar" style="flex:70" title="Under-fueled: the same training cost, so far less is left for the body"><span class="tr" style="flex:45">Training</span><span class="bd" style="flex:25"></span></div><div style="flex:30"></div></div></div>
+   <p style="font-size:.86rem">Training costs the same either way. Eat less and the cut comes out of what your body needs to adapt, heal and stay healthy.</p>
+   <p class="stamp">Illustration, not to scale.</p><p class="src">Mountjoy et al., IOC consensus on REDs, Br J Sports Med 2023</p></figure>`;
+  if(id==="iron")return `<figure class="card fig" style="margin:0"><span class="fig-title">Help it in, keep blockers out</span>
+   <div class="bb"><div><h4><span class="ic" style="background:var(--ok)">+</span>Boosts</h4><ul><li>Red meat, poultry, fish (heme iron)</li><li>Vitamin C with plant iron: citrus, berries, peppers</li><li>If prescribed: take iron in the morning, every other day</li></ul></div>
+    <div><h4><span class="ic" style="background:var(--stop)">−</span>Blocks</h4><ul><li>Coffee and tea within about an hour</li><li>Calcium: dairy or calcium pills at the same meal</li><li>Taking iron late in the day after hard training</li></ul></div></div>
+   <p class="src">Sim et al., Eur J Appl Physiol 2019; Stoffel et al., Lancet Haematol 2017 & 2020</p></figure>`;
+  if(id==="tiers")return `<figure class="card fig" style="margin:0"><span class="fig-title">Supplement evidence, top to bottom</span>
+   <div class="tiers">
+    <div><span class="g" style="background:var(--viz-1)">A</span><div><b>Strong evidence</b><p>Caffeine, creatine, beta-alanine, bicarbonate, nitrate. Iron, calcium and vitamin D when a test shows you need them. Sports drinks, gels and protein powder.</p></div></div>
+    <div><span class="g" style="background:color-mix(in srgb,var(--viz-1) 62%,var(--surface-2))">B</span><div><b>Emerging</b><p>Collagen, fish oil and similar. Only with your dietitian, as part of a plan.</p></div></div>
+    <div><span class="g" style="background:color-mix(in srgb,var(--fg) 28%,var(--surface-2))">C</span><div><b>Little support</b><p>Most "recovery", "immune", "detox" and proprietary blends.</p></div></div>
+    <div><span class="g" style="background:var(--stop)" aria-hidden="true">✕</span><div><b>D · Banned or high risk</b><p>Stimulant pre-workouts, prohormones, SARMs, peptides and fat burners. Never take these.</p></div></div>
+   </div><p class="src">AIS Sports Supplement Framework; Maughan et al., IOC consensus, Br J Sports Med 2018</p></figure>`;
+  if(id==="caff"){
+   const c=CAFF,W=340,H=196,L=38,R=330,T=14,B=150,x=t=>L+(t-c.from)/(c.to-c.from)*(R-L),y=m=>B-m/220*(B-T);
+   const pts=[];for(let t=c.from;t<=c.to+1e-9;t+=.25)pts.push([t,caffMg(t)]);
+   const line=pts.map(([t,m],i)=>(i?"L":"M")+x(t).toFixed(1)+","+y(m).toFixed(1)).join("");
+   const bed=24, bedMg=Math.round(caffMg(bed));
+   return `<figure class="card fig caff" style="margin:0"><span class="fig-title">Caffeine still in your body after a 7 pm match</span>
+   <p class="stamp">200 mg (about two cups of coffee or one pre-workout) taken at 6 pm.</p>
+   <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart. Caffeine peaks at 200 milligrams at 7 pm and halves about every 5 hours: about ${bedMg} milligrams remain at midnight and about 50 at 5 am.">
+    ${[0,100,200].map(m=>`<line x1="${L}" x2="${R}" y1="${y(m)}" y2="${y(m)}" stroke="var(--grid)"/><text x="${L-6}" y="${y(m)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--mono)">${m}</text>`).join("")}
+    <text x="${L-6}" y="${T-4}" text-anchor="end" font-size="9" fill="var(--muted)">mg</text>
+    ${[18,21,24,27,30].map(t=>`<text x="${x(t)}" y="${B+16}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--mono)">${hourLabel(t).replace(":00","")}</text>`).join("")}
+    <line x1="${x(19)}" x2="${x(19)}" y1="${T}" y2="${B}" stroke="var(--muted)" stroke-width="1"/><text x="${x(19)+4}" y="${T+8}" font-size="9.5" fill="var(--muted)">First serve</text>
+    <line x1="${x(bed)}" x2="${x(bed)}" y1="${T}" y2="${B}" stroke="var(--muted)" stroke-width="1"/><text x="${x(bed)+4}" y="${T+8}" font-size="9.5" fill="var(--muted)">Bedtime</text>
+    <path d="${line}L${x(c.to)},${B}L${x(c.from)},${B}Z" fill="var(--viz-2)" opacity=".14"/>
+    <path d="${line}" fill="none" stroke="var(--viz-2)" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(bed)}" cy="${y(bedMg)}" r="4.5" fill="var(--viz-2)" stroke="var(--surface)" stroke-width="2"/>
+    <text x="${x(bed)+8}" y="${y(bedMg)-8}" font-size="10.5" font-weight="700" fill="var(--fg)">~${bedMg} mg at midnight</text>
+    <g class="caff-x" style="opacity:0"><line y1="${T}" y2="${B}" stroke="var(--fg)" stroke-width="1"/><circle r="4" fill="var(--viz-2)" stroke="var(--surface)" stroke-width="2"/></g>
+    <rect class="caff-hit" x="${L}" y="${T}" width="${R-L}" height="${B-T+20}" fill="transparent" data-l="${L}" data-r="${R}" data-t="${T}" data-b="${B}"/>
+   </svg><div class="tip" role="status"></div>
+   <p style="font-size:.86rem">At bedtime you still carry about ${bedMg} mg, roughly a cup of coffee. That's why a low dose, or none, makes sense before night matches.</p>
+   <p class="stamp">Uses an average half-life of 5 hours. It ranges from about 2 to 10 hours between people, and hormonal birth control can roughly double it.</p>
+   <details class="figtable"><summary>Show as a table</summary><table><thead><tr><th>Time</th><th>Caffeine left</th></tr></thead><tbody>${[18,19,21,23,24,26,28,31].map(t=>`<tr><td>${hourLabel(t)}</td><td>${Math.round(caffMg(t))} mg</td></tr>`).join("")}</tbody></table></details>
+   <p class="src">Guest et al., ISSN caffeine position stand 2021; Nehlig, Pharmacol Rev 2018 (caffeine metabolism); Gardiner et al., Sleep Med Rev 2023</p></figure>`}
+  return "";
+}
+function caffHover(e){
+  const hit=e.target.closest&&e.target.closest(".caff-hit");if(!hit)return;
+  const svg=hit.ownerSVGElement,fig=svg.closest(".caff"),tip=fig.querySelector(".tip"),g=svg.querySelector(".caff-x");
+  const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const L=+hit.dataset.l,R=+hit.dataset.r,T=+hit.dataset.t,B=+hit.dataset.b,c=CAFF;
+  let t=c.from+(Math.min(R,Math.max(L,p.x))-L)/(R-L)*(c.to-c.from);t=Math.round(t*2)/2;
+  const mg=caffMg(t),X=L+(t-c.from)/(c.to-c.from)*(R-L),Y=B-mg/220*(B-T);
+  g.style.opacity=1;g.querySelector("line").setAttribute("x1",X);g.querySelector("line").setAttribute("x2",X);g.querySelector("circle").setAttribute("cx",X);g.querySelector("circle").setAttribute("cy",Y);
+  tip.textContent="";const v=document.createElement("b");v.textContent=Math.round(mg)+" mg";tip.append(v,document.createElement("br"),document.createTextNode(hourLabel(t)));
+  const sr=svg.getBoundingClientRect(),fr=fig.getBoundingClientRect(),px=sr.left-fr.left+X/340*sr.width;
+  tip.style.left=Math.min(fr.width-tip.offsetWidth-8,Math.max(8,px-tip.offsetWidth/2))+"px";tip.style.top=(sr.top-fr.top+Y/196*sr.height-48)+"px";tip.style.opacity=1;
+}
+document.addEventListener("pointermove",caffHover);
+document.addEventListener("pointerdown",caffHover);
+document.addEventListener("pointerout",e=>{const hit=e.target.closest&&e.target.closest(".caff-hit");if(!hit)return;const fig=hit.ownerSVGElement.closest(".caff");fig.querySelector(".tip").style.opacity=0;hit.ownerSVGElement.querySelector(".caff-x").style.opacity=0});
+
 let learnLesson=null;
 function lessonHTML(l){
   const done=EDU.learned.includes(l.id), tr=(TRACKS.find(t=>t[0]===l.tr)||[])[1];
   return `<div class="view"><button class="linkbtn" data-lesson="">‹ Back to your path</button>
    <div><p class="eyebrow">${esc(tr)} · ${l.min} min read</p><h1 style="margin-top:6px">${esc(l.t)}</h1><p class="muted" style="margin-top:6px">${esc(l.sum)}</p></div>
    <div class="card stack lesson">${l.secs.map(([h,p])=>`<section style="gap:6px"><h3>${esc(h)}</h3><p>${esc(p)}</p></section>`).join("")}</div>
+   ${l.fig?figHTML(l.fig):""}
    ${l.tool==="fuel"?fuelTool():l.tool==="sweat"?sweatTool():""}
    <div class="plan">${planHead("Key takeaways","")}${l.take.map((t,i)=>`<div class="step"><span class="when">0${i+1}</span><b>${esc(t)}</b></div>`).join("")}</div>
    <div class="card stack"><span class="eyebrow">Try this</span>${l.doIt.map(t=>`<p style="font-size:.92rem">→ ${esc(t)}</p>`).join("")}</div>
