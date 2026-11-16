@@ -784,7 +784,7 @@ const LESSONS=[
  {id:"c-fuel",tr:"core",t:"Fuel for the work",min:5,sum:"Match carbs and protein to the day's load.",tool:"fuel",
   secs:[["Periodize your plate","Your needs aren't the same every day. Carbohydrate is the fuel that moves most with training load: lighter days need less, two-a-days and matches need more. Protein stays fairly steady."],
    ["The ranges","For carbohydrate, sports nutrition guidelines use about 3–5 g per kg of body weight on light days, 5–7 g/kg on moderate days of roughly an hour of training, and 6–10 g/kg on high-volume days. Most volleyball practice days sit in the moderate range; matches and doubles push higher. For protein, aim for about 1.2–2.0 g/kg a day, spread as about 0.3 g/kg every 3–4 hours."],
-   ["Numbers or plates","Some athletes like numbers; others do better with a plate picture. Both work. Turn numbers on or off in My path."]],
+   ["Use the plates","The three plates below turn those ranges into a picture: match your plate to the day instead of counting grams. Your dietitian can give you personal numbers if you need them."]],
   take:["Carbs move with the training day; protein stays steady.","Spread protein over 4–5 eating times.","Under-fueling on rest days slows recovery for the next session."],
   doIt:["Look at tomorrow's schedule tonight and pick the plate that fits.","Add a carb + protein snack between lift and practice."],
   src:"Thomas, Erdman & Burke, ACSM/AND/DC joint position stand, 2016; Jäger et al., ISSN protein position stand, 2017; USOPC & University of Colorado Athlete's Plates"},
@@ -993,15 +993,8 @@ function plateSVG(g,p,v,label){
   return `<figure class="plate"><svg viewBox="0 0 100 100" role="img" aria-label="${label}: ${Math.round(g*100)}% grains and starches, ${Math.round(p*100)}% protein, ${Math.round(v*100)}% fruit and vegetables"><circle cx="50" cy="50" r="49" fill="#fff" stroke="#D3D9E6"/>${arc(s,a,"#FF5E1A")}${arc(a,b,"#0B132B")}${arc(b,s+T,"#3DD69B")}<circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="1.5"/></svg><figcaption><b>${label}</b><span>${Math.round(g*100)}% carbs · ${Math.round(p*100)}% protein · ${Math.round(v*100)}% produce</span></figcaption></figure>`;
 }
 function fuelTool(){
-  const k=kg();
   const plates=`<div class="plates">${plateSVG(.25,.25,.5,"Easy / rest day")}${plateSVG(1/3,1/3,1/3,"Practice day")}${plateSVG(.5,.25,.25,"Match or two-a-day")}</div><p class="stamp">Orange = grains and starches · navy = protein · green = fruit and vegetables. Add a little healthy fat and a drink to every plate.</p>`;
-  if(!EDU.numbers||!k)return `<div class="card stack"><span class="eyebrow">Your plates</span>${plates}${EDU.numbers&&!k?`<p class="muted" style="font-size:.86rem">Add your weight in My path to see gram ranges too.</p>`:""}</div>`;
-  const r=(lo,hi)=>`${Math.round(lo*k)}–${Math.round(hi*k)} g`;
-  return `<div class="card stack"><span class="eyebrow">Your numbers · ${Math.round(k)} kg · stays on this phone</span>
-   <table class="ntab"><thead><tr><th>Day</th><th>Carbs / day</th></tr></thead><tbody>
-    <tr><td>Easy / rest</td><td>${r(3,5)}</td></tr><tr><td>Practice day</td><td>${r(5,7)}</td></tr><tr><td>Match / two-a-day</td><td>${r(6,8)}</td></tr></tbody></table>
-   <div class="row" style="flex-wrap:wrap;gap:8px"><span class="chip violet">Protein ${r(1.6,2.0)} / day</span><span class="chip violet">~${Math.round(.3*k)} g per meal or snack</span><span class="chip">Pre-match meal carbs ${r(1,2)}</span></div>
-   <p class="stamp">Starting ranges from sports nutrition guidelines, not prescriptions. Your dietitian tailors them. Match-day upper limit set to 8 g/kg for a team sport.</p>${plates}</div>`;
+  return `<div class="card stack"><span class="eyebrow">Your plates</span>${plates}</div>`;
 }
 function sweatTool(){
   const sw=EDU.sweat, u=EDU.unit;
@@ -1030,10 +1023,8 @@ function lessonHTML(l){
 }
 function setupHTML(){
   return `<form class="card stack" id="edu-form"><span class="eyebrow">Personalize your path · optional · stays on this phone</span>
-   <p class="muted" style="font-size:.86rem">Used only to pick lessons and show your numbers. Nothing is sent anywhere.</p>
-   <div class="stack" style="gap:6px"><span class="eyebrow">Show numbers?</span><div class="choice mini" data-ep="numbers">${[["0","Plates only"],["1","Plates + gram ranges"]].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${String(+!!EDU.numbers)===v}">${l}</button>`).join("")}</div></div>
-   <div class="namerow"><label for="e-wt">Body weight (optional)<input id="e-wt" inputmode="decimal" value="${esc(EDU.weight)}" placeholder="for gram ranges"></label>
-    <div class="stack" style="gap:6px"><span class="eyebrow">Units</span><div class="choice mini" data-ep="unit">${["lb","kg"].map(u=>`<button type="button" data-v="${u}" aria-pressed="${EDU.unit===u}">${u}</button>`).join("")}</div></div></div>
+   <p class="muted" style="font-size:.86rem">Used only to pick lessons. Nothing is sent anywhere.</p>
+   <div class="stack" style="gap:6px"><span class="eyebrow">Units for the sweat test</span><div class="choice mini" data-ep="unit">${["lb","kg"].map(u=>`<button type="button" data-v="${u}" aria-pressed="${EDU.unit===u}">${u}</button>`).join("")}</div></div>
    <div class="stack" style="gap:6px"><span class="eyebrow">What do you want to work on?</span><div class="choice mini" data-ep="goals" data-multi="1">${GOALS.map(g=>`<button type="button" data-v="${g}" aria-pressed="${EDU.goals.includes(g)}">${g}</button>`).join("")}</div></div>
    <div class="stack" style="gap:6px"><span class="eyebrow">Your cycle</span><div class="choice mini" data-ep="cycle">${CYCLES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.cycle===v}">${l}</button>`).join("")}</div></div>
    <div class="stack" style="gap:6px"><span class="eyebrow">Pregnancy & postpartum</span><div class="choice mini" data-ep="stage">${STAGES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.stage===v}">${l}</button>`).join("")}</div></div>
@@ -1055,7 +1046,7 @@ function vLearn(){
     body=`<div class="seg" data-libtrack="1">${TRACKS.map(([k,l])=>`<button data-v="${k}" aria-pressed="${libTrack===k}">${l}</button>`).join("")}</div>
      <div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div>`;
   }else if(learnTab==="tools"){
-    body=`<section><h2>Supplement check</h2>${suppTool()}</section><section><h2>Fuel numbers</h2>${fuelTool()}</section><section><h2>Sweat test</h2>${sweatTool()}</section>`;
+    body=`<section><h2>Supplement check</h2>${suppTool()}</section><section><h2>Your plates</h2>${fuelTool()}</section><section><h2>Sweat test</h2>${sweatTool()}</section>`;
   }else{
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
      <div class="stack" id="faq">${faqHTML()}</div>
@@ -1479,7 +1470,7 @@ document.addEventListener("submit",e=>{
     else{lvl="low";title="Lower risk, still check in";msg="Certified products are tested for banned substances, but that doesn't mean you need it or that the dose is right. Run it by "+esc(CONFIG.rdFirst)+"."}
     suppRes={lvl,title,msg,text:`Supplement check · ${profile.name}\nProduct: ${name}${brand?" ("+brand+")":""}\nWhy: ${why||"—"}\nCertified: ${cert}${fl.length?"\nFlags: "+fl.join(", "):""}\n(I'll send a photo of the label.)`};
     render();return}
-  if(f.id==="edu-form"){EDU.weight=$("#e-wt").value.replace(/[^0-9.]/g,"");EDU.setup=true;editPath=false;saveEdu();render();scrollTo({top:0});toast("Your path is ready");return}
+  if(f.id==="edu-form"){EDU.weight="";EDU.numbers=false;EDU.setup=true;editPath=false;saveEdu();render();scrollTo({top:0});toast("Your path is ready");return}
   if(f.id==="sweat-form"){const n=id=>parseFloat($(id).value);const pre=n("#sw-pre"),post=n("#sw-post"),drank=n("#sw-drank")||0,min=n("#sw-min");
     if(!pre||!post||!min){toast("Add both weights and the practice length");return}
     const lb=EDU.unit==="lb",toKg=x=>lb?x/2.2046:x,drankL=lb?drank/33.814:drank/1000,lossKg=toKg(pre)-toKg(post);
