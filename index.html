@@ -277,6 +277,18 @@ body{font-stretch:100%}
 :root[data-scheme="horizon"] body{background:linear-gradient(180deg,#FFF6EC 0%,#FFF1E2 60%,#FFE0C7 100%) fixed;background-color:#FFF1E2}
 :root[data-scheme="horizon"] nav.tabs{background:color-mix(in srgb,#FFF1E2 90%,transparent)}
 [hidden]{display:none!important}
+/* ===== Game Day theme: switches on automatically on match days ===== */
+:root[data-gameday]{--bg:#000000;--surface:#111116;--surface-2:#1D1D25;--line:#2E2E38;--fg:#FFFFFF;--muted:#BDBDCB;--accent:#FF5E1A;--accent-text:#FF8A4C;--sel-bg:#FF5E1A;--sel-fg:#000000;--violet:#FF8A4C;--sky:none}
+:root[data-gameday] body{background:radial-gradient(130% 45% at 50% 112%,rgb(255 94 26 / .38),transparent 62%) fixed,#000;background-color:#000}
+:root[data-gameday] nav.tabs{background:color-mix(in srgb,#000 90%,transparent);border-top-color:rgb(255 94 26 / .45)}
+:root[data-gameday] .hero{background:radial-gradient(70% 60% at 100% 0%,#FF5E1A 0%,transparent 70%),radial-gradient(60% 50% at 0% 100%,#C2410C 0%,transparent 70%),#050505}
+.gdbar{position:relative;overflow:hidden;border-radius:var(--r);padding:14px 16px;background:linear-gradient(100deg,#FF5E1A,#C2410C);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.gdbar b{font:900 1.35rem/1 var(--display);font-stretch:125%;letter-spacing:.04em;text-transform:uppercase}
+.gdbar span{font:600 .74rem/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.95}
+.gdbar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 18px,rgb(255 255 255 / .07) 18px 22px);pointer-events:none}
+.gdbar .btn{background:#000;color:#fff;position:relative;z-index:1}
+/* ===== Welcome screen ===== */
+.welcome-steps{display:flex;flex-direction:column;gap:10px}
 .schemes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .scheme{all:unset;cursor:pointer;box-sizing:border-box;background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:3px;border:2px solid transparent;transition:border-color .2s}
 .scheme[aria-pressed="true"]{border-color:var(--accent)}
@@ -571,7 +583,8 @@ function clock(min){min=((min%1440)+1440)%1440;let h=Math.floor(min/60),m=min%60
 function sb(t,big){t=String(t);return `<span class="sb${big?" big":""}"><span class="sb-ghost" aria-hidden="true">${t.replace(/[0-9]/g,"8")}</span><span class="sb-on">${t}</span></span>`}
 function mmdd(iso){const d=new Date(iso+"T12:00:00");return String(d.getMonth()+1).padStart(2,"0")+"."+String(d.getDate()).padStart(2,"0")}
 function dow(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"}).toUpperCase()}
-function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");r.classList.toggle("lg",!!prefs.large)}
+function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large)}
+function todayMatch(){const t=isoToday();return SCHEDULE.find(m=>m.d===t)||null}
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
 function myAllergens(){return profile?profile.allergies||[]:[]}
 function shakeName(){return "protein shake"}
@@ -1350,6 +1363,23 @@ function atClick(b){
 }
 function remSync(){if(!remDraft)return;const g=id=>document.getElementById(id);["title","date","time","note"].forEach(k=>{if(g("rem-"+k))remDraft[k]=g("rem-"+k).value})}
 
+function vWelcome(){
+  const staff=profile.position==="Staff",gd=todayMatch();
+  const steps=staff?[["at","","Training room","Reminders, programs and announcements from "+CONFIG.atFirst,I.at],["learn","","Learn","Nutrition and athletic-training lessons the team sees",I.book],["fuel","match","Game-day fuel","What athletes eat, hour by hour",I.plate]]
+   :[["ready","","Do your first check-in","Sleep, soreness, energy, mood and stress in 15 seconds",I.moon],["journal","","Log a meal","Your Performance Journal lights the Fuel moon",I.journal],["learn","","Build your path","Lessons picked for you and your position",I.book],["at","","Meet "+CONFIG.atFirst,"Athletic training: rehab, prehab and reminders",I.at]];
+  return `<div class="view">
+   <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">You're in</span></div>
+    <p class="wordmark">Welcome, ${esc(profile.first)}</p><p class="wordmark-sub">to the LA Orbit</p>
+    <p class="hello" style="margin-top:10px">${staff?"Here's what the athletes see, and where your tools are.":"This is your fuel, recovery and training-room hub for the season."}</p>
+    <div class="meta">${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}${profile.num?`<span class="chip">#${esc(profile.num)}</span>`:""}${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:""}</div>
+    <div class="grain"></div><div class="horizon"></div></div>
+   ${gd?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>You joined on a match day. Check the plan.</span></div></div>`:""}
+   <section><h2>Start here</h2><div class="welcome-steps">${steps.map(([t,seg,l,d,ic])=>`<button class="ng" data-welcomego="${t}"${seg?` data-seg="${seg}"`:""}>${ic}<b>${esc(l)}</b><span>${esc(d)}</span></button>`).join("")}</div></section>
+   <div class="card stack"><span class="eyebrow">Good to know</span>
+    <p style="font-size:.9rem">Everything you log stays on this phone. Light 3 moons in a day to add a star to this week's constellation.</p></div>
+   <button class="btn block" data-welcomego="home">Go to Home</button></div>`;
+}
+
 /* ===== Views ===== */
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
@@ -1402,10 +1432,11 @@ function vHome(){
    <header class="hero">
     <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p>
-    <p class="hello">Welcome back, ${esc(first)}.</p>
+    <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`Welcome back, ${esc(first)}.`}</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
    </header>
+   ${(()=>{const m=todayMatch();return m?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))} · First serve ${esc(matchLocal(m))}</span></div><button class="btn sm" data-go="fuel" data-seg="match">Plan</button></div>`:""})()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
    ${matchDayCard()}${roadTripCard()}${todayRemCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
@@ -1489,6 +1520,8 @@ function vMe(){
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
    <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
+   <section><h2>Game-day theme</h2><p class="muted" style="font-size:.86rem">On match days the app turns black and orange, then goes back to your scheme the next day.</p>
+    <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">On match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
    <section><h2>App feedback</h2><form class="card stack" id="fb-app">
@@ -1653,9 +1686,11 @@ function render(){
   const app=$("#app");
   if(!profile||draft.editing){$("nav.tabs").hidden=true;app.innerHTML=vOnboard();return}
   $("nav.tabs").hidden=false;
+  if(profile.welcomed===false&&tab!=="welcome"&&!["ready","journal","learn","at"].includes(tab))tab="welcome";
+  if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();return}
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="rd"&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={welcome:vWelcome,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();
 }
@@ -1664,6 +1699,7 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
+  if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.tab){tab=ds.tab;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}if(ds.session)draft.session=ds.session;render();scrollTo({top:0});return}
   if(ds.lesson!==undefined){learnLesson=ds.lesson||null;tab="learn";render();scrollTo({top:0});return}
@@ -1693,7 +1729,7 @@ document.addEventListener("click",e=>{
     if(pick.dataset.multi){draft[k]=draft[k]||[];draft[k]=draft[k].includes(v)?draft[k].filter(x=>x!==v):[...draft[k],v]}else draft[k]=v;
     pick.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",pick.dataset.multi?draft[k].includes(x.dataset.v):x.dataset.v===draft[k]));return}
   const pref=b.closest("[data-pref]");
-  if(pref){const k=pref.dataset.pref;prefs[k]=k==="large"?ds.v==="1":ds.v;store.set("prefs",prefs);render();return}
+  if(pref){const k=pref.dataset.pref;prefs[k]=k==="large"||k==="gameday"?ds.v==="1":ds.v;store.set("prefs",prefs);render();return}
   if(ds.scheme){prefs.scheme=ds.scheme;store.set("prefs",prefs);render();toast((SCHEMES.find(x=>x.k===ds.scheme)||{}).n+" on");return}
   if(ds.ack){profile.ack=true;store.set("profile",profile);render();return}
   if(ds.cancel){draft={};render();return}
@@ -1731,7 +1767,8 @@ document.addEventListener("submit",e=>{
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
     const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
-    store.set("profile",profile);draft={};tab="home";render();toast("Profile saved");return}
+    const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
+    store.set("profile",profile);draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)logStamp("Welcome to the Orbit");else toast("Profile saved");return}
   if(f.id==="rem-form"){remSync();const r=remDraft;
     if(!r.title.trim()){toast("Name the reminder");return}
     if(!r.date||!r.time){toast("Pick a date and time");return}
