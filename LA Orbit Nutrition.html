@@ -467,7 +467,9 @@ const CONFIG = {
   atName: "Emma Stratomen", atFirst: "Emma", atTitle: "Athletic Trainer",
   trainingCenter: "Seal Beach, CA",            // where the team trains
   atBookingLink: "",                           // Emma's booking link (Calendly etc.), when ready
-  atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
+  atHours: "",
+  atSheetCSV: "",                              // Emma's announcements: Google Sheet "Publish to web" CSV link
+  teamSheetCSV: "",                            // optional: main Home announcements from a second sheet tab                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
   appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
@@ -1379,7 +1381,7 @@ function progDone(pid,i){return (jGet(isoToday()).prehab||[]).includes(pid+":"+i
 function todayRemCard(){const L=remToday().sort((a,b)=>remNext(a)-remNext(b));if(!L.length)return "";
   return `<section><div class="sec-head"><h2>Today's reminders</h2><button class="linkbtn" data-tab="at">Training room</button></div><div class="card" style="padding-block:2px">${L.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${clock(+r.time.split(":")[0]*60+ +r.time.split(":")[1])}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}</div>`).join("")}</div></section>`}
 function vAT(){
-  const anns=DATA.atAnnouncements||[];
+  const anns=atAnns();
   const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
   const L=LESSONS.filter(l=>l.tr==="at");
   return `<div class="view"><div><p class="eyebrow">Athletic training · ${esc(CONFIG.atName)}, ${esc(CONFIG.atTitle)}</p><h1 style="margin-top:6px">Training room</h1></div>
@@ -1511,6 +1513,31 @@ function feedbackHTML(){return `<form class="card stack" id="fb-app">
     <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form>`}
 function vFeedback(){return `<div class="view"><div><p class="eyebrow">Help make the app better</p><h1 style="margin-top:6px">App feedback</h1></div>${feedbackHTML()}</div>`}
 
+/* ===== Announcements from Google Sheets (published to the web as CSV).
+   Columns (header row, any order, case-insensitive): Date | Tag | Headline | Details | Hide after | Show
+   Last good copy is kept on the phone; if a sheet can't be reached the app shows that copy, then the built-in list. ===== */
+let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null)};
+function parseCSV(text){const rows=[];let row=[],f="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true; else if(c===","){row.push(f);f=""} else if(c==="\n"||c==="\r"){if(c==="\r"&&text[i+1]==="\n")i++;row.push(f);rows.push(row);row=[];f=""} else f+=c}
+  if(f!==""||row.length){row.push(f);rows.push(row)}return rows.filter(r=>r.some(x=>x.trim()!==""))}
+function sheetDate(v){v=(v||"").trim();if(!v)return "";let m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);if(m){const y=m[3].length===2?"20"+m[3]:m[3];return `${y}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`}
+  const d=new Date(v);return isNaN(d)?"":d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function sheetRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iD=col("date"),iT=col("tag"),iH=col("headline"),iX=col("details"),iE=col("hide"),iS=col("show");
+  if(iH<0)return null;const today=isoToday();
+  return R.slice(1).map(r=>({when:sheetDate(r[iD]),tag:(r[iT]||"").trim(),t:(r[iH]||"").trim(),d:(r[iX]||"").trim(),hide:sheetDate(r[iE]),show:(r[iS]||"yes").trim().toLowerCase()}))
+   .filter(a=>a.t&&a.show!=="no"&&!(a.hide&&a.hide<today)&&!(a.when&&a.when>today)).sort((a,b)=>(b.when||"").localeCompare(a.when||""))}
+async function loadSheet(kind,url){if(!url)return;try{const r=await fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return;
+  const rows=sheetRows(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
+  const changed=JSON.stringify((SHEET[kind]||{}).rows)!==JSON.stringify(rows);SHEET[kind]=val;store.set("sheet_"+kind,val);if(changed&&profile&&!draft.editing)render()}catch(e){}}
+function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV)}
+function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
+function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadSheets()});
+
 /* ===== Views ===== */
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
@@ -1547,7 +1574,7 @@ function launchCard(m,compact){
 }
 function vHome(){
   const first=profile.first;
-  const [feat,...rest]=DATA.announcements;
+  const [feat,...rest]=teamAnns();
   const dateLine=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
   const pre=jGet(isoToday()).prehab||[];
   const go=[
@@ -2106,6 +2133,7 @@ document.addEventListener("input",e=>{const t=e.target;
   if(t.id==="q"){draft.q=t.value;const f=$("#faq");if(f)f.innerHTML=faqHTML()}});
 
 render();
+loadSheets();
 
 </script>
 </body></html>
