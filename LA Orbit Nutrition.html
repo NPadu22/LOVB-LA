@@ -580,7 +580,7 @@ let profile=store.get("profile",null);
 let prefs=store.get("prefs",{accent:"#FF5E1A",theme:"system",large:false});
 if(!prefs.scheme)prefs.scheme=prefs.theme==="dark"?"space":prefs.theme==="light"?"starlight":"auto";
 if(!SCHEMES.some(x=>x.k===prefs.scheme))prefs.scheme="auto";
-let tab="home", fuelSeg="match", dinnerSeg="out", seasonSeg="all", learnSeg="answers", draft={};
+let tab="home", fuelSeg="plan", dinnerSeg="out", seasonSeg="all", learnSeg="answers", draft={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function isoToday(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -1513,7 +1513,8 @@ function vHome(){
   const dateLine=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
   const pre=jGet(isoToday()).prehab||[];
   const go=[
-   ["fuel","match","Game-day fuel","Home and road, hour by hour",I.plate],
+   ["fuel","plan","Meal plan","Your day of eating, meal by meal",I.plate],
+   ["fuel","match","Game-day fuel","Home and road, hour by hour",I.season],
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
    ["at","","Training room","Emma: rehab, reminders, booking",I.at],
    ["season","","Season","22 matches, fueling notes",I.cal],
@@ -1533,7 +1534,7 @@ function vHome(){
    </header>
    ${(()=>{const m=todayMatch();return m?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))} · First serve ${esc(matchLocal(m))}</span></div><button class="btn sm" data-go="fuel" data-seg="match">Plan</button></div>`:""})()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
-   ${matchDayCard()}${roadTripCard()}${todayRemCard()}
+   ${planHomeCard()}${matchDayCard()}${roadTripCard()}${todayRemCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
    ${!habitDone("ready",isoToday())?`<button class="rcard" data-go="ready"><span class="ring">15″</span><span class="stack" style="gap:2px"><b>Morning check-in</b><span>Sleep, soreness, energy, mood, stress</span></span><span class="linkbtn">Start</span></button>`:""}
@@ -1546,12 +1547,119 @@ function vHome(){
    <p class="stamp" style="text-align:center">Updated ${fmtDate(DATA.updated)} · Built by your sports dietitian</p></div>`;
 }
 
+/* ===== Meal planner: a full day of eating built around the day type and practice time.
+   Options carry allergen tags (same names as ALLERGENS) and a veg flag; the planner hides anything that clashes. ===== */
+const MEALBANK={
+ breakfast:[
+  {n:"Oatmeal made with milk, banana and peanut butter",a:["Dairy","Peanut"],v:1},
+  {n:"Scrambled eggs, toast and a piece of fruit",a:["Egg","Wheat/Gluten"],v:1},
+  {n:"Breakfast burrito: eggs, potatoes, black beans and salsa in a flour tortilla",a:["Egg","Wheat/Gluten"],v:1},
+  {n:"Greek yogurt with granola and berries",a:["Dairy","Wheat/Gluten"],v:1},
+  {n:"Rice bowl with eggs, avocado and fruit",a:["Egg"],v:1},
+  {n:"Smoothie: banana, berries, oats, soy milk and plant protein",a:["Soy"],v:1},
+  {n:"Bagel with turkey, cheese and an orange",a:["Wheat/Gluten","Dairy"]}],
+ pre:[
+  {n:"Banana",a:[],v:1},{n:"Applesauce pouch",a:[],v:1},{n:"Rice cakes with honey",a:[],v:1},
+  {n:"Pretzels",a:["Wheat/Gluten"],v:1},{n:"Fig bar you've tested",a:["Wheat/Gluten"],v:1},{n:"Sports drink and a few chews",a:[],v:1}],
+ recovery:[
+  {n:"Chocolate milk and a banana",a:["Dairy"],v:1},
+  {n:"Chicken and rice bowl from last night's leftovers",a:[]},
+  {n:"Turkey sandwich and fruit",a:["Wheat/Gluten"]},
+  {n:"Greek yogurt, granola and fruit",a:["Dairy","Wheat/Gluten"],v:1},
+  {n:"Tofu rice bowl with vegetables",a:["Soy"],v:1},
+  {n:"Plant-protein smoothie with fruit and oats",a:["Soy"],v:1},
+  {n:"Tuna pouch, crackers and an apple",a:["Fish","Wheat/Gluten"]}],
+ main:[
+  {n:"Chicken burrito bowl: rice, black beans, salsa and vegetables",a:[]},
+  {n:"Salmon, rice and roasted vegetables",a:["Fish"]},
+  {n:"Pasta with turkey meat sauce and a side salad",a:["Wheat/Gluten"]},
+  {n:"Tofu and vegetable stir-fry over rice",a:["Soy"],v:1},
+  {n:"Lentil curry with rice and spinach",a:[],v:1},
+  {n:"Turkey chili over rice with fruit",a:[]},
+  {n:"Sheet-pan chicken fajitas with tortillas and black beans",a:["Wheat/Gluten"]},
+  {n:"Shrimp tacos on corn tortillas with rice and slaw",a:["Shellfish"]},
+  {n:"Bean and cheese quesadillas with rice and fruit",a:["Dairy","Wheat/Gluten"],v:1},
+  {n:"Steak or chicken, baked potato and green beans",a:[]}],
+ snack:[
+  {n:"Hummus, pita and veggies",a:["Wheat/Gluten","Sesame"],v:1},
+  {n:"Apple and peanut butter",a:["Peanut"],v:1},
+  {n:"String cheese, crackers and grapes",a:["Dairy","Wheat/Gluten"],v:1},
+  {n:"Edamame and rice cakes",a:["Soy"],v:1},
+  {n:"Trail mix and a banana",a:["Peanut","Tree nut"],v:1},
+  {n:"Turkey and rice crackers with fruit",a:[]}],
+ prebed:[
+  {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1},
+  {n:"Glass of milk and a banana",a:["Dairy"],v:1},
+  {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1},
+  {n:"Plant-protein shake (pea)",a:[],v:1}]
+};
+const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick carbs, small and familiar. Skip it if you ate in the last 2 hours.",recovery:"Carbs + protein within an hour, plus fluid.",
+ main:"",snack:"Carb + protein to bridge the gap.",prebed:"Protein before sleep supports overnight repair.",during:"Water at every break; a sports drink if it runs over 90 minutes or it's hot."};
+const PLATE={easy:"Easy plate",practice:"Practice plate",match:"Big-day plate"};
+const PRACTICE_TIMES=[["am","Morning"],["mid","Midday"],["pm","Afternoon"]];
+const DAYTYPES=[["rest","Rest / light"],["practice","Practice"],["double","Two-a-day"],["match","Match day"]];
+function dayTemplate(type,pt){
+  const T=(h,m)=>h*60+(m||0), o=(t,n,bank,occ,plate,extra)=>({t,n,bank,occ,plate,...(extra||{})});
+  if(type==="rest")return [o(T(8,30),"Breakfast","breakfast","Breakfast","easy"),o(T(12,30),"Lunch","main","Lunch","easy"),o(T(15,30),"Snack","snack","Snack"),o(T(18,30),"Dinner","main","Dinner","easy"),o(T(21,30),"Before bed (optional)","prebed","Snack")];
+  if(type==="double")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Session 1 · 9–11 am","during",null),o(T(11,15),"Recovery","recovery","Post-training"),
+   o(T(12,30),"Lunch","main","Lunch","match"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Session 2 · 3:30–5:30 pm","during",null),o(T(17,45),"Recovery","recovery","Post-training"),o(T(19),"Dinner","main","Dinner","match"),o(T(21,30),"Before bed","prebed","Snack")];
+  if(pt==="am")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Practice · 9–11:30 am","during",null),o(T(11,45),"Recovery","recovery","Post-training"),
+   o(T(13),"Lunch","main","Lunch","practice"),o(T(16),"Snack","snack","Snack"),o(T(19),"Dinner","main","Dinner","practice"),o(T(21,30),"Before bed","prebed","Snack")];
+  if(pt==="mid")return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(11),"Pre-practice","pre","Pre-training"),o(T(12),"Practice · 12–2:30 pm","during",null),o(T(14,45),"Recovery lunch","main","Post-training","practice"),
+   o(T(17),"Snack","snack","Snack"),o(T(19),"Dinner","main","Dinner","practice"),o(T(21,30),"Before bed","prebed","Snack")];
+  return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(12),"Lunch","main","Lunch","practice"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Practice · 3:30–6 pm","during",null),
+   o(T(18,15),"Recovery","recovery","Post-training"),o(T(19,30),"Dinner","main","Dinner","practice"),o(T(22),"Before bed","prebed","Snack")];
+}
+let PLANPREF=store.get("planpref",{pt:"pm",veg:false,days:{},sel:{}});
+function savePlan(){store.set("planpref",PLANPREF)}
+function planType(iso){iso=iso||isoToday();return PLANPREF.days[iso]||(SCHEDULE.some(m=>m.d===iso)?"match":"practice")}
+function mealOptions(bank){const al=myAllergens();return (MEALBANK[bank]||[]).filter(x=>!x.a.some(a=>al.includes(a))&&(!PLANPREF.veg||x.v))}
+function pickFor(type,i,bank){const L=mealOptions(bank);if(!L.length)return null;const k=type+":"+PLANPREF.pt+":"+i;const n=(PLANPREF.sel[k]||0)+i;return L[(n%L.length+L.length)%L.length]}
+function loggedToday(text){return jGet(isoToday()).entries.some(e=>e.what===text)}
+function planHTML(){
+  const type=planType(),items=type==="match"?null:dayTemplate(type,PLANPREF.pt);
+  const head=`<div class="card stack"><span class="eyebrow">Today is a…</span><div class="choice mini" data-planday="1">${DAYTYPES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${type===k}">${l}</button>`).join("")}</div>
+    ${type==="practice"?`<span class="eyebrow" style="margin-top:4px">Practice time</span><div class="choice mini" data-planpt="1">${PRACTICE_TIMES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${PLANPREF.pt===k}">${l}</button>`).join("")}</div>`:""}
+    <div class="choice mini" data-planveg="1"><button type="button" data-v="1" aria-pressed="${!!PLANPREF.veg}">Vegetarian</button></div>
+    ${myAllergens().length?`<p class="stamp">Hiding options with ${esc(myAllergens().join(", "))}.${profile.other?` Check every option against ${esc(profile.other)} yourself.`:""}</p>`:profile.other?`<p class="stamp">Check every option against ${esc(profile.other)} yourself.</p>`:""}</div>`;
+  if(type==="match"){const m=todayMatch()||nextMatch();return head+`<p class="muted" style="font-size:.9rem">Match days follow your game-day plan.</p>`+gamePlanHTML(m&&!m.home?"road":"home")}
+  return head+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],"TODAY")}
+   ${items.map((x,i)=>{
+     if(x.bank==="during")return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
+     const pick=pickFor(type,i,x.bank),done=pick&&loggedToday(pick.n),n=mealOptions(x.bank).length;
+     return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}${x.plate?` · ${PLATE[x.plate]}`:""}</span>
+      ${pick?`<b>${esc(pick.n)}</b>`:`<b>No option fits your allergies here</b><p>Ask your dietitian for a swap.</p>`}
+      ${BANKNOTE[x.bank]?`<p>${BANKNOTE[x.bank]}</p>`:""}
+      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${n>1?`<button class="btn ghost sm" data-planswap="${type}:${PLANPREF.pt}:${i}">Swap</button>`:""}<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button></div>`:""}</div>`}).join("")}
+  </div>
+  <div class="card stack"><span class="eyebrow">The plates</span><p style="font-size:.88rem">Easy plate: half fruit and vegetables, a quarter grains, a quarter protein. Practice plate: equal thirds. Big-day plate: half grains and starches. See them in Learn › Tools.</p></div>
+  <p class="src">Thomas, Erdman & Burke, ACSM/AND/DC position stand 2016; Kerksick et al., ISSN nutrient timing 2017; USOPC & University of Colorado Athlete's Plates</p>`;
+}
+function nextPlanItem(){const type=planType();if(type==="match")return null;const now=new Date(),mins=now.getHours()*60+now.getMinutes(),L=dayTemplate(type,PLANPREF.pt);
+  for(let i=0;i<L.length;i++){if(L[i].bank==="during")continue;if(L[i].t>=mins-30){const p=pickFor(type,i,L[i].bank);if(p)return {x:L[i],p}}}return null}
+function planHomeCard(){if(todayMatch())return "";const nx=nextPlanItem(),type=planType();
+  return `<section><div class="sec-head"><h2>Today's meal plan</h2><span class="stamp">${esc({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type])}</span></div>
+   <button class="rcard" data-go="fuel" data-seg="plan" style="width:100%"><span class="ring">${nx?esc(clock(nx.x.t).replace(" ","")):"✓"}</span><span class="stack" style="gap:2px"><b>${nx?esc(nx.x.n):"That's the day"}</b><span>${nx?esc(nx.p.n):"Eat to appetite and hydrate. Set tomorrow's day type tonight."}</span></span><span class="linkbtn">Plan</span></button></section>`}
+function planClick(b){
+  const ds=b.dataset;
+  if(b.closest("[data-planday]")){PLANPREF.days[isoToday()]=ds.v;savePlan();render();return true}
+  if(b.closest("[data-planpt]")){PLANPREF.pt=ds.v;savePlan();render();return true}
+  if(b.closest("[data-planveg]")){PLANPREF.veg=!PLANPREF.veg;savePlan();render();return true}
+  if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
+  if(ds.planlog!==undefined){const type=planType(),L=dayTemplate(type,PLANPREF.pt),x=L[+ds.planlog],p=pickFor(type,+ds.planlog,x.bank);if(!p)return true;
+    const t=isoToday(),d=jGet(t);if(d.entries.some(e=>e.what===p.n)){toast("Already in your journal");return true}
+    const was=starLit(t),hh=String(Math.floor(x.t/60)).padStart(2,"0"),mm=String(x.t%60).padStart(2,"0");
+    d.entries.push({id:Date.now().toString(36),occ:x.occ||"Snack",time:hh+":"+mm,what:p.n,photo:"",energy:"",gut:"",notes:"From meal plan"});
+    if(jPut(t,d)){render();logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":"Logged"+starHint(t))}return true}
+  return false;
+}
+
 function planHead(title,sub){return `<div class="p-head"><span class="p-title">${title}</span>${sub?`<span class="p-sub">${sub}</span>`:""}</div>`}
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
+  const segs=[["plan","Meal plan"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
   let body="";
-  if(fuelSeg==="homegame"||fuelSeg==="road"){
+  if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
   }else if(fuelSeg==="travel"){
     const away=SCHEDULE.filter(x=>!x.home&&x.d>=isoToday()).slice(0,3);
@@ -1572,7 +1680,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><p class="eyebrow">Fuel · match, travel, home</p><h1 style="margin-top:6px">Fuel</h1></div>
+  return `<div class="view"><div><p class="eyebrow">Fuel · meal plans, match days, travel</p><h1 style="margin-top:6px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1795,6 +1903,7 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
+  if(planClick(b))return;
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.tab){tab=ds.tab;learnLesson=null;if(tab==="ready")rDraft=null;render();scrollTo({top:0});return}
   if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}if(ds.session)draft.session=ds.session;render();scrollTo({top:0});return}
