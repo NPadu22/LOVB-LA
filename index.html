@@ -1231,7 +1231,7 @@ function lessonHTML(l){
    ${l.help?`<div class="stopbox"><p style="font-size:.9rem">${esc(l.help)}</p></div>`:""}
    <p class="src">Sources: ${esc(l.src)}</p>
    <button class="btn block ${done?"ghost":""}" data-learned="${l.id}">${done?"Learned ✓ (tap to undo)":"Mark as learned"}</button>
-   ${l.tr==="at"?`<button class="btn ghost block" data-tab="at">Go to the training room</button>`:`<button class="btn ghost block" data-go="rd" data-session="General sports performance">Talk it through with ${esc(CONFIG.rdFirst)}</button>`}</div>`;
+   ${l.tr==="at"?`<button class="btn ghost block" data-tab="at">Go to the training room</button>`:""}</div>`;
 }
 function setupHTML(){
   return `<form class="card stack" id="edu-form"><span class="eyebrow">Personalize your path · optional · stays on this phone</span>
