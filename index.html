@@ -273,6 +273,10 @@ body{font-stretch:100%}
 :root[data-scheme="rush"] .ng svg,:root[data-scheme="rush"] nav.tabs button[aria-current="page"] svg{color:#FF8A4C}
 :root[data-scheme="rush"] nav.tabs button[aria-current="page"]::before{background:#FF5E1A}
 :root[data-scheme="rush"] .step .when::after{border-color:#FF5E1A}
+:root[data-scheme="horizon"]{--bg:#FFF1E2;--surface:#FFFAF4;--surface-2:#FCE3CF;--line:#EFD2BC;--fg:#0B132B;--muted:#56607E;--sel-bg:#0B132B;--sel-fg:#FFFFFF;--sky:none}
+:root[data-scheme="horizon"] body{background:linear-gradient(180deg,#FFF6EC 0%,#FFF1E2 60%,#FFE0C7 100%) fixed;background-color:#FFF1E2}
+:root[data-scheme="horizon"] nav.tabs{background:color-mix(in srgb,#FFF1E2 90%,transparent)}
+[hidden]{display:none!important}
 .schemes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .scheme{all:unset;cursor:pointer;box-sizing:border-box;background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:3px;border:2px solid transparent;transition:border-color .2s}
 .scheme[aria-pressed="true"]{border-color:var(--accent)}
@@ -425,7 +429,8 @@ const CONFIG = {
   bookingLink: "https://calendly.com/welcometolbc/usav-rd-meeting-with-nick",
   rdName: "Nick, Sports Dietitian",
   rdFirst: "Nick",
-  appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66"
+  appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
+  feedbackEmail: ""                            // app feedback goes here (opens the user's mail app)
 };
 
 /* ===== Editable content lives in the af-data block (announcements) ===== */
@@ -433,7 +438,8 @@ let DATA;try{DATA=JSON.parse(document.getElementById("af-data").textContent)}cat
 DATA=Object.assign({updated:"",announcements:[]},DATA||{});
 
 const ALLERGENS=["Dairy","Egg","Wheat/Gluten","Peanut","Tree nut","Soy","Fish","Shellfish","Sesame"];
-const POSITIONS=["Outside hitter","Opposite","Middle blocker","Setter","Libero"];
+const POSITIONS=["Outside hitter","Opposite","Middle blocker","Setter","Libero","Staff"];
+function posLabel(p){p=p||profile||{};return p.position==="Staff"&&p.role?"Staff · "+p.role:(p.position||"")}
 const SESSIONS=["Onboarding HHQ","General sports performance","Lab review","Body tissue measurement","Request supplements","Injury & rehab nutrition"];
 /* Color schemes: every one is built only from Orbit team colors (Orbit Orange, Deep Space Navy, Black, Starlight White) and their tints/shades */
 const SCHEMES=[
@@ -441,7 +447,8 @@ const SCHEMES=[
  {k:"space",n:"Deep Space",d:"Navy with Orbit Orange",sw:["#0B132B","#14203F","#FF5E1A"]},
  {k:"midnight",n:"Midnight",d:"True black, easy on battery",sw:["#000000","#0B0F1C","#FF5E1A"]},
  {k:"starlight",n:"Starlight",d:"White with navy and orange",sw:["#FFFFFF","#0B132B","#FF5E1A"]},
- {k:"rush",n:"Color Rush",d:"All-orange, like the Color Rush kit",sw:["#C2410C","#0B132B","#FFFFFF"]}
+ {k:"rush",n:"Color Rush",d:"All-orange, like the Color Rush kit",sw:["#C2410C","#0B132B","#FFFFFF"]},
+ {k:"horizon",n:"Horizon",d:"Warm sunset cream with navy and orange",sw:["#FFF1E2","#0B132B","#FF5E1A"]}
 ];
 
 /* ===== 2026-27 season (LOVB Pro schedule, published Nov 2026). Times stored in Central Time as the league lists them.
@@ -561,7 +568,7 @@ function clock(min){min=((min%1440)+1440)%1440;let h=Math.floor(min/60),m=min%60
 function sb(t,big){t=String(t);return `<span class="sb${big?" big":""}"><span class="sb-ghost" aria-hidden="true">${t.replace(/[0-9]/g,"8")}</span><span class="sb-on">${t}</span></span>`}
 function mmdd(iso){const d=new Date(iso+"T12:00:00");return String(d.getMonth()+1).padStart(2,"0")+"."+String(d.getDate()).padStart(2,"0")}
 function dow(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"}).toUpperCase()}
-function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"?"light":"dark");if(k==="midnight"||k==="rush")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");r.classList.toggle("lg",!!prefs.large)}
+function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");r.classList.toggle("lg",!!prefs.large)}
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
 function myAllergens(){return profile?profile.allergies||[]:[]}
 function shakeName(){return "protein shake"}
@@ -1169,8 +1176,7 @@ function vLearn(){
     body=`<section><h2>Supplement check</h2>${suppTool()}</section><section><h2>Your plates</h2>${fuelTool()}</section><section><h2>Sweat test</h2>${sweatTool()}</section>`;
   }else{
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
-     <div class="stack" id="faq">${faqHTML()}</div>
-     <div class="card stack"><h3>Didn't find it?</h3><p class="muted">Send it in. Good questions end up here for the whole team.</p><a class="btn block" href="${CONFIG.whatsappLink}" target="_blank" rel="noopener">Ask on WhatsApp</a></div>`;
+     <div class="stack" id="faq">${faqHTML()}</div>`;
   }
   return `<div class="view"><div><p class="eyebrow">Nutrition education · ${doneN} of ${LESSONS.length} lessons learned</p><h1 style="margin-top:6px">Learn</h1></div>
    <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
@@ -1214,7 +1220,7 @@ function suppTool(){
    <div class="stack" style="gap:6px"><span class="eyebrow">Does it say or include any of these?</span><div class="choice mini" data-pick="spFlags" data-multi="1">${SUPP_FLAGS.map(t=>`<button type="button" data-v="${t}" aria-pressed="${(draft.spFlags||[]).includes(t)}">${t}</button>`).join("")}</div></div>
    <button class="btn block" type="submit">Check it</button>
    ${suppRes?`<div class="${suppRes.lvl==="high"?"stopbox":"launch"}"><b>${suppRes.title}</b><p style="font-size:.9rem">${suppRes.msg}</p></div>
-    <div class="copybox" id="sp-copy">${esc(suppRes.text)}</div><div class="row" style="flex-wrap:wrap"><button class="btn" data-copy="sp-copy">Copy</button><a class="btn ghost" href="${sendHref("rd",suppRes.text)}" target="_blank" rel="noopener">Ask ${esc(CONFIG.rdFirst)} on WhatsApp</a></div>`:""}
+    <p class="stamp">Take a photo of the label and bring it to your next session.</p>`:""}
    <p class="stamp">Look products up at nsfsport.com before buying. Under anti-doping rules you're responsible for anything in your body, even from a contaminated product.</p></form>`;
 }
 
@@ -1226,6 +1232,7 @@ function vOnboard(){
    <form id="onb" class="stack card">
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
     <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
+    <label for="f-role" id="role-wrap" ${p.position==="Staff"?"":"hidden"}>Your staff role<input id="f-role" value="${esc(p.role||"")}" placeholder="e.g. Athletic trainer, assistant coach, S&C"></label>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
     <button class="btn block" type="submit">${p.editing?"Save changes":"Enter orbit"}</button>${p.editing?`<button type="button" class="btn ghost block" data-cancel="1">Cancel</button>`:""}
@@ -1262,17 +1269,14 @@ function vHome(){
    ["season","","Season","22 matches, fueling notes",I.cal],
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["journal","","Performance journal","Meals, water, training, energy",I.journal],
-   ["rd","","Book the RD","Labs, body tissue, supplements",I.cal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
-   ["sky","","Constellations","Your week in stars",I.home],
-   ["fuel","requests","Food requests","Rate a meal, report an issue",I.chat]
-  ];
+   ["sky","","Constellations","Your week in stars",I.home]  ];
   return `<div class="view">
    <header class="hero">
     <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p>
     <p class="hello">Welcome back, ${esc(first)}.</p>
-    <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(profile.position)}</span>`:""}</div>
+    <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
    </header>
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
@@ -1292,7 +1296,7 @@ function vHome(){
 function planHead(title,sub){return `<div class="p-head"><span class="p-title">${title}</span>${sub?`<span class="p-sub">${sub}</span>`:""}</div>`}
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"],["requests","Food requests"]];
+  const segs=[["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
   let body="";
   if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
@@ -1309,13 +1313,6 @@ function vFuel(){
     const L=DINNERS[fuelSeg==="out"?"out":"home"];
     body=`<p class="muted">${fuelSeg==="out"?"How to order around LA so it works for training and matches.":"Fast staples and recipes for the days between road trips."}</p>
     <div class="card" style="padding-block:2px">${L.map(x=>`<div class="item"><div class="meal-top"><h3>${x.n}</h3>${x.t?`<span class="nums">${x.t}</span>`:""}</div><p class="muted" style="font-size:.9rem">${x.d}</p></div>`).join("")}</div>`;
-  }else{
-    body=formBlock("feedback",[
-      `<div class="stack" style="gap:6px"><span class="eyebrow">Type</span><div class="choice" data-pick="fbType">${["Rate a meal","Report an issue"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.fbType===t}">${t}</button>`).join("")}</div></div>`,
-      `<label for="fb-meal">Which meal, trip or item<input id="fb-meal" placeholder="e.g. Pre-match meal in Miami"></label>`,
-      `<div class="stack" style="gap:6px"><span class="eyebrow">Rating (optional)</span><div class="choice" data-pick="fbRate">${["1","2","3","4","5"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.fbRate===t}" aria-label="${t} of 5">${t}</button>`).join("")}</div></div>`,
-      `<label for="fb-note">Details<textarea id="fb-note" placeholder="What worked, what didn't, what you'd like on the next trip"></textarea></label>`
-    ],"Write my message");
   }
   return `<div class="view"><div><p class="eyebrow">Fuel · match, travel, home</p><h1 style="margin-top:6px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
@@ -1344,12 +1341,6 @@ function vRD(){
    <div class="card stack"><p>Pick a time that works on Calendly. Sessions are in person.</p>
     <a class="btn block" href="${CONFIG.bookingLink}" target="_blank" rel="noopener">Pick a time on Calendly</a>
     <p class="stamp">Covers onboarding HHQ, sports performance, lab review, body tissue measurement, supplements and injury nutrition.</p></div>
-   <section><h2>Tell ${esc(CONFIG.rdFirst)} what it's for</h2><p class="muted" style="font-size:.88rem">Optional. Sends a heads-up on WhatsApp so the session starts ready.</p>
-   ${formBlock("session",[
-    `<div class="stack" style="gap:6px"><span class="eyebrow">Session type</span><div class="choice" data-pick="session">${SESSIONS.map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.session===t}">${t}</button>`).join("")}</div></div>`,
-    `<label for="rd-note">Notes<textarea id="rd-note" placeholder="Goals, questions, labs you're bringing, or the supplement you're asking about"></textarea></label>`,
-    `<p class="muted" style="font-size:.8rem">Includes your name and position.</p>`
-   ],"Write my message")}</section>
    <section><h2>Nutrition 411</h2><div class="card stack"><p>Quick question that doesn't need a session? Message on WhatsApp.</p>
     <div class="row"><span class="eyebrow" style="width:74px">Number</span><span class="copybox grow" id="wa-num">${CONFIG.whatsapp}</span><button class="btn ghost sm" data-copy="wa-num">Copy</button></div>
     <div class="row"><span class="eyebrow" style="width:74px">Username</span><span class="copybox grow" id="wa-user">@${CONFIG.whatsappUser}</span><button class="btn ghost sm" data-copy="wa-user">Copy</button></div>
@@ -1364,12 +1355,18 @@ function vMe(){
   return `<div class="view"><div><p class="eyebrow">Profile · Look</p><h1 style="margin-top:6px">${esc(profile.name)}</h1></div>
    <div class="card stack">
     <div class="row"><span class="grow muted">Team</span><b>Los Angeles Orbit</b></div>
-    <div class="row"><span class="grow muted">Position</span><b>${esc(profile.position||"—")}</b></div>
+    <div class="row"><span class="grow muted">Position</span><b>${esc(posLabel()||"—")}</b></div>
     <div class="row"><span class="grow muted">Jersey</span><b>${profile.num?"#"+esc(profile.num):"—"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
+   <section><h2>App feedback</h2><form class="card stack" id="fb-app">
+    <p class="muted" style="font-size:.88rem">Something broken, confusing or missing? Tell us how to make the app better.</p>
+    <div class="choice mini" data-pick="appFbType">${["Idea","Something's broken","Content is wrong","Other"].map(t=>`<button type="button" data-v="${t}" aria-pressed="${draft.appFbType===t}">${t}</button>`).join("")}</div>
+    <label for="fb-app-note">Your feedback<textarea id="fb-app-note" placeholder="What happened, where in the app, and what you expected">${esc(draft.appFbNote||"")}</textarea></label>
+    <button class="btn block" type="submit" ${CONFIG.feedbackEmail?"":"disabled"}>Send by email</button>
+    <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form></section>
    <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section></div>`;
@@ -1603,9 +1600,16 @@ document.addEventListener("submit",e=>{
     const first=$("#f-first").value.trim(),last=$("#f-last").value.trim(),name=(first+" "+last).trim();
     if(!first||!last){toast("Add your first and last name");return}
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
-    profile={name,first,last,position:$("#f-pos").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
+    const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     store.set("profile",profile);draft={};tab="home";render();toast("Profile saved");return}
+  if(f.id==="fb-app"){const note=$("#fb-app-note").value.trim();draft.appFbNote=note;
+    if(!note){toast("Write a few words first");return}
+    if(!CONFIG.feedbackEmail){toast("Feedback email isn't set up yet");return}
+    const type=draft.appFbType||"Feedback";
+    const body=`${note}\n\n— ${profile.name}${posLabel()?" · "+posLabel():""}\nApp updated ${DATA.updated||""} · ${navigator.userAgent}`;
+    location.href=`mailto:${CONFIG.feedbackEmail}?subject=${encodeURIComponent("LA Orbit app · "+type)}&body=${encodeURIComponent(body)}`;
+    draft.appFbNote="";draft.appFbType="";setTimeout(render,400);toast("Opening your email app");return}
   if(f.id==="form-session"){
     if(!draft.session){toast("Pick a session type");return}
     draft.sessionSent=`Session heads-up for ${CONFIG.rdFirst}\n${profile.name} · LA Orbit · ${profile.position||"—"}\nType: ${draft.session}${$("#rd-note").value.trim()?"\nNotes: "+$("#rd-note").value.trim():""}`;
@@ -1615,7 +1619,7 @@ document.addEventListener("submit",e=>{
     draft.feedbackSent=`Food · ${draft.fbType}\n${profile.name} · LA Orbit\nItem: ${$("#fb-meal").value.trim()||"—"}${draft.fbRate?"\nRating: "+draft.fbRate+"/5":""}${$("#fb-note").value.trim()?"\n"+$("#fb-note").value.trim():""}`;
     render();toast("Message ready");return}
 });
-document.addEventListener("change",e=>{if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
+document.addEventListener("change",e=>{if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
   if(t.dataset&&t.dataset.ed&&ED){const [i,k]=t.dataset.ed.split(".");ED.announcements[+i][k]=t.value;edStatus();return}
   if(t.id==="q"){draft.q=t.value;const f=$("#faq");if(f)f.innerHTML=faqHTML()}});
