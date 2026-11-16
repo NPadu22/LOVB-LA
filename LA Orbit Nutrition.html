@@ -274,6 +274,19 @@ body{font-stretch:100%}
 .gdbar span{font:600 .74rem/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.95}
 .gdbar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 18px,rgb(255 255 255 / .07) 18px 22px);pointer-events:none}
 .gdbar .btn{background:#000;color:#fff;position:relative;z-index:1}
+.wkstrip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.wkstrip::-webkit-scrollbar{display:none}
+.wkstrip button{all:unset;cursor:pointer;flex:0 0 auto;min-width:56px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:14px;background:var(--surface);color:var(--muted);border:1px solid transparent;transition:background .2s,border-color .2s}
+.wkstrip button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 18%,var(--surface));border-color:color-mix(in srgb,var(--accent) 55%,transparent);color:var(--fg)}
+.wkstrip em{font:600 .58rem var(--mono);font-style:normal;letter-spacing:.1em}
+.wkstrip b{font:800 1.1rem var(--display);font-stretch:125%;color:var(--fg)}
+.wkstrip span{font:600 .62rem var(--body)}
+.wkstrip button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.plan details.mdet{background:rgb(11 19 43 / .05);border-radius:10px;padding:0 10px;margin-top:2px}
+.plan details.mdet summary{padding:8px 0;font-size:.82rem;color:var(--ink)}
+.plan details.mdet summary::after{color:var(--ink-muted)}
+.plan details.mdet p{font-size:.84rem;color:var(--ink-muted);padding-bottom:8px}
+.plan details.mdet .stamp{color:var(--ink-muted)}
 /* ===== Welcome animation: launch into orbit ===== */
 .wa{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;cursor:pointer;
  background:radial-gradient(120% 70% at 50% 110%,rgb(255 94 26 / .35),transparent 60%),radial-gradient(80% 60% at 50% 40%,#14203F,#05070F 70%);color:#fff;animation:waOut .5s ease 3.5s forwards}
@@ -1549,49 +1562,70 @@ function vHome(){
 
 /* ===== Meal planner: a full day of eating built around the day type and practice time.
    Options carry allergen tags (same names as ALLERGENS) and a veg flag; the planner hides anything that clashes. ===== */
+/* Ingredients: key -> [shopping-list label, store section] */
+const ING={
+ banana:["Bananas","Produce"],berries:["Berries (fresh or frozen)","Produce"],apple:["Apples","Produce"],orange:["Oranges","Produce"],grapes:["Grapes","Produce"],fruit:["Seasonal fruit","Produce"],
+ avocado:["Avocados","Produce"],spinach:["Spinach","Produce"],greens:["Salad greens","Produce"],veg:["Mixed vegetables (fresh or frozen)","Produce"],peppers:["Bell peppers","Produce"],onion:["Onions","Produce"],
+ broccoli:["Broccoli","Produce"],greenbeans:["Green beans","Produce"],potatoes:["Potatoes","Produce"],slaw:["Coleslaw mix","Produce"],lime:["Limes","Produce"],cucumber:["Cucumbers","Produce"],
+ eggs:["Eggs","Protein"],chicken:["Chicken breast or thighs","Protein"],salmon:["Salmon fillets","Protein"],turkeyground:["Lean ground turkey","Protein"],steak:["Sirloin steak","Protein"],shrimp:["Shrimp","Protein"],
+ tofu:["Firm tofu","Protein"],tuna:["Tuna pouches","Protein"],deliturkey:["Sliced turkey","Protein"],edamame:["Edamame (frozen)","Protein"],
+ oats:["Oats","Grains & starches"],bread:["Whole-grain bread","Grains & starches"],tortflour:["Flour tortillas","Grains & starches"],tortcorn:["Corn tortillas","Grains & starches"],rice:["Rice (or microwave rice)","Grains & starches"],
+ pasta:["Pasta","Grains & starches"],bagels:["Bagels","Grains & starches"],ricecakes:["Rice cakes","Grains & starches"],pretzels:["Pretzels","Grains & starches"],crackers:["Crackers","Grains & starches"],
+ granola:["Nut-free granola","Grains & starches"],pita:["Pita","Grains & starches"],ricecrackers:["Rice crackers","Grains & starches"],
+ milk:["Milk","Dairy & alternatives"],yogurt:["Greek yogurt","Dairy & alternatives"],cheese:["Shredded cheese","Dairy & alternatives"],stringcheese:["String cheese","Dairy & alternatives"],
+ chocmilk:["Chocolate milk","Dairy & alternatives"],cottage:["Cottage cheese","Dairy & alternatives"],soymilk:["Soy milk","Dairy & alternatives"],
+ pb:["Peanut butter","Pantry & snacks"],honey:["Honey","Pantry & snacks"],salsa:["Salsa","Pantry & snacks"],beans:["Black beans (canned)","Pantry & snacks"],lentils:["Lentils","Pantry & snacks"],
+ tomato:["Marinara or crushed tomatoes","Pantry & snacks"],soysauce:["Low-sodium soy sauce","Pantry & snacks"],curry:["Curry paste or powder","Pantry & snacks"],spice:["Taco or fajita seasoning","Pantry & snacks"],
+ hummus:["Hummus","Pantry & snacks"],trailmix:["Trail mix","Pantry & snacks"],figbar:["Fig bars","Pantry & snacks"],applesauce:["Applesauce pouches","Pantry & snacks"],
+ sportsdrink:["Sports drink","Pantry & snacks"],chews:["Energy chews","Pantry & snacks"],plantprotein:["Plant protein powder (third-party tested)","Pantry & snacks"],oil:["Olive oil","Pantry & snacks"]
+};
+const ING_SECTIONS=["Produce","Protein","Grains & starches","Dairy & alternatives","Pantry & snacks"];
+/* Options: n name, a allergens (ALLERGENS names), v vegetarian, g ingredients, r how to make it */
 const MEALBANK={
  breakfast:[
-  {n:"Oatmeal made with milk, banana and peanut butter",a:["Dairy","Peanut"],v:1},
-  {n:"Scrambled eggs, toast and a piece of fruit",a:["Egg","Wheat/Gluten"],v:1},
-  {n:"Breakfast burrito: eggs, potatoes, black beans and salsa in a flour tortilla",a:["Egg","Wheat/Gluten"],v:1},
-  {n:"Greek yogurt with granola and berries",a:["Dairy","Wheat/Gluten"],v:1},
-  {n:"Rice bowl with eggs, avocado and fruit",a:["Egg"],v:1},
-  {n:"Smoothie: banana, berries, oats, soy milk and plant protein",a:["Soy"],v:1},
-  {n:"Bagel with turkey, cheese and an orange",a:["Wheat/Gluten","Dairy"]}],
+  {n:"Oatmeal made with milk, banana and peanut butter",a:["Dairy","Peanut"],v:1,g:["oats","milk","banana","pb"],r:"Microwave ½–1 cup oats with milk for 2 minutes. Top with sliced banana and a spoon of peanut butter."},
+  {n:"Scrambled eggs, toast and a piece of fruit",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","bread","fruit"],r:"Scramble 2–3 eggs in a little oil, 2 minutes. Two slices of toast and a piece of fruit on the side."},
+  {n:"Breakfast burrito: eggs, potatoes, black beans and salsa in a flour tortilla",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","potatoes","beans","salsa","tortflour"],r:"Microwave diced potato 3–4 minutes, scramble eggs, add warmed beans and salsa, roll in a tortilla. Make 5 on Sunday, wrap in foil and freeze; reheat 2 minutes."},
+  {n:"Greek yogurt with granola and berries",a:["Dairy","Wheat/Gluten"],v:1,g:["yogurt","granola","berries","honey"],r:"Layer a cup of Greek yogurt with granola and berries; drizzle honey. Add toast or a banana on bigger days."},
+  {n:"Rice bowl with eggs, avocado and fruit",a:["Egg"],v:1,g:["rice","eggs","avocado","fruit"],r:"Warm a cup of microwave rice, top with 2 fried or boiled eggs and sliced avocado. Fruit on the side."},
+  {n:"Smoothie: banana, berries, oats, soy milk and plant protein",a:["Soy"],v:1,g:["banana","berries","oats","soymilk","plantprotein"],r:"Blend a banana, a handful of frozen berries, ¼ cup oats, a cup of soy milk and a scoop of tested plant protein."},
+  {n:"Bagel with turkey, cheese and an orange",a:["Wheat/Gluten","Dairy"],g:["bagels","deliturkey","cheese","orange"],r:"Toast a bagel, add sliced turkey and cheese. An orange on the side."}],
  pre:[
-  {n:"Banana",a:[],v:1},{n:"Applesauce pouch",a:[],v:1},{n:"Rice cakes with honey",a:[],v:1},
-  {n:"Pretzels",a:["Wheat/Gluten"],v:1},{n:"Fig bar you've tested",a:["Wheat/Gluten"],v:1},{n:"Sports drink and a few chews",a:[],v:1}],
+  {n:"Banana",a:[],v:1,g:["banana"],r:"Grab and go."},{n:"Applesauce pouch",a:[],v:1,g:["applesauce"],r:"Keep two in your bag."},
+  {n:"Rice cakes with honey",a:[],v:1,g:["ricecakes","honey"],r:"Two rice cakes with a drizzle of honey."},
+  {n:"Pretzels",a:["Wheat/Gluten"],v:1,g:["pretzels"],r:"A handful, plus water."},{n:"Fig bar you've tested",a:["Wheat/Gluten"],v:1,g:["figbar"],r:"One or two bars."},
+  {n:"Sports drink and a few chews",a:[],v:1,g:["sportsdrink","chews"],r:"Sip the drink through warm-up; chews if you're hungry."}],
  recovery:[
-  {n:"Chocolate milk and a banana",a:["Dairy"],v:1},
-  {n:"Chicken and rice bowl from last night's leftovers",a:[]},
-  {n:"Turkey sandwich and fruit",a:["Wheat/Gluten"]},
-  {n:"Greek yogurt, granola and fruit",a:["Dairy","Wheat/Gluten"],v:1},
-  {n:"Tofu rice bowl with vegetables",a:["Soy"],v:1},
-  {n:"Plant-protein smoothie with fruit and oats",a:["Soy"],v:1},
-  {n:"Tuna pouch, crackers and an apple",a:["Fish","Wheat/Gluten"]}],
+  {n:"Chocolate milk and a banana",a:["Dairy"],v:1,g:["chocmilk","banana"],r:"About 16 oz of chocolate milk and a banana. Keep it cold in your bag."},
+  {n:"Chicken and rice bowl from last night's leftovers",a:[],g:["chicken","rice","veg"],r:"Pack it the night before. Reheat or eat cold."},
+  {n:"Turkey sandwich and fruit",a:["Wheat/Gluten"],g:["bread","deliturkey","fruit"],r:"Turkey on bread with mustard, plus a piece of fruit."},
+  {n:"Greek yogurt, granola and fruit",a:["Dairy","Wheat/Gluten"],v:1,g:["yogurt","granola","fruit"],r:"A cup of yogurt, a handful of granola, fruit on top."},
+  {n:"Tofu rice bowl with vegetables",a:["Soy"],v:1,g:["tofu","rice","veg","soysauce"],r:"Microwave rice and frozen vegetables; add cubed baked tofu and a splash of soy sauce."},
+  {n:"Plant-protein smoothie with fruit and oats",a:["Soy"],v:1,g:["plantprotein","soymilk","banana","oats"],r:"Blend a scoop of tested plant protein, soy milk, a banana and oats."},
+  {n:"Tuna pouch, crackers and an apple",a:["Fish","Wheat/Gluten"],g:["tuna","crackers","apple"],r:"Shelf-stable, so it lives in your bag."}],
  main:[
-  {n:"Chicken burrito bowl: rice, black beans, salsa and vegetables",a:[]},
-  {n:"Salmon, rice and roasted vegetables",a:["Fish"]},
-  {n:"Pasta with turkey meat sauce and a side salad",a:["Wheat/Gluten"]},
-  {n:"Tofu and vegetable stir-fry over rice",a:["Soy"],v:1},
-  {n:"Lentil curry with rice and spinach",a:[],v:1},
-  {n:"Turkey chili over rice with fruit",a:[]},
-  {n:"Sheet-pan chicken fajitas with tortillas and black beans",a:["Wheat/Gluten"]},
-  {n:"Shrimp tacos on corn tortillas with rice and slaw",a:["Shellfish"]},
-  {n:"Bean and cheese quesadillas with rice and fruit",a:["Dairy","Wheat/Gluten"],v:1},
-  {n:"Steak or chicken, baked potato and green beans",a:[]}],
+  {n:"Chicken burrito bowl: rice, black beans, salsa and vegetables",a:[],g:["chicken","rice","beans","salsa","veg","spice"],r:"Season chicken with taco spice and pan-cook 12 minutes. Serve over rice with warmed beans, sautéed vegetables and salsa."},
+  {n:"Salmon, rice and roasted vegetables",a:["Fish"],g:["salmon","rice","broccoli","oil","lime"],r:"Roast salmon and broccoli on one tray at 400°F for 12–15 minutes with oil and salt. Serve with rice and a squeeze of lime."},
+  {n:"Pasta with turkey meat sauce and a side salad",a:["Wheat/Gluten"],g:["pasta","turkeyground","tomato","greens"],r:"Brown ground turkey, add marinara and simmer 10 minutes. Toss with pasta; salad on the side. Makes great leftovers."},
+  {n:"Tofu and vegetable stir-fry over rice",a:["Soy"],v:1,g:["tofu","veg","rice","soysauce","oil"],r:"Pan-fry cubed tofu until golden, add vegetables for 4 minutes, finish with soy sauce. Serve over plenty of rice."},
+  {n:"Lentil curry with rice and spinach",a:[],v:1,g:["lentils","curry","tomato","spinach","rice","onion"],r:"Cook onion, add curry paste, lentils, crushed tomatoes and water; simmer 20 minutes and stir in spinach. Serve over rice."},
+  {n:"Turkey chili over rice with fruit",a:[],g:["turkeyground","beans","tomato","onion","rice","fruit"],r:"Brown turkey and onion, add beans, tomatoes and chili spice; simmer 20 minutes. Makes four servings."},
+  {n:"Sheet-pan chicken fajitas with tortillas and black beans",a:["Wheat/Gluten"],g:["chicken","peppers","onion","spice","tortflour","beans"],r:"Toss sliced chicken, peppers and onion with fajita spice and oil; roast at 425°F for 20 minutes. Serve in warm tortillas with beans."},
+  {n:"Shrimp tacos on corn tortillas with rice and slaw",a:["Shellfish"],g:["shrimp","tortcorn","rice","slaw","lime"],r:"Season shrimp and pan-cook 3 minutes. Serve on warm corn tortillas with slaw and lime; rice on the side."},
+  {n:"Bean and cheese quesadillas with rice and fruit",a:["Dairy","Wheat/Gluten"],v:1,g:["tortflour","beans","cheese","rice","fruit","salsa"],r:"Fill tortillas with beans and cheese, crisp in a pan 2 minutes per side. Rice, salsa and fruit on the side."},
+  {n:"Steak or chicken, baked potato and green beans",a:[],g:["steak","potatoes","greenbeans","oil"],r:"Microwave a potato 6–8 minutes, pan-sear steak or chicken, steam green beans."}],
  snack:[
-  {n:"Hummus, pita and veggies",a:["Wheat/Gluten","Sesame"],v:1},
-  {n:"Apple and peanut butter",a:["Peanut"],v:1},
-  {n:"String cheese, crackers and grapes",a:["Dairy","Wheat/Gluten"],v:1},
-  {n:"Edamame and rice cakes",a:["Soy"],v:1},
-  {n:"Trail mix and a banana",a:["Peanut","Tree nut"],v:1},
-  {n:"Turkey and rice crackers with fruit",a:[]}],
+  {n:"Hummus, pita and veggies",a:["Wheat/Gluten","Sesame"],v:1,g:["hummus","pita","cucumber"],r:"A few spoons of hummus with pita and cut vegetables."},
+  {n:"Apple and peanut butter",a:["Peanut"],v:1,g:["apple","pb"],r:"Slice an apple, dip in 2 tablespoons of peanut butter."},
+  {n:"String cheese, crackers and grapes",a:["Dairy","Wheat/Gluten"],v:1,g:["stringcheese","crackers","grapes"],r:"Easy to pack."},
+  {n:"Edamame and rice cakes",a:["Soy"],v:1,g:["edamame","ricecakes"],r:"Microwave a cup of frozen edamame 3 minutes; salt lightly."},
+  {n:"Trail mix and a banana",a:["Peanut","Tree nut"],v:1,g:["trailmix","banana"],r:"A small handful of trail mix and a banana."},
+  {n:"Turkey and rice crackers with fruit",a:[],g:["deliturkey","ricecrackers","fruit"],r:"Roll turkey slices, pair with rice crackers and fruit."}],
  prebed:[
-  {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1},
-  {n:"Glass of milk and a banana",a:["Dairy"],v:1},
-  {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1},
-  {n:"Plant-protein shake (pea)",a:[],v:1}]
+  {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1,g:["yogurt","berries"],r:"About a cup, topped with berries."},
+  {n:"Glass of milk and a banana",a:["Dairy"],v:1,g:["milk","banana"],r:"Simple and effective."},
+  {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1,g:["soymilk","bread","pb"],r:"A glass of soy milk and a slice of toast with peanut butter."},
+  {n:"Plant-protein shake (pea)",a:[],v:1,g:["plantprotein"],r:"One scoop of tested pea protein in water or a milk you tolerate."}]
 };
 const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick carbs, small and familiar. Skip it if you ate in the last 2 hours.",recovery:"Carbs + protein within an hour, plus fluid.",
  main:"",snack:"Carb + protein to bridge the gap.",prebed:"Protein before sleep supports overnight repair.",during:"Water at every break; a sports drink if it runs over 90 minutes or it's hot."};
@@ -1610,44 +1644,85 @@ function dayTemplate(type,pt){
   return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(12),"Lunch","main","Lunch","practice"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Practice · 3:30–6 pm","during",null),
    o(T(18,15),"Recovery","recovery","Post-training"),o(T(19,30),"Dinner","main","Dinner","practice"),o(T(22),"Before bed","prebed","Snack")];
 }
-let PLANPREF=store.get("planpref",{pt:"pm",veg:false,days:{},sel:{}});
+let PLANPREF=Object.assign({pt:"pm",veg:false,days:{},sel:{},got:{}},store.get("planpref",{}));
+let planDate=null, showGrocery=false;
 function savePlan(){store.set("planpref",PLANPREF)}
 function planType(iso){iso=iso||isoToday();return PLANPREF.days[iso]||(SCHEDULE.some(m=>m.d===iso)?"match":"practice")}
 function mealOptions(bank){const al=myAllergens();return (MEALBANK[bank]||[]).filter(x=>!x.a.some(a=>al.includes(a))&&(!PLANPREF.veg||x.v))}
-function pickFor(type,i,bank){const L=mealOptions(bank);if(!L.length)return null;const k=type+":"+PLANPREF.pt+":"+i;const n=(PLANPREF.sel[k]||0)+i;return L[(n%L.length+L.length)%L.length]}
-function loggedToday(text){return jGet(isoToday()).entries.some(e=>e.what===text)}
+/* Picks rotate by slot and change every two days, so dinners double as next-day leftovers and the grocery list stays short. Swap moves one slot on one day. */
+function pickFor(type,i,bank,iso){iso=iso||isoToday();const L=mealOptions(bank);if(!L.length)return null;
+  const k=iso+":"+type+":"+PLANPREF.pt+":"+i, day=Math.round(new Date(iso+"T12:00:00")/864e5);
+  const n=(PLANPREF.sel[k]||0)+i+Math.floor(day/2)*(bank==="pre"||bank==="prebed"?0:1);return L[(n%L.length+L.length)%L.length]}
+function loggedOn(iso,text){return jGet(iso).entries.some(e=>e.what===text)}
+/* Match days shop for the game-day pattern: breakfast, lunch, pre-match meal, snack, recovery, late dinner */
+function matchSlots(){return [["breakfast",0],["main",1],["main",2],["pre",3],["recovery",4],["main",5]]}
+function weekDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i))}
+function groceryList(){
+  const counts={},meals=[];
+  weekDays().forEach(iso=>{const type=planType(iso);
+    const slots=type==="match"?matchSlots().map(([bank,i])=>({bank,i})):dayTemplate(type,PLANPREF.pt).map((x,i)=>({bank:x.bank,i})).filter(x=>x.bank!=="during");
+    slots.forEach(({bank,i})=>{const p=pickFor(type==="match"?"match":type,i,bank,iso);if(!p)return;meals.push(p.n);(p.g||[]).forEach(k=>{counts[k]=(counts[k]||0)+1})})});
+  const by={};Object.entries(counts).forEach(([k,c])=>{const [label,sec]=ING[k]||[k,"Pantry & snacks"];(by[sec]=by[sec]||[]).push({k,label,c})});
+  ING_SECTIONS.forEach(s=>by[s]&&by[s].sort((a,b)=>a.label.localeCompare(b.label)));
+  return {by,meals:meals.length};
+}
+function groceryHTML(){
+  const {by,meals}=groceryList(),wk=weekDays()[0];
+  const got=PLANPREF.got[wk]||[];
+  const text=["Grocery list · LA Orbit · week of "+fmtDate(wk),...ING_SECTIONS.filter(s=>by[s]).flatMap(s=>["",s.toUpperCase(),...by[s].map(x=>"- "+x.label+(x.c>1?" (×"+x.c+")":""))])].join("\n");
+  return `<div class="card stack" id="grocery"><div class="sec-head"><h3>Grocery list · next 7 days</h3><span class="stamp">${meals} meals & snacks</span></div>
+   <p class="muted" style="font-size:.86rem">Built from the meals planned for the week. Meals repeat every two days, so cook once and eat the leftovers. "×3" means it shows up in three meals. Tick things off as you shop.</p>
+   ${ING_SECTIONS.filter(s=>by[s]).map(s=>`<div class="stack" style="gap:6px"><span class="eyebrow">${s}</span><div class="choice mini">${by[s].map(x=>`<button type="button" data-groc="${x.k}" aria-pressed="${got.includes(x.k)}">${esc(x.label)}${x.c>1?` ×${x.c}`:""}</button>`).join("")}</div></div>`).join("")}
+   <div class="copybox" id="groc-copy" style="display:none">${esc(text)}</div>
+   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copygroc="1">Copy list</button><button class="btn ghost sm" data-grocreset="1">Clear ticks</button></div>
+   <p class="stamp">Staples that last (rice, oats, beans, frozen vegetables, nut-free granola) can be bought in bulk. Check labels against your allergies.</p></div>`;
+}
+function weekStrip(sel){
+  return `<div class="wkstrip" role="tablist" aria-label="Plan a day this week">${weekDays().map((iso,i)=>{const t=planType(iso),m=SCHEDULE.find(x=>x.d===iso);
+    return `<button role="tab" data-planpick="${iso}" aria-selected="${iso===sel}"><em>${i===0?"TODAY":dow(iso)}</em><b>${new Date(iso+"T12:00:00").getDate()}</b><span>${m?"Match":{rest:"Rest",practice:"Practice",double:"2-a-day",match:"Match"}[t]}</span></button>`}).join("")}</div>`;
+}
 function planHTML(){
-  const type=planType(),items=type==="match"?null:dayTemplate(type,PLANPREF.pt);
-  const head=`<div class="card stack"><span class="eyebrow">Today is a…</span><div class="choice mini" data-planday="1">${DAYTYPES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${type===k}">${l}</button>`).join("")}</div>
+  const iso=planDate&&weekDays().includes(planDate)?planDate:isoToday(), isToday=iso===isoToday();
+  const type=planType(iso),items=type==="match"?null:dayTemplate(type,PLANPREF.pt);
+  const dayName=isToday?"Today":new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});
+  const head=`${weekStrip(iso)}<div class="card stack"><span class="eyebrow">${esc(dayName)} is a…</span><div class="choice mini" data-planday="1">${DAYTYPES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${type===k}">${l}</button>`).join("")}</div>
     ${type==="practice"?`<span class="eyebrow" style="margin-top:4px">Practice time</span><div class="choice mini" data-planpt="1">${PRACTICE_TIMES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${PLANPREF.pt===k}">${l}</button>`).join("")}</div>`:""}
     <div class="choice mini" data-planveg="1"><button type="button" data-v="1" aria-pressed="${!!PLANPREF.veg}">Vegetarian</button></div>
     ${myAllergens().length?`<p class="stamp">Hiding options with ${esc(myAllergens().join(", "))}.${profile.other?` Check every option against ${esc(profile.other)} yourself.`:""}</p>`:profile.other?`<p class="stamp">Check every option against ${esc(profile.other)} yourself.</p>`:""}</div>`;
-  if(type==="match"){const m=todayMatch()||nextMatch();return head+`<p class="muted" style="font-size:.9rem">Match days follow your game-day plan.</p>`+gamePlanHTML(m&&!m.home?"road":"home")}
-  return head+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],"TODAY")}
+  const grocery=`<button class="btn block ${showGrocery?"ghost":""}" data-grocery="1">${showGrocery?"Hide grocery list":"Build my grocery list for the week"}</button>${showGrocery?groceryHTML():""}`;
+  if(type==="match"){const m=SCHEDULE.find(x=>x.d===iso)||nextMatch();return head+`<p class="muted" style="font-size:.9rem">Match days follow the game-day plan.</p>`+gamePlanHTML(m&&!m.home?"road":"home")+grocery}
+  return head+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}
    ${items.map((x,i)=>{
      if(x.bank==="during")return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
-     const pick=pickFor(type,i,x.bank),done=pick&&loggedToday(pick.n),n=mealOptions(x.bank).length;
+     const pick=pickFor(type,i,x.bank,iso),done=pick&&isToday&&loggedOn(iso,pick.n),n=mealOptions(x.bank).length;
      return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}${x.plate?` · ${PLATE[x.plate]}`:""}</span>
       ${pick?`<b>${esc(pick.n)}</b>`:`<b>No option fits your allergies here</b><p>Ask your dietitian for a swap.</p>`}
       ${BANKNOTE[x.bank]?`<p>${BANKNOTE[x.bank]}</p>`:""}
-      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${n>1?`<button class="btn ghost sm" data-planswap="${type}:${PLANPREF.pt}:${i}">Swap</button>`:""}<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button></div>`:""}</div>`}).join("")}
+      ${pick&&pick.r?`<details class="mdet"><summary>How to make it</summary><p>${esc(pick.r)}</p>${pick.g&&pick.g.length?`<p class="stamp">You'll need: ${esc(pick.g.map(k=>(ING[k]||[k])[0].toLowerCase()).join(", "))}</p>`:""}</details>`:""}
+      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${n>1?`<button class="btn ghost sm" data-planswap="${iso}:${type}:${PLANPREF.pt}:${i}">Swap</button>`:""}${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
   </div>
-  <div class="card stack"><span class="eyebrow">The plates</span><p style="font-size:.88rem">Easy plate: half fruit and vegetables, a quarter grains, a quarter protein. Practice plate: equal thirds. Big-day plate: half grains and starches. See them in Learn › Tools.</p></div>
+  <div class="card stack"><span class="eyebrow">The plates</span><p style="font-size:.88rem">Easy plate: half fruit and vegetables, a quarter grains, a quarter protein. Practice plate: equal thirds. Big-day plate: half grains and starches. Add a little healthy fat and a drink every time.</p></div>
+  ${grocery}
   <p class="src">Thomas, Erdman & Burke, ACSM/AND/DC position stand 2016; Kerksick et al., ISSN nutrient timing 2017; USOPC & University of Colorado Athlete's Plates</p>`;
 }
 function nextPlanItem(){const type=planType();if(type==="match")return null;const now=new Date(),mins=now.getHours()*60+now.getMinutes(),L=dayTemplate(type,PLANPREF.pt);
   for(let i=0;i<L.length;i++){if(L[i].bank==="during")continue;if(L[i].t>=mins-30){const p=pickFor(type,i,L[i].bank);if(p)return {x:L[i],p}}}return null}
 function planHomeCard(){if(todayMatch())return "";const nx=nextPlanItem(),type=planType();
   return `<section><div class="sec-head"><h2>Today's meal plan</h2><span class="stamp">${esc({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type])}</span></div>
-   <button class="rcard" data-go="fuel" data-seg="plan" style="width:100%"><span class="ring">${nx?esc(clock(nx.x.t).replace(" ","")):"✓"}</span><span class="stack" style="gap:2px"><b>${nx?esc(nx.x.n):"That's the day"}</b><span>${nx?esc(nx.p.n):"Eat to appetite and hydrate. Set tomorrow's day type tonight."}</span></span><span class="linkbtn">Plan</span></button></section>`}
+   <button class="rcard" data-go="fuel" data-seg="plan" style="width:100%"><span class="ring">${nx?esc(clock(nx.x.t).replace(" ","")):"✓"}</span><span class="stack" style="gap:2px"><b>${nx?esc(nx.x.n):"That's the day"}</b><span>${nx?esc(nx.p.n):"Eat to appetite and hydrate. Plan tomorrow tonight."}</span></span><span class="linkbtn">Plan</span></button></section>`}
 function planClick(b){
-  const ds=b.dataset;
-  if(b.closest("[data-planday]")){PLANPREF.days[isoToday()]=ds.v;savePlan();render();return true}
+  const ds=b.dataset, iso=planDate&&weekDays().includes(planDate)?planDate:isoToday();
+  if(ds.planpick){planDate=ds.planpick;render();return true}
+  if(b.closest("[data-planday]")){PLANPREF.days[iso]=ds.v;savePlan();render();return true}
   if(b.closest("[data-planpt]")){PLANPREF.pt=ds.v;savePlan();render();return true}
   if(b.closest("[data-planveg]")){PLANPREF.veg=!PLANPREF.veg;savePlan();render();return true}
   if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
-  if(ds.planlog!==undefined){const type=planType(),L=dayTemplate(type,PLANPREF.pt),x=L[+ds.planlog],p=pickFor(type,+ds.planlog,x.bank);if(!p)return true;
-    const t=isoToday(),d=jGet(t);if(d.entries.some(e=>e.what===p.n)){toast("Already in your journal");return true}
+  if(ds.grocery){showGrocery=!showGrocery;render();if(showGrocery)setTimeout(()=>{const g=document.getElementById("grocery");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
+  if(ds.groc){const wk=weekDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
+  if(ds.grocreset){PLANPREF.got={};savePlan();render();return true}
+  if(ds.copygroc){const txt=document.getElementById("groc-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Grocery list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
+  if(ds.planlog!==undefined){const t=isoToday(),type=planType(t),L=dayTemplate(type,PLANPREF.pt),x=L[+ds.planlog],p=pickFor(type,+ds.planlog,x.bank,t);if(!p)return true;
+    const d=jGet(t);if(d.entries.some(e=>e.what===p.n)){toast("Already in your journal");return true}
     const was=starLit(t),hh=String(Math.floor(x.t/60)).padStart(2,"0"),mm=String(x.t%60).padStart(2,"0");
     d.entries.push({id:Date.now().toString(36),occ:x.occ||"Snack",time:hh+":"+mm,what:p.n,photo:"",energy:"",gut:"",notes:"From meal plan"});
     if(jPut(t,d)){render();logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":"Logged"+starHint(t))}return true}
