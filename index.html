@@ -326,6 +326,15 @@ body{font-stretch:100%}
 @keyframes waOut{to{opacity:0;visibility:hidden}}
 /* ===== Welcome screen ===== */
 .welcome-steps{display:flex;flex-direction:column;gap:10px}
+html:root{--sky:none!important}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--bgart,none) center/cover no-repeat}
+.card,.ng,.rcard,.scheme,.bgopt,.datebar,.editlink,.wkstrip button,.seg button:not([aria-pressed="true"]),details:not(.mdet):not(.figtable){background-color:color-mix(in srgb,var(--surface) 84%,transparent)}
+.bgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bgopt{all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:6px;background:var(--surface);border:2px solid transparent;transition:border-color .2s}
+.bgopt[aria-pressed="true"]{border-color:var(--accent)}
+.bgopt i{display:block;aspect-ratio:3/4;border-radius:10px;background-color:var(--bg);background-size:cover;background-position:center;box-shadow:inset 0 0 0 1px var(--line)}
+.bgopt b{font:700 .74rem/1.2 var(--body);text-align:center;padding-bottom:2px;overflow-wrap:anywhere}
+.bgopt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .schemes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .scheme{all:unset;cursor:pointer;box-sizing:border-box;background:var(--surface);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:3px;border:2px solid transparent;transition:border-color .2s}
 .scheme[aria-pressed="true"]{border-color:var(--accent)}
@@ -472,17 +481,11 @@ body{font-stretch:100%}
 const CONFIG = {
   appName: "LA Orbit Sports Performance",
   teamFocus: ["c-late","c-road","s-tiers"],   // lessons pinned to the top of every athlete's path ("Team focus")
-  whatsapp: "+1 818-800-5065",                 // Nutrition 411 on WhatsApp
-  whatsappUser: "22Padula",
-  whatsappLink: "https://npadu22.github.io/LOVB-LA/",
-  bookingLink: "https://calendly.com/welcometolbc/usav-rd-meeting-with-nick",
   atName: "Emma Stratomen", atFirst: "Emma", atTitle: "Athletic Trainer",
   trainingCenter: "Seal Beach, CA",            // where the team trains
   atBookingLink: "",                           // Emma's booking link (Calendly etc.), when ready
   atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
-  rdName: "Nick, Sports Dietitian",
-  rdFirst: "Nick",
-  appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
+  appLink: "https://npadu22.github.io/LOVB-LA/",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
 
@@ -493,7 +496,6 @@ DATA=Object.assign({updated:"",announcements:[],atAnnouncements:[]},DATA||{});
 const ALLERGENS=["Dairy","Egg","Wheat/Gluten","Peanut","Tree nut","Soy","Fish","Shellfish","Sesame"];
 const POSITIONS=["Outside hitter","Opposite","Middle blocker","Setter","Libero","Staff"];
 function posLabel(p){p=p||profile||{};return p.position==="Staff"&&p.role?"Staff · "+p.role:(p.position||"")}
-const SESSIONS=["Onboarding HHQ","General sports performance","Lab review","Body tissue measurement","Request supplements","Injury & rehab nutrition"];
 /* Color schemes: every one is built only from Orbit team colors (Orbit Orange, Deep Space Navy, Black, Starlight White) and their tints/shades */
 const SCHEMES=[
  {k:"auto",n:"Auto",d:"Deep Space by night, Starlight by day",sw:["#0B132B","#FFFFFF","#FF5E1A"]},
@@ -621,7 +623,38 @@ function clock(min){min=((min%1440)+1440)%1440;let h=Math.floor(min/60),m=min%60
 function sb(t,big){t=String(t);return `<span class="sb${big?" big":""}"><span class="sb-ghost" aria-hidden="true">${t.replace(/[0-9]/g,"8")}</span><span class="sb-on">${t}</span></span>`}
 function mmdd(iso){const d=new Date(iso+"T12:00:00");return String(d.getMonth()+1).padStart(2,"0")+"."+String(d.getDate()).padStart(2,"0")}
 function dow(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"}).toUpperCase()}
-function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large)}
+/* ===== Orbit backgrounds: decorative layers behind every screen, drawn as SVG in the current scheme's ink ===== */
+const BACKGROUNDS=[
+ {k:"stars",n:"Starfield",d:"A quiet night sky"},
+ {k:"rings",n:"Orbit rings",d:"Tilted rings around a planet"},
+ {k:"constellations",n:"Constellations",d:"Star maps drawn in light"},
+ {k:"horizon",n:"LA horizon",d:"Sunset glow under the stars"},
+ {k:"nebula",n:"Nebula",d:"Soft orange and blue clouds"},
+ {k:"trails",n:"Satellite trails",d:"Light streaks across the sky"},
+ {k:"none",n:"Plain",d:"No background art"}
+];
+function isDarkNow(){const t=document.documentElement.getAttribute("data-theme");if(t)return t==="dark";try{return matchMedia("(prefers-color-scheme: dark)").matches}catch(e){return true}}
+function bgSVG(k,dark){
+  const ink=dark?"#FFFFFF":"#0B132B",o=dark?1.8:1.1,acc="#FF5E1A",blue="#5E82F0";
+  let seed=11;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const stars=(n,max)=>[...Array(n)].map(()=>`<circle cx="${(rnd()*400).toFixed(1)}" cy="${(rnd()*800).toFixed(1)}" r="${(rnd()*(max||1.3)+.35).toFixed(2)}" fill="${ink}" opacity="${((rnd()*.5+.2)*o).toFixed(2)}"/>`).join("");
+  let body="";
+  if(k==="stars")body=stars(90,1.4);
+  if(k==="rings")body=stars(40,1)+`<g transform="rotate(-18 300 170)" fill="none" stroke="${ink}"><ellipse cx="300" cy="170" rx="260" ry="80" opacity="${.14*o}"/><ellipse cx="300" cy="170" rx="190" ry="58" opacity="${.18*o}"/><ellipse cx="300" cy="170" rx="330" ry="104" opacity="${.08*o}" stroke-dasharray="3 7"/></g>
+   <circle cx="300" cy="170" r="46" fill="${acc}" opacity="${dark?.22:.16}"/><circle cx="300" cy="170" r="46" fill="none" stroke="${acc}" opacity="${dark?.4:.3}"/><circle cx="72" cy="214" r="5" fill="#FFC857" opacity="${dark?.8:.7}"/>
+   <g transform="rotate(12 90 640)" fill="none" stroke="${ink}"><ellipse cx="90" cy="640" rx="220" ry="60" opacity="${.1*o}"/></g>`;
+  if(k==="constellations"){const C=[[[40,90],[95,60],[150,110],[210,80],[260,130]],[[250,330],[300,300],[350,350],[320,410],[260,400]],[[60,560],[110,520],[170,560],[150,630],[90,650]],[[230,690],[280,660],[340,700],[380,650]]];
+   body=stars(55,1)+C.map(c=>`<polyline points="${c.map(p=>p.join(",")).join(" ")}" fill="none" stroke="${ink}" stroke-width=".8" opacity="${.22*o}"/>`+c.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.4" fill="${ink}" opacity="${.65*o}"/>`).join("")).join("")}
+  if(k==="horizon")body=`<defs><linearGradient id="hz" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="${acc}" stop-opacity="0"/><stop offset="1" stop-color="${acc}" stop-opacity="${dark?.45:.3}"/></linearGradient></defs><rect width="400" height="800" fill="url(#hz)"/>`
+   +stars(60,1.1).replace(/cy="(\d+)/g,(m,y)=>`cy="${Math.round(+y*.6)}`)+`<circle cx="200" cy="790" r="120" fill="${acc}" opacity="${dark?.2:.14}"/><path d="M0 760 L60 742 L110 752 L150 728 L190 744 L240 720 L290 740 L340 726 L400 748 L400 800 L0 800Z" fill="${dark?"#05070F":"#0B132B"}" opacity="${dark?.55:.18}"/>`;
+  if(k==="nebula")body=`<defs><filter id="bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter></defs><g filter="url(#bl)"><circle cx="320" cy="160" r="120" fill="${acc}" opacity="${dark?.28:.16}"/><circle cx="80" cy="420" r="130" fill="${blue}" opacity="${dark?.3:.14}"/><circle cx="300" cy="680" r="110" fill="${acc}" opacity="${dark?.18:.1}"/></g>`+stars(50,1.1);
+  if(k==="trails")body=stars(45,1)+[[-40,120,460,40],[-60,340,470,220],[-30,560,450,470],[-50,760,460,690]].map(([x1,y1,x2,y2],i)=>`<defs><linearGradient id="tr${i}" x1="0" x2="1"><stop offset="0" stop-color="${i%2?ink:acc}" stop-opacity="0"/><stop offset=".7" stop-color="${i%2?ink:acc}" stop-opacity="${(i%2?.25:.45)*o}"/><stop offset="1" stop-color="${i%2?ink:acc}" stop-opacity="0"/></linearGradient></defs><path d="M${x1} ${y1} Q200 ${(y1+y2)/2-60} ${x2} ${y2}" fill="none" stroke="url(#tr${i})" stroke-width="${i%2?1.2:2}"/>`).join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">${body}</svg>`;
+}
+function bgURL(k,dark){return k==="none"?"none":`url('data:image/svg+xml,${encodeURIComponent(bgSVG(k,dark)).replace(/'/g,"%27")}')`}
+function applyBg(){const k=prefs.bg||"stars";document.documentElement.style.setProperty("--bgart",bgURL(k,isDarkNow()))}
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyBg())}catch(e){}
+function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large);applyBg()}
 function todayMatch(){const t=isoToday();return SCHEDULE.find(m=>m.d===t)||null}
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
 function myAllergens(){return profile?profile.allergies||[]:[]}
@@ -837,13 +870,6 @@ function vReady(){
    </div></section>
    <p class="src">Why: self-reported wellness tends to pick up training stress earlier and more reliably than many objective markers. Source: Saw, Main & Gastin, Br J Sports Med 2016.</p></div>`;
 }
-function rSummary(){
-  const days=[...Array(7)].map((_,i)=>jShift(isoToday(),i-6));
-  return [`Readiness · ${profile.name}${profile.position?" · "+profile.position:""}`,...days.map(x=>{const r=jGet(x).ready,v=rScore(r);if(v==null)return `- ${fmtDate(x)}: no check-in`;
-   return `- ${fmtDate(x)}: ${v.toFixed(1)}/5 · sleep ${r.sleepH==="9"?"9+":r.sleepH}h (quality ${r.sleepQ}) · soreness ${r.sore} · energy ${r.energy} · mood ${r.mood} · stress ${r.stress}${r.note?" · "+r.note:""}`})].join("\n");
-}
-
-/* ===== Her orbit: she's the center; daily habits are moons that light up ===== */
 function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"journal"},{k:"recover",n:"Recover",tap:1},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
 function habitDone(k,iso){const d=jGet(iso);
   if(k==="ready")return rScore(d.ready)!=null;
@@ -1276,12 +1302,11 @@ function vLearn(){
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
      <div class="stack" id="faq">${faqHTML()}</div>`;
   }
-  return `<div class="view"><div><p class="eyebrow">Nutrition education · ${doneN} of ${LESSONS.length} lessons learned</p><h1 style="margin-top:6px">Learn</h1></div>
+  return `<div class="view"><div><p class="eyebrow">Education · ${doneN} of ${LESSONS.length} lessons learned</p><h1 style="margin-top:6px">Learn</h1></div>
    <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
 
-function sendHref(to,text){return `${CONFIG.whatsappLink}?text=${encodeURIComponent(text)}`}
 
 /* ===== Team priorities on Home: match-night recovery and road-trip packing ===== */
 function matchDayCard(){
@@ -1556,7 +1581,7 @@ function vHome(){
   ];
   return `<div class="view">
    <header class="hero">
-    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
+    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${profile.position==="Staff"?esc(posLabel()):profile.num?"Los Angeles Orbit · #"+esc(profile.num):"Los Angeles Orbit"}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p>
     <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`Welcome back, ${esc(first)}.`}</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
@@ -1676,7 +1701,8 @@ function matchSlots(){return [["breakfast",0],["main",1],["main",2],["pre",3],["
 function weekDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i))}
 function groceryList(){
   const counts={},meals=[];
-  weekDays().forEach(iso=>{const type=planType(iso);
+  const away=awayInfo();
+  weekDays().forEach(iso=>{if(away[iso])return;const type=planType(iso);
     const slots=type==="match"?matchSlots().map(([bank,i])=>({bank,i})):dayTemplate(type,PLANPREF.pt).map((x,i)=>({bank:x.bank,i})).filter(x=>x.bank!=="during");
     slots.forEach(({bank,i})=>{const p=pickFor(type==="match"?"match":type,i,bank,iso);if(!p)return;meals.push(p.n);(p.g||[]).forEach(k=>{counts[k]=(counts[k]||0)+1})})});
   const by={};Object.entries(counts).forEach(([k,c])=>{const [label,sec]=ING[k]||[k,"Pantry & snacks"];(by[sec]=by[sec]||[]).push({k,label,c})});
@@ -1686,17 +1712,54 @@ function groceryList(){
 function groceryHTML(){
   const {by,meals}=groceryList(),wk=weekDays()[0];
   const got=PLANPREF.got[wk]||[];
-  const text=["Grocery list · LA Orbit · week of "+fmtDate(wk),...ING_SECTIONS.filter(s=>by[s]).flatMap(s=>["",s.toUpperCase(),...by[s].map(x=>"- "+x.label+(x.c>1?" (×"+x.c+")":""))])].join("\n");
+  const kitL=Object.keys(awayInfo()).length?roadKitFor().map(x=>"- "+x.n):[];
+  const text=["Grocery list · LA Orbit · week of "+fmtDate(wk),...ING_SECTIONS.filter(s=>by[s]).flatMap(s=>["",s.toUpperCase(),...by[s].map(x=>"- "+x.label+(x.c>1?" (×"+x.c+")":""))]),...(kitL.length?["","ROAD KIT",...kitL]:[])].join("\n");
   return `<div class="card stack" id="grocery"><div class="sec-head"><h3>Grocery list · next 7 days</h3><span class="stamp">${meals} meals & snacks</span></div>
    <p class="muted" style="font-size:.86rem">Built from the meals planned for the week. Meals repeat every two days, so cook once and eat the leftovers. "×3" means it shows up in three meals. Tick things off as you shop.</p>
    ${ING_SECTIONS.filter(s=>by[s]).map(s=>`<div class="stack" style="gap:6px"><span class="eyebrow">${s}</span><div class="choice mini">${by[s].map(x=>`<button type="button" data-groc="${x.k}" aria-pressed="${got.includes(x.k)}">${esc(x.label)}${x.c>1?` ×${x.c}`:""}</button>`).join("")}</div></div>`).join("")}
+   ${(()=>{const aw=Object.values(awayInfo());if(!aw.length)return "";const kit=roadKitFor(),trip=aw.find(x=>x.kind==="road")||aw[0];
+     return `<div class="stack" style="gap:6px"><span class="eyebrow">Road kit · ${esc(trip.m.city.split(",")[0])} trip</span><p class="stamp">Travel and road match days are left out of the home list. Pack these instead.</p><div class="choice mini">${kit.map(x=>`<button type="button" data-groc="kit:${esc(x.n)}" aria-pressed="${got.includes("kit:"+x.n)}">${esc(x.n)}</button>`).join("")}</div></div>`})()}
    <div class="copybox" id="groc-copy" style="display:none">${esc(text)}</div>
    <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copygroc="1">Copy list</button><button class="btn ghost sm" data-grocreset="1">Clear ticks</button></div>
    <p class="stamp">Staples that last (rice, oats, beans, frozen vegetables, nut-free granola) can be bought in bulk. Check labels against your allergies.</p></div>`;
 }
+/* Road trips inside the planning week: the travel day before a road match and the match day itself are eaten away from home */
+function awayInfo(){const wk=weekDays(),map={};
+  SCHEDULE.filter(m=>!m.home).forEach(m=>{const tr=jShift(m.d,-1);if(wk.includes(tr)&&!map[tr])map[tr]={kind:"travel",m};if(wk.includes(m.d))map[m.d]={kind:"road",m}});return map}
+const ROADKIT=[{n:"Oatmeal cups",a:[]},{n:"Bars you've tested",a:[]},{n:"Pretzels",a:["Wheat/Gluten"]},{n:"Dried fruit",a:[]},{n:"Applesauce pouches",a:[]},{n:"Rice cakes",a:[]},
+ {n:"Chicken pouches",a:[]},{n:"Tuna pouches",a:["Fish"]},{n:"Shelf-stable milk boxes",a:["Dairy"]},{n:"Shelf-stable soy milk boxes",a:["Soy"]},{n:"Nut butter packets",a:["Peanut","Tree nut"]},
+ {n:"Electrolyte packets",a:[]},{n:"Plant protein single-serve packs",a:[]}];
+function roadKitFor(){const al=myAllergens();return ROADKIT.filter(x=>!x.a.some(a=>al.includes(a)))}
+/* Batch-cook plan: what to cook ahead from the week's planned meals. Leftover guidance: USDA FoodKeeper (cooked leftovers 3-4 days refrigerated). */
+function prepPlan(){
+  const away=awayInfo(),counts={},mains=new Set(),bfast=new Set();
+  weekDays().forEach(iso=>{if(away[iso])return;const type=planType(iso);
+    const slots=type==="match"?matchSlots().map(([bank,i])=>({bank,i})):dayTemplate(type,PLANPREF.pt).map((x,i)=>({bank:x.bank,i})).filter(x=>x.bank!=="during");
+    slots.forEach(({bank,i})=>{const p=pickFor(type==="match"?"match":type,i,bank,iso);if(!p)return;if(bank==="main")mains.add(p.n);if(bank==="breakfast")bfast.add(p.n);(p.g||[]).forEach(k=>{counts[k]=(counts[k]||0)+1})})});
+  const steps=[], c=k=>counts[k]||0;
+  if(c("rice"))steps.push(["Cook a big pot of rice",`Covers about ${c("rice")} meals this week. Cool it quickly, refrigerate in containers, and freeze anything you won't eat in 3–4 days.`]);
+  if(c("pasta"))steps.push(["Cook pasta for the week",`About ${c("pasta")} meals. Toss with a little oil so it doesn't stick.`]);
+  if(c("chicken"))steps.push(["Roast chicken in one batch",`About ${c("chicken")} meals. Season, roast at 425°F for 20–25 minutes until 165°F inside, slice and portion.`]);
+  if(c("turkeyground"))steps.push(["Make the turkey dish ahead",`About ${c("turkeyground")} meals use ground turkey (chili or meat sauce). Make one pot and portion it.`]);
+  if(c("tofu"))steps.push(["Bake tofu",`About ${c("tofu")} meals. Press, cube and bake at 400°F for 25 minutes; it keeps 4 days.`]);
+  if(c("lentils"))steps.push(["Cook lentils or curry",`About ${c("lentils")} meals. Lentil curry freezes well in single portions.`]);
+  if(c("eggs")>=3)steps.push(["Hard-boil a dozen eggs",`Eggs show up in about ${c("eggs")} meals and snacks. Hard-boiled eggs keep a week in the fridge.`]);
+  if([...bfast].some(n=>/burrito/i.test(n)))steps.push(["Freeze breakfast burritos","Roll 5, wrap in foil and freeze. Two minutes in the microwave on busy mornings."]);
+  const prod=["veg","peppers","onion","broccoli","greenbeans","cucumber","fruit","berries","grapes"].reduce((a,k)=>a+c(k),0);
+  if(prod)steps.push(["Wash and cut produce",`Vegetables and fruit show up about ${prod} times. Cut them now and keep containers at eye level in the fridge.`]);
+  steps.push(["Pack practice snacks","Fill a few bags with your pre-practice snack picks so they're ready to grab."]);
+  return {steps,mains:[...mains]};
+}
+function prepHTML(){const {steps,mains}=prepPlan(),away=awayInfo(),trip=Object.values(away).find(x=>x.kind==="road");
+  return `<div class="card stack" id="prep"><div class="sec-head"><h3>Prep plan · batch-cook once</h3><span class="stamp">${steps.length} steps · about 90 min</span></div>
+   <p class="muted" style="font-size:.86rem">Do it on your lightest day${trip?`, before you leave for ${esc(trip.m.city.split(",")[0])}`:""}. Most cooked food keeps 3–4 days in the fridge, so do a quick second prep midweek or freeze half.</p>
+   <ol class="tl">${steps.map(([h,d],i)=>`<li><span class="t">STEP ${i+1}</span><div class="b"><b>${esc(h)}</b><span>${esc(d)}</span></div></li>`).join("")}</ol>
+   ${mains.length?`<p class="stamp">This week's main meals: ${esc(mains.join("; "))}.</p>`:""}
+   <p class="src">Food storage: USDA FoodKeeper (cooked leftovers 3–4 days refrigerated; reheat to 165°F)</p></div>`}
+let showPrep=false;
 function weekStrip(sel){
   return `<div class="wkstrip" role="tablist" aria-label="Plan a day this week">${weekDays().map((iso,i)=>{const t=planType(iso),m=SCHEDULE.find(x=>x.d===iso);
-    return `<button role="tab" data-planpick="${iso}" aria-selected="${iso===sel}"><em>${i===0?"TODAY":dow(iso)}</em><b>${new Date(iso+"T12:00:00").getDate()}</b><span>${m?"Match":{rest:"Rest",practice:"Practice",double:"2-a-day",match:"Match"}[t]}</span></button>`}).join("")}</div>`;
+    const aw=awayInfo()[iso];return `<button role="tab" data-planpick="${iso}" aria-selected="${iso===sel}"><em>${i===0?"TODAY":dow(iso)}</em><b>${new Date(iso+"T12:00:00").getDate()}</b><span>${aw&&aw.kind==="travel"?"Travel":m?(m.home?"Home":"Road"):{rest:"Rest",practice:"Practice",double:"2-a-day",match:"Match"}[t]}</span></button>`}).join("")}</div>`;
 }
 function planHTML(){
   const iso=planDate&&weekDays().includes(planDate)?planDate:isoToday(), isToday=iso===isoToday();
@@ -1706,9 +1769,12 @@ function planHTML(){
     ${type==="practice"?`<span class="eyebrow" style="margin-top:4px">Practice time</span><div class="choice mini" data-planpt="1">${PRACTICE_TIMES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${PLANPREF.pt===k}">${l}</button>`).join("")}</div>`:""}
     <div class="choice mini" data-planveg="1"><button type="button" data-v="1" aria-pressed="${!!PLANPREF.veg}">Vegetarian</button></div>
     ${myAllergens().length?`<p class="stamp">Hiding options with ${esc(myAllergens().join(", "))}.${profile.other?` Check every option against ${esc(profile.other)} yourself.`:""}</p>`:profile.other?`<p class="stamp">Check every option against ${esc(profile.other)} yourself.</p>`:""}</div>`;
-  const grocery=`<button class="btn block ${showGrocery?"ghost":""}" data-grocery="1">${showGrocery?"Hide grocery list":"Build my grocery list for the week"}</button>${showGrocery?groceryHTML():""}`;
+  const grocery=`<button class="btn block ${showGrocery?"ghost":""}" data-grocery="1">${showGrocery?"Hide grocery list":"Build my grocery list for the week"}</button>${showGrocery?groceryHTML():""}
+   <button class="btn ghost block" data-prep="1">${showPrep?"Hide prep plan":"Show my prep plan (batch-cook)"}</button>${showPrep?prepHTML():""}`;
+  const aw=awayInfo()[iso];
+  const awayCard=aw?`<div class="card row" style="align-items:flex-start"><span class="chip violet">${aw.kind==="travel"?"Travel day":"Road match"}</span><div class="stack" style="gap:6px"><p style="font-size:.9rem">${aw.kind==="travel"?`Flying to ${esc(aw.m.city)} for ${esc(aw.m.opp)}. Eat before the airport, pack 2–3 snacks and switch to local meal times when you land.`:`At ${esc(aw.m.opp)} in ${esc(aw.m.city)}. Follow the road game-day plan and your city food guide.`}</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost sm" data-go="fuel" data-seg="${aw.kind==="travel"?"travel":"road"}">${aw.kind==="travel"?"Travel guide":"Road game plan"}</button></div></div></div>`:"";
   if(type==="match"){const m=SCHEDULE.find(x=>x.d===iso)||nextMatch();return head+`<p class="muted" style="font-size:.9rem">Match days follow the game-day plan.</p>`+gamePlanHTML(m&&!m.home?"road":"home")+grocery}
-  return head+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}
+  return head+awayCard+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}
    ${items.map((x,i)=>{
      if(x.bank==="during")return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
      const pick=pickFor(type,i,x.bank,iso),done=pick&&isToday&&loggedOn(iso,pick.n),n=mealOptions(x.bank).length;
@@ -1736,6 +1802,7 @@ function planClick(b){
   if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
   if(ds.grocery){showGrocery=!showGrocery;render();if(showGrocery)setTimeout(()=>{const g=document.getElementById("grocery");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.groc){const wk=weekDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
+  if(ds.prep){showPrep=!showPrep;render();if(showPrep)setTimeout(()=>{const g=document.getElementById("prep");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.grocreset){PLANPREF.got={};savePlan();render();return true}
   if(ds.copygroc){const txt=document.getElementById("groc-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Grocery list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
   if(ds.planlog!==undefined){const t=isoToday(),type=planType(t),L=dayTemplate(type,PLANPREF.pt),x=L[+ds.planlog],p=pickFor(type,+ds.planlog,x.bank,t);if(!p)return true;
@@ -1789,21 +1856,6 @@ function vSeason(){
    <p class="stamp">Schedule from the LOVB Pro 2026–27 release. Times can change; check team communications before travel.</p></div>`;
 }
 
-function formBlock(id,fields,cta,to){
-  if(draft[id+"Sent"])return `<div class="card stack"><span class="chip ok" style="align-self:flex-start">Ready to send</span><p>Tap Send and your message opens ready to go${to==="at"?" in Messages":" in WhatsApp"}. If it doesn't open, copy it instead.</p><div class="copybox" id="${id}-copy">${esc(draft[id+"Sent"])}</div>
-    <div class="row" style="flex-wrap:wrap"><button class="btn" data-copy="${id}-copy">Copy message</button><a class="btn ghost" href="${sendHref(to,draft[id+"Sent"])}" target="_blank" rel="noopener">Send</a><button class="btn ghost" data-reset="${id}">New</button></div></div>`;
-  return `<form class="card stack" id="form-${id}">${fields.join("")}<button class="btn block" type="submit">${cta}</button></form>`;
-}
-function vRD(){
-  return `<div class="view"><div><p class="eyebrow">In person · ${esc(CONFIG.rdName)}</p><h1 style="margin-top:6px">Book a session</h1></div>
-   <div class="card stack"><p>Pick a time that works on Calendly. Sessions are in person.</p>
-    <a class="btn block" href="${CONFIG.bookingLink}" target="_blank" rel="noopener">Pick a time on Calendly</a>
-    <p class="stamp">Covers onboarding HHQ, sports performance, lab review, body tissue measurement, supplements and injury nutrition.</p></div>
-   <section><h2>Nutrition 411</h2><div class="card stack"><p>Quick question that doesn't need a session? Message on WhatsApp.</p>
-    <div class="row"><span class="eyebrow" style="width:74px">Number</span><span class="copybox grow" id="wa-num">${CONFIG.whatsapp}</span><button class="btn ghost sm" data-copy="wa-num">Copy</button></div>
-    <div class="row"><span class="eyebrow" style="width:74px">Username</span><span class="copybox grow" id="wa-user">@${CONFIG.whatsappUser}</span><button class="btn ghost sm" data-copy="wa-user">Copy</button></div>
-    <a class="btn block" href="${CONFIG.whatsappLink}" target="_blank" rel="noopener">Open WhatsApp</a></div></section></div>`;
-}
 function faqHTML(){
   const q=(draft.q||"").toLowerCase();
   const list=FAQ.filter(f=>!q||(f.q+f.a.join(" ")).toLowerCase().includes(q));
@@ -1821,6 +1873,8 @@ function vMe(){
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
    <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
+   <section><h2>Background</h2><p class="muted" style="font-size:.86rem">Orbit art behind every screen. Works with any color scheme.</p>
+    <div class="bgs">${BACKGROUNDS.map(x=>`<button class="bgopt" data-bg="${x.k}" aria-pressed="${(prefs.bg||"stars")===x.k}" aria-label="${x.n}: ${x.d}"><i style="background-image:${bgURL(x.k,isDarkNow())}"></i><b>${x.n}</b></button>`).join("")}</div></section>
    <section><h2>Game-day theme</h2><p class="muted" style="font-size:.86rem">On match days the app turns black and orange, then goes back to your scheme the next day.</p>
     <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">On match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
    <section><h2>Text size</h2>
@@ -1872,7 +1926,7 @@ const OCC=["Breakfast","Lunch","Dinner","Snack","Pre-match","During match","Post
 const TRAIN=["Rest","Practice","Lift","Match","Travel","Rehab"];
 const GUT=["Good","OK","Upset"];
 let J=store.get("journal",{days:{}}); if(!J||!J.days)J={days:{}};
-let jDate=isoToday(), jEdit=null, jDelAsk=false, jRange=1, jShareText="";
+let jDate=isoToday(), jEdit=null, jDelAsk=false;
 const jBlank=()=>({training:[],water:0,entries:[],prehab:[],ready:null,habits:{}});
 function jGet(d){return Object.assign(jBlank(),J.days[d]||{})}
 function jPut(d,v){J.days[d]=v;if(store.set("journal",J))return true;toast("Phone storage is full. Remove photos from older entries to save more.");return false}
@@ -1920,19 +1974,6 @@ function vJournalForm(){
     ${isNew?"":jDelAsk?`<div class="stopbox"><p>Delete this entry? This can't be undone.</p><div class="row"><button type="button" class="btn" data-jdelyes="1">Delete</button><button type="button" class="btn ghost" data-jdelno="1">Keep it</button></div></div>`:`<button type="button" class="btn ghost block" data-jdel="1">Delete entry</button>`}
    </form></div>`;
 }
-function jSummary(){
-  const lines=[`Food journal · ${profile.name} · LA Orbit`];
-  for(let i=jRange-1;i>=0;i--){
-    const iso=jShift(jDate,-i), d=jGet(iso);
-    if(!d.entries.length&&!d.training.length&&!d.water&&!d.prehab.length&&!d.ready)continue;
-    lines.push("",`${fmtDate(iso)}${d.training.length?" · "+d.training.join(", "):""}${d.water?` · Water: ${d.water} bottle${d.water>1?"s":""}`:""}${rScore(d.ready)!=null?` · Readiness ${rScore(d.ready).toFixed(1)}/5, sleep ${d.ready.sleepH==="9"?"9+":d.ready.sleepH}h`:""}`);
-    [...d.entries].sort((a,b)=>(a.time||"").localeCompare(b.time||"")).forEach(e=>{
-      const extra=[e.energy?`energy ${e.energy}/5`:"",e.gut?`stomach ${e.gut.toLowerCase()}`:"",e.photo?"photo on phone":""].filter(Boolean).join(", ");
-      lines.push(`- ${jTime(e.time)} ${e.occ}: ${e.what||"(no description)"}${extra?` (${extra})`:""}${e.notes?` — ${e.notes}`:""}`);
-    });
-  }
-  return lines.length>1?lines.join("\n"):"Nothing logged in this range yet.";
-}
 function jPhoto(file){
   const r=new FileReader();
   r.onload=()=>{const img=new Image();img.onload=()=>{
@@ -1945,7 +1986,7 @@ function jPhoto(file){
 }
 function jClick(b){
   const ds=b.dataset;
-  if(ds.jday){const n=jShift(jDate,+ds.jday);if(n<=isoToday()){jDate=n;jShareText="";render()}return true}
+  if(ds.jday){const n=jShift(jDate,+ds.jday);if(n<=isoToday()){jDate=n;render()}return true}
   if(ds.jtrain){const d=jGet(jDate);d.training=d.training.includes(ds.jtrain)?d.training.filter(x=>x!==ds.jtrain):[...d.training,ds.jtrain];jPut(jDate,d);b.setAttribute("aria-pressed",d.training.includes(ds.jtrain));return true}
   if(ds.jwater){const d=jGet(jDate);d.water=Math.max(0,Math.min(20,d.water+ +ds.jwater));jPut(jDate,d);render();return true}
   if(ds.jnew){jEdit={id:Date.now().toString(36),occ:"",time:jDate===isoToday()?nowHM():"",what:"",photo:"",energy:"",gut:"",notes:""};jDelAsk=false;render();scrollTo({top:0});return true}
@@ -1956,8 +1997,6 @@ function jClick(b){
   if(ds.jdel){jSync();jDelAsk=true;render();return true}
   if(ds.jdelno){jSync();jDelAsk=false;render();return true}
   if(ds.jdelyes){const d=jGet(jDate);d.entries=d.entries.filter(x=>x.id!==jEdit.id);jPut(jDate,d);jEdit=null;render();toast("Entry deleted");return true}
-  if(ds.jrange){jRange=+ds.jrange;jShareText="";render();return true}
-  if(ds.jshare){jShareText=jSummary();render();return true}
   return false;
 }
 function logStamp(msg){
@@ -1973,7 +2012,7 @@ function jSubmit(){
   if(!jEdit.what.trim()&&!jEdit.photo){toast("Add a few words or a photo");return}
   const d=jGet(jDate),i=d.entries.findIndex(x=>x.id===jEdit.id);
   if(i>=0)d.entries[i]={...jEdit};else d.entries.push({...jEdit});
-  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;jShareText="";render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged"+(jDate===isoToday()?starHint(jDate):""))}
+  const was=starLit(jDate);if(jPut(jDate,d)){jEdit=null;render();logStamp(!was&&starLit(jDate)?"Logged. Tonight's star is lit":"Logged"+(jDate===isoToday()?starHint(jDate):""))}
 }
 
 /* ===== Render & events ===== */
@@ -1984,9 +2023,9 @@ function render(){
   $("nav.tabs").hidden=false;
   if(profile.welcomed===false&&tab!=="welcome"&&!["ready","journal","learn","at"].includes(tab))tab="welcome";
   if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();return}
-  if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="rd"&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
+  if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,rd:vRD,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();
 }
@@ -1998,7 +2037,7 @@ document.addEventListener("click",e=>{
   if(planClick(b))return;
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.tab){tab=ds.tab;learnLesson=null;if(tab==="ready")rDraft=null;render();scrollTo({top:0});return}
-  if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}if(ds.session)draft.session=ds.session;render();scrollTo({top:0});return}
+  if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}render();scrollTo({top:0});return}
   if(ds.lesson!==undefined){learnLesson=ds.lesson||null;tab="learn";render();scrollTo({top:0});return}
   if(ds.learned){EDU.learned=EDU.learned.includes(ds.learned)?EDU.learned.filter(x=>x!==ds.learned):[...EDU.learned,ds.learned];saveEdu();const on=EDU.learned.includes(ds.learned);render();if(on)logStamp("Lesson learned");return}
   if(ds.editpath){editPath=true;render();return}
@@ -2014,7 +2053,6 @@ document.addEventListener("click",e=>{
     ep.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",ep.dataset.multi?EDU[k].includes(x.dataset.v):(k==="numbers"?String(+!!EDU[k]):EDU[k])===x.dataset.v));return}
   const rq=b.closest("[data-rq]");
   if(rq){const k=rq.dataset.rq,v=k==="sleepH"?ds.v:+ds.v;rDraft[k]=rDraft[k]===v?undefined:v;rq.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(k==="sleepH"?x.dataset.v:+x.dataset.v)===String(rDraft[k])));return}
-  if(ds.rshare){draft.rShare=rSummary();render();return}
   const segset=b.closest("[data-segset]");
   if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;render();return}
   if(ds.edadd){ED.announcements.push({t:"",d:"",tag:"Nutrition",when:isoToday()});render();return}
@@ -2027,11 +2065,11 @@ document.addEventListener("click",e=>{
     pick.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",pick.dataset.multi?draft[k].includes(x.dataset.v):x.dataset.v===draft[k]));return}
   const pref=b.closest("[data-pref]");
   if(pref){const k=pref.dataset.pref;prefs[k]=k==="large"||k==="gameday"?ds.v==="1":ds.v;store.set("prefs",prefs);render();return}
+  if(ds.bg){prefs.bg=ds.bg;store.set("prefs",prefs);render();toast((BACKGROUNDS.find(x=>x.k===ds.bg)||{}).n+" on");return}
   if(ds.scheme){prefs.scheme=ds.scheme;store.set("prefs",prefs);render();toast((SCHEMES.find(x=>x.k===ds.scheme)||{}).n+" on");return}
   if(ds.ack){profile.ack=true;store.set("profile",profile);render();return}
   if(ds.cancel){draft={};render();return}
   if(ds.edit){draft={...profile,editing:true};render();scrollTo({top:0});return}
-  if(ds.reset){delete draft[ds.reset+"Sent"];render();return}
   if(ds.copy){const el=document.getElementById(ds.copy);const txt=el.textContent;
     const sel=()=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Selected. Copy it from here")};
     try{navigator.clipboard.writeText(txt).then(()=>toast("Copied"),sel)}catch(err){sel()}return}
@@ -2078,14 +2116,6 @@ document.addEventListener("submit",e=>{
     const body=`${note}\n\n— ${profile.name}${posLabel()?" · "+posLabel():""}\nApp updated ${DATA.updated||""} · ${navigator.userAgent}`;
     location.href=`mailto:${CONFIG.feedbackEmail}?subject=${encodeURIComponent("LA Orbit app · "+type)}&body=${encodeURIComponent(body)}`;
     draft.appFbNote="";draft.appFbType="";setTimeout(render,400);toast("Opening your email app");return}
-  if(f.id==="form-session"){
-    if(!draft.session){toast("Pick a session type");return}
-    draft.sessionSent=`Session heads-up for ${CONFIG.rdFirst}\n${profile.name} · LA Orbit · ${profile.position||"—"}\nType: ${draft.session}${$("#rd-note").value.trim()?"\nNotes: "+$("#rd-note").value.trim():""}`;
-    render();toast("Request ready");return}
-  if(f.id==="form-feedback"){
-    if(!draft.fbType){toast("Pick a type");return}
-    draft.feedbackSent=`Food · ${draft.fbType}\n${profile.name} · LA Orbit\nItem: ${$("#fb-meal").value.trim()||"—"}${draft.fbRate?"\nRating: "+draft.fbRate+"/5":""}${$("#fb-note").value.trim()?"\n"+$("#fb-note").value.trim():""}`;
-    render();toast("Message ready");return}
 });
 document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
