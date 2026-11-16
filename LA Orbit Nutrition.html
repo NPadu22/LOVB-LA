@@ -312,6 +312,7 @@ body{font-stretch:100%}
 .hero,.hero .hello{color:var(--cream)}
 .hero .wordmark{color:var(--cream);text-shadow:0 2px 18px rgb(11 19 43 / .55)}
 .hero .wordmark span{color:var(--cream);opacity:.8}
+.wordmark-sub{font:800 .9rem/1.1 var(--display);font-stretch:125%;letter-spacing:.14em;text-transform:uppercase;margin-top:6px;color:var(--cream);opacity:.88}
 .hero .eyebrow{color:var(--cream);opacity:.85}
 .hero .chip{background:rgb(11 19 43 / .55);color:var(--cream)}
 .hero .chip.stop{color:#FFB3A0}.hero .chip.ok{color:#9FF0CB}
@@ -1034,7 +1035,7 @@ function suppTool(){
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
   return `<div class="view">
-   <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">Fuel <span>·</span> Learn</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens in team meals and the app.</p><div class="grain"></div><div class="horizon"></div></div>
+   <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens in team meals and the app.</p><div class="grain"></div><div class="horizon"></div></div>
    <form id="onb" class="stack card">
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
     <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
@@ -1082,7 +1083,7 @@ function vHome(){
   return `<div class="view">
    <header class="hero">
     <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">LA Orbit Sports Performance${profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
-    <p class="wordmark">Fuel <span>·</span> Learn</p>
+    <p class="wordmark">LA Orbit</p><p class="wordmark-sub">Sports Performance</p>
     <p class="hello">Welcome back, ${esc(first)}.</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(profile.position)}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
