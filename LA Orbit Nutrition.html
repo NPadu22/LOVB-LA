@@ -160,6 +160,11 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .ng:hover{background:var(--surface-2)}
 .ng:active{transform:scale(.97)}
 .ng::after{content:"";position:absolute;right:-26px;bottom:-26px;width:64px;height:64px;border-radius:50%;border:1px solid var(--line)}
+.nav-grid.compact{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nav-grid.compact .ng{align-items:center;text-align:center;padding:14px 6px;gap:6px}
+.nav-grid.compact .ng svg{margin:0}
+.nav-grid.compact .ng b{font-size:.74rem;line-height:1.15}
+.nav-grid.compact .ng::after{display:none}
 
 /* announcements */
 .feature{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,var(--surface)),var(--surface));border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:8px}
@@ -287,6 +292,26 @@ body{font-stretch:100%}
 .plan details.mdet summary::after{color:var(--ink-muted)}
 .plan details.mdet p{font-size:.84rem;color:var(--ink-muted);padding-bottom:8px}
 .plan details.mdet .stamp{color:var(--ink-muted)}
+/* ===== Me: locker nameplate ===== */
+.locker{position:relative;overflow:hidden;border-radius:16px;padding:12px 16px 18px;background:linear-gradient(180deg,#22325E 0%,#14203F 45%,#0B132B 100%);color:#fff;
+ box-shadow:inset 0 0 0 2px rgb(255 255 255 / .07),inset 0 -40px 60px rgb(0 0 0 / .25),0 12px 28px rgb(0 0 0 / .3)}
+.locker::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 3px,rgb(255 255 255 / .018) 3px 4px);pointer-events:none}
+.locker .vents{width:56%;height:30px;margin:2px auto 14px;border-radius:4px;background:repeating-linear-gradient(180deg,#04060D 0 4px,rgb(255 255 255 / .1) 4px 5px,transparent 5px 8px);box-shadow:inset 0 1px 2px rgb(0 0 0 / .6)}
+.locker .plate{position:relative;margin:0 auto;max-width:300px;background:linear-gradient(180deg,#FFFFFF,#E3E7F0);color:#0B132B;border-radius:6px;padding:8px 22px 9px;text-align:center;
+ box-shadow:inset 0 -2px 0 rgb(0 0 0 / .14),0 2px 0 rgb(0 0 0 / .45),0 6px 14px rgb(0 0 0 / .3)}
+.locker .plate::before,.locker .plate::after{content:"";position:absolute;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#8A93AB);box-shadow:inset 0 0 0 1px rgb(0 0 0 / .25)}
+.locker .plate::before{left:8px}.locker .plate::after{right:8px}
+.locker .plate span{display:block;font:700 .66rem/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#56607E}
+.locker .plate h1{margin:3px 0 0;font:900 clamp(1.5rem,8vw,2.1rem)/1 var(--display);font-stretch:125%;letter-spacing:.06em;text-transform:uppercase;color:#0B132B;overflow-wrap:break-word}
+.locker .lk-body{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-top:16px;padding-right:18px}
+.locker .lk-num{font:900 clamp(4.2rem,22vw,5.6rem)/.85 var(--display);font-stretch:125%;color:#FF5E1A;text-shadow:0 0 0 #fff,2px 2px 0 rgb(0 0 0 / .35);letter-spacing:-.02em;min-width:1.2ch;text-align:center}
+.locker .lk-num.staff{font-size:clamp(1.8rem,9vw,2.4rem);letter-spacing:.08em}
+.locker .lk-meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+.locker .lk-meta .patch{width:52px;height:52px}
+.locker .lk-meta b{font:800 1rem/1.15 var(--display);font-stretch:125%;text-transform:uppercase;letter-spacing:.03em}
+.locker .lk-meta span{font:600 .68rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#A3AECB}
+.locker .latch{position:absolute;right:10px;top:62%;width:8px;height:54px;margin-top:-27px;border-radius:4px;background:linear-gradient(90deg,#9AA3BA,#E9ECF3 45%,#7C859C);box-shadow:0 2px 4px rgb(0 0 0 / .45)}
+.locker .stripe{position:absolute;left:0;right:0;bottom:0;height:4px;background:#FF5E1A}
 /* ===== Welcome animation: launch into orbit ===== */
 .wa{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;cursor:pointer;
  background:radial-gradient(120% 70% at 50% 110%,rgb(255 94 26 / .35),transparent 60%),radial-gradient(80% 60% at 50% 40%,#14203F,#05070F 70%);color:#fff;animation:waOut .5s ease 3.5s forwards}
@@ -852,9 +877,9 @@ function vReady(){
   const days=[...Array(7)].map((_,i)=>jShift(t,i-6));
   const done=rScore(r)!=null&&r.sleepH;
   const flags=rFlags(r);
-  return `<div class="view"><div><p class="eyebrow">Readiness · 15 seconds · saved on this phone</p><h1 style="margin-top:6px">Check-in</h1></div>
+  return `<div class="view"><div><p class="eyebrow">15 seconds</p><h1 style="margin-top:4px">Check-in</h1></div>
    ${done?`<div class="launch"><span class="eyebrow">Today</span><div class="t"><span><i>Readiness</i>${sb(rScore(r).toFixed(1),1)} <span class="eyebrow">of 5</span></span><span><i>Sleep</i>${sb(r.sleepH==="9"?"9+":r.sleepH,1)} <span class="eyebrow">h</span></span></div>
-    ${flags.length?`<p style="font-size:.9rem">Heads-up: ${flags.join(", ")}. Flag it to your coaches or medical staff before practice, and fuel extra well today.</p>`:`<p style="font-size:.9rem">Good to go. Fuel the day like it matters.</p>`}</div>`:""}
+    ${flags.length?`<p style="font-size:.9rem">Heads-up: ${flags.join(", ")}. Flag it to your coaches or medical staff before practice, and fuel extra well today.</p>`:`<p style="font-size:.9rem">Good to go.</p>`}</div>`:""}
    <form class="card stack" id="ready-form">
     <div class="stack" style="gap:6px"><span class="eyebrow">Hours slept last night</span><div class="choice mini" data-rq="sleepH">${SLEEPH.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${rDraft.sleepH===v}">${l}</button>`).join("")}</div></div>
     ${RQ.map(q=>`<div class="stack" style="gap:6px"><div class="row" style="justify-content:space-between"><span class="eyebrow">${q.n}</span><span class="stamp">1 ${q.lo} · 5 ${q.hi}</span></div><div class="choice mini rq5" data-rq="${q.k}">${[1,2,3,4,5].map(n=>`<button type="button" data-v="${n}" aria-pressed="${rDraft[q.k]===n}">${n}</button>`).join("")}</div></div>`).join("")}
@@ -885,7 +910,7 @@ function orbitHTML(){
     ${H.map((h,i)=>{const a=-Math.PI/2+i*2*Math.PI/n, x=50+44*Math.cos(a), y=50+41.6*Math.sin(a), on=habitDone(h.k,t);
       return `<button class="moon ${on?"on":""}" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%" ${h.tap?`data-habit="${h.k}"`:`data-go="${h.go}"`} aria-label="${h.n}: ${on?"done":"not yet"} (${HINT[h.k]})"><i></i><span>${h.n}</span></button>`}).join("")}
    </div>
-   <p class="stamp" style="text-align:center">${lit===n?"Full orbit today. Every moon is lit.":lit?`${n-lit} moon${n-lit>1?"s":""} still dark. Tap one to light it.`:"Tap a moon to start your day."} Light 3 or more to add tonight's star.</p>`;
+   <p class="stamp" style="text-align:center">${lit===n?"Full orbit. Every moon lit.":"Light 3 moons for tonight's star."}</p>`;
 }
 
 /* ===== Constellations: each day with 3+ habits lights a star; each week draws one ===== */
@@ -915,7 +940,7 @@ function constCard(){
 function vSky(){
   const mon=mondayOf(isoToday());
   const past=[...Array(8)].map((_,i)=>jShift(mon,-7*(i+1)));
-  return `<div class="view"><div><p class="eyebrow">Your sky · built from your habits</p><h1 style="margin-top:6px">Constellations</h1></div>
+  return `<div class="view"><div><p class="eyebrow">Your week</p><h1 style="margin-top:4px">Constellations</h1></div>
    <div class="skycard" style="cursor:default">${constSVG(mon,1)}<b>${constFor(mon).n}</b><span class="stamp">Week of ${fmtDate(mon)}</span></div>
    <div class="card stack"><span class="eyebrow">How a star lights</span><p style="font-size:.9rem">Light 3 or more moons in your orbit in a day and that night's star turns on. Two lit nights in a row draw the line between them. Seven nights completes the week's constellation.</p>
     <div class="tags">${habits().map(h=>`<span class="chip">${h.n}: ${HINT[h.k]}</span>`).join("")}</div></div>
@@ -1259,7 +1284,7 @@ let learnLesson=null;
 function lessonHTML(l){
   const done=EDU.learned.includes(l.id), tr=(TRACKS.find(t=>t[0]===l.tr)||[])[1];
   return `<div class="view"><button class="linkbtn" data-lesson="">‹ Back to your path</button>
-   <div><p class="eyebrow">${esc(tr)} · ${l.min} min read</p><h1 style="margin-top:6px">${esc(l.t)}</h1><p class="muted" style="margin-top:6px">${esc(l.sum)}</p></div>
+   <div><p class="eyebrow">${esc(tr)} · ${l.min} min read</p><h1 style="margin-top:4px">${esc(l.t)}</h1><p class="muted" style="margin-top:6px">${esc(l.sum)}</p></div>
    <div class="card stack lesson">${l.secs.map(([h,p])=>`<section style="gap:6px"><h3>${esc(h)}</h3><p>${esc(p)}</p></section>`).join("")}</div>
    ${l.fig?figHTML(l.fig):""}
    ${l.tool==="fuel"?fuelTool():l.tool==="sweat"?sweatTool():""}
@@ -1300,7 +1325,7 @@ function vLearn(){
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
      <div class="stack" id="faq">${faqHTML()}</div>`;
   }
-  return `<div class="view"><div><p class="eyebrow">Education · ${doneN} of ${LESSONS.length} lessons learned</p><h1 style="margin-top:6px">Learn</h1></div>
+  return `<div class="view"><div><p class="eyebrow">${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
    <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1397,19 +1422,19 @@ function vAT(){
   const anns=atAnns();
   const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
   const L=LESSONS.filter(l=>l.tr==="at");
-  return `<div class="view"><div><p class="eyebrow">Athletic training · ${esc(CONFIG.atName)}, ${esc(CONFIG.atTitle)}</p><h1 style="margin-top:6px">Training room</h1></div>
+  return `<div class="view"><div><p class="eyebrow">${esc(CONFIG.atName)} · ${esc(CONFIG.atTitle)}</p><h1 style="margin-top:4px">Training room</h1></div>
    <section><h2>See ${esc(CONFIG.atFirst)}</h2><div class="card stack">
     ${CONFIG.atHours?`<div class="row" style="align-items:flex-start"><span class="chip violet">Hours</span><p style="font-size:.9rem">${esc(CONFIG.atHours)}</p></div>`:""}
     ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
-    ${!CONFIG.atHours&&!CONFIG.atBookingLink?`<p>Booking and treatment-room hours are coming soon. Until then, find ${esc(CONFIG.atFirst)} in the training room or ask a coach.</p>`:""}
-    <p class="stamp">Hurt or worried about something? <button class="linkbtn" data-lesson="a-when">When to see the athletic trainer ›</button></p></div></section>
+    ${!CONFIG.atHours&&!CONFIG.atBookingLink?`<p>Booking and hours coming soon.</p>`:""}
+    <button class="linkbtn" data-lesson="a-when" style="align-self:flex-start">When to see the athletic trainer ›</button></div></section>
    <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
     ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
    <section><h2>Prehab & rehab</h2>
     ${AT_PROGRAMS.length?AT_PROGRAMS.map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
       ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([pg.who,pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
       ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
-     :`<div class="card stack"><p>${esc(CONFIG.atFirst)}'s prehab and rehab programs will appear here.</p><p class="muted" style="font-size:.86rem">Rehab is individual. Follow the plan ${esc(CONFIG.atFirst)} gives you in person, and set a reminder below so you don't miss a session.</p></div>`}</section>
+     :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}</section>
    <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
     ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
       <div class="row" style="flex-wrap:wrap;gap:8px">${IN_CLAUDE?"":`<button class="btn sm" data-remcal="${r.id}">Add to calendar</button>`}<a class="btn ${IN_CLAUDE?"":"ghost "}sm" href="${gcalHref(r)}" target="_blank" rel="noopener">Google Calendar</a><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
@@ -1421,7 +1446,7 @@ function vAT(){
       <label for="rem-note">Note (optional)<input id="rem-note" value="${esc(remDraft.note||"")}" placeholder="e.g. Bring tape, 3 sets each side"></label>
       <button class="btn block" type="submit">Save reminder</button><button type="button" class="btn ghost block" data-remcancel="1">Cancel</button></form>`
      :`<button class="btn block ${sorted.length?"ghost":""}" data-remnew="1">Add a reminder</button>`}
-    <p class="stamp">${IN_CLAUDE?"\"Google Calendar\" adds the reminder to your Google calendar. The installed team app can also add it to Apple Calendar with an alert.":"\"Add to calendar\" puts the reminder in your phone's calendar (Apple, Outlook and others) with an alert 10 minutes before. \"Google Calendar\" adds it there instead."}</p></section>
+    <p class="stamp">Calendar reminders alert you 10 min before.</p></section>
    <section><h2>Learn</h2><div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div></section></div>`;
 }
 function atClick(b){
@@ -1471,13 +1496,11 @@ function vWelcome(){
   return `<div class="view">
    <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">You're in</span></div>
     <p class="wordmark">Welcome, ${esc(profile.first)}</p><p class="wordmark-sub">to the LA Orbit</p>
-    <p class="hello" style="margin-top:10px">${staff?"Here's what the athletes see, and where your tools are.":"This is your fuel, recovery and training-room hub for the season."}</p>
+    
     <div class="meta">${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}${profile.num?`<span class="chip">#${esc(profile.num)}</span>`:""}${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div></div>
    ${gd?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>You joined on a match day. Check the plan.</span></div></div>`:""}
    <section><h2>Start here</h2><div class="welcome-steps">${steps.map(([t,seg,l,d,ic])=>`<button class="ng" data-welcomego="${t}"${seg?` data-seg="${seg}"`:""}>${ic}<b>${esc(l)}</b><span>${esc(d)}</span></button>`).join("")}</div></section>
-   <div class="card stack"><span class="eyebrow">Good to know</span>
-    <p style="font-size:.9rem">Everything you log stays on this phone. Light 3 moons in a day to add a star to this week's constellation.</p></div>
    <button class="btn block" data-welcomego="home">Go to Home</button></div>`;
 }
 
@@ -1524,7 +1547,7 @@ function feedbackHTML(){return `<form class="card stack" id="fb-app">
     <label for="fb-app-note">Your feedback<textarea id="fb-app-note" placeholder="What happened, where in the app, and what you expected">${esc(draft.appFbNote||"")}</textarea></label>
     <button class="btn block" type="submit" ${CONFIG.feedbackEmail?"":"disabled"}>Send by email</button>
     <p class="stamp">${CONFIG.feedbackEmail?"Opens your email app with the message ready. Includes your name and position.":"Feedback email isn't set up yet."}</p></form>`}
-function vFeedback(){return `<div class="view"><div><p class="eyebrow">Help make the app better</p><h1 style="margin-top:6px">App feedback</h1></div>${feedbackHTML()}</div>`}
+function vFeedback(){return `<div class="view"><div><h1 style="margin-top:4px">App feedback</h1></div>${feedbackHTML()}</div>`}
 
 /* ===== Announcements from Google Sheets (published to the web as CSV).
    Columns (header row, any order, case-insensitive): Date | Tag | Headline | Details | Hide after | Show
@@ -1582,7 +1605,7 @@ function launchCard(m,compact){
    <h3>${m.home?"vs":"at"} ${esc(m.opp)}</h3>
    <div class="t"><span><i>T-minus</i>${sb(String(days).padStart(2,"0"),1)} <span class="eyebrow">${days===1?"day":"days"}</span></span></div>
    <p class="muted" style="font-size:.88rem">First serve ${matchLocal(m)}${m.off!==-2?` (${clock(m.pt)} PT)`:""}${m.venue?` · ${esc(m.venue)}`:""}</p>
-   ${compact?"":`<p style="font-size:.9rem">${esc(matchNotes(m)[0])}</p>`}
+   
    <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-go="fuel" data-seg="match">Game-day plan</button><button class="btn ghost sm" data-tab="season">Full season</button></div></div>`;
 }
 function vHome(){
@@ -1594,10 +1617,9 @@ function vHome(){
    ["fuel","plan","Meal plan","Your day of eating, meal by meal",I.plate],
    ["fuel","match","Game-day fuel","Home and road, hour by hour",I.season],
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
-   ["at","","Training room","Emma: rehab, reminders, booking",I.at],
    ["season","","Season","22 matches, fueling notes",I.cal],
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
-   ["journal","","Performance journal","Meals, water, training, energy",I.journal],
+   ["journal","","Journal","Meals, water, training, energy",I.journal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
    ["feedback","","App feedback","Ideas, bugs and fixes",I.chat]
@@ -1615,14 +1637,13 @@ function vHome(){
    ${planHomeCard()}${matchDayCard()}${roadTripCard()}${todayRemCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
-   ${!habitDone("ready",isoToday())?`<button class="rcard" data-go="ready"><span class="ring">15″</span><span class="stack" style="gap:2px"><b>Morning check-in</b><span>Sleep, soreness, energy, mood, stress</span></span><span class="linkbtn">Start</span></button>`:""}
    ${feat?`<section><div class="sec-head"><h2>Announcements</h2><span class="stamp">Updated ${fmtDate(DATA.updated)}</span></div>
     <article class="feature"><div class="row" style="justify-content:space-between"><span class="chip accent">${esc(feat.tag)}</span><span class="stamp">${fmtDate(feat.when)}</span></div><h3>${esc(feat.t)}</h3>${feat.d?`<p>${esc(feat.d)}</p>`:""}</article>
     ${rest.length?`<div class="card" style="padding-block:2px">${rest.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag)}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b><p class="muted" style="font-size:.88rem">${esc(a.d)}</p></div>`).join("")}</div>`:""}</section>`:""}
-   <section><h2>Everything here</h2><div class="nav-grid">
-    ${go.map(([t,seg,l,d,ic])=>`<button class="ng" data-go="${t}"${seg?` data-seg="${seg}"`:""}>${ic}<b>${l}</b><span>${d}</span></button>`).join("")}
+   <section><h2>More</h2><div class="nav-grid compact">
+    ${go.map(([t,seg,l,d,ic])=>`<button class="ng" data-go="${t}"${seg?` data-seg="${seg}"`:""}>${ic}<b>${l}</b></button>`).join("")}
    </div></section>
-   <p class="stamp" style="text-align:center">Updated ${fmtDate(DATA.updated)} · Built by your sports dietitian</p></div>`;
+   </div>`;
 }
 
 /* ===== Meal planner: a full day of eating built around the day type and practice time.
@@ -1692,8 +1713,8 @@ const MEALBANK={
   {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1,g:["soymilk","bread","pb"],r:"A glass of soy milk and a slice of toast with peanut butter."},
   {n:"Plant-protein shake (pea)",a:[],v:1,g:["plantprotein"],r:"One scoop of tested pea protein in water or a milk you tolerate."}]
 };
-const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick carbs, small and familiar. Skip it if you ate in the last 2 hours.",recovery:"Carbs + protein within an hour, plus fluid.",
- main:"",snack:"Carb + protein to bridge the gap.",prebed:"Protein before sleep supports overnight repair.",during:"Water at every break; a sports drink if it runs over 90 minutes or it's hot."};
+const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
+ main:"",snack:"Bridges the gap.",prebed:"Protein for overnight repair.",during:"Water every break. Sports drink if long or hot."};
 const PLATE={easy:"Easy plate",practice:"Practice plate",match:"Big-day plate"};
 const PRACTICE_TIMES=[["am","Morning"],["mid","Midday"],["pm","Afternoon"]];
 const DAYTYPES=[["rest","Rest / light"],["practice","Practice"],["double","Two-a-day"],["match","Match day"]];
@@ -1796,7 +1817,7 @@ function planHTML(){
    <button class="btn ghost block" data-prep="1">${showPrep?"Hide prep plan":"Show my prep plan (batch-cook)"}</button>${showPrep?prepHTML():""}`;
   const aw=awayInfo()[iso];
   const awayCard=aw?`<div class="card row" style="align-items:flex-start"><span class="chip violet">${aw.kind==="travel"?"Travel day":"Road match"}</span><div class="stack" style="gap:6px"><p style="font-size:.9rem">${aw.kind==="travel"?`Flying to ${esc(aw.m.city)} for ${esc(aw.m.opp)}. Eat before the airport, pack 2–3 snacks and switch to local meal times when you land.`:`At ${esc(aw.m.opp)} in ${esc(aw.m.city)}. Follow the road game-day plan and your city food guide.`}</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost sm" data-go="fuel" data-seg="${aw.kind==="travel"?"travel":"road"}">${aw.kind==="travel"?"Travel guide":"Road game plan"}</button></div></div></div>`:"";
-  if(type==="match"){const m=SCHEDULE.find(x=>x.d===iso)||nextMatch();return head+`<p class="muted" style="font-size:.9rem">Match days follow the game-day plan.</p>`+gamePlanHTML(m&&!m.home?"road":"home")+grocery}
+  if(type==="match"){const m=SCHEDULE.find(x=>x.d===iso)||nextMatch();return head+``+gamePlanHTML(m&&!m.home?"road":"home")+grocery}
   return head+awayCard+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}
    ${items.map((x,i)=>{
      if(x.bank==="during")return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
@@ -1807,7 +1828,6 @@ function planHTML(){
       ${pick&&pick.r?`<details class="mdet"><summary>How to make it</summary><p>${esc(pick.r)}</p>${pick.g&&pick.g.length?`<p class="stamp">You'll need: ${esc(pick.g.map(k=>(ING[k]||[k])[0].toLowerCase()).join(", "))}</p>`:""}</details>`:""}
       ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${n>1?`<button class="btn ghost sm" data-planswap="${iso}:${type}:${PLANPREF.pt}:${i}">Swap</button>`:""}${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
   </div>
-  <div class="card stack"><span class="eyebrow">The plates</span><p style="font-size:.88rem">Easy plate: half fruit and vegetables, a quarter grains, a quarter protein. Practice plate: equal thirds. Big-day plate: half grains and starches. Add a little healthy fat and a drink every time.</p></div>
   ${grocery}
   <p class="src">Thomas, Erdman & Burke, ACSM/AND/DC position stand 2016; Kerksick et al., ISSN nutrient timing 2017; USOPC & University of Colorado Athlete's Plates</p>`;
 }
@@ -1862,7 +1882,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><p class="eyebrow">Fuel · meal plans, match days, travel</p><h1 style="margin-top:6px">Fuel</h1></div>
+  return `<div class="view"><div><h1 style="margin-top:4px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1870,7 +1890,7 @@ function vSeason(){
   const t=isoToday(), nx=nextMatch();
   const list=SCHEDULE.filter(m=>seasonSeg==="all"||(seasonSeg==="home"?m.home:!m.home));
   const months={};list.forEach(m=>{const k=new Date(m.d+"T12:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});(months[k]=months[k]||[]).push(m)});
-  return `<div class="view"><div><p class="eyebrow">2026–27 · LOVB Pro · 22 matches</p><h1 style="margin-top:6px">Season</h1></div>
+  return `<div class="view"><div><p class="eyebrow">2026–27 · 22 matches</p><h1 style="margin-top:4px">Season</h1></div>
    ${launchCard(nx,true)}
    <div class="seg" data-segset="season">${[["all","All"],["home","Home"],["away","Road"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${seasonSeg===k}">${l}</button>`).join("")}</div>
    ${Object.entries(months).map(([mo,L])=>`<section><h2>${mo}</h2><div class="card" style="padding-block:0">${L.map(m=>{const notes=matchNotes(m);
@@ -1885,21 +1905,26 @@ function faqHTML(){
   return list.length?list.map(f=>`<details><summary>${f.q}</summary><div class="ans">${f.a.map(p=>`<p>${p}</p>`).join("")}<p class="src">Source: ${f.s}</p></div></details>`).join(""):`<p class="muted">No answers match "${esc(draft.q)}" yet.</p>`;
 }
 function vMe(){
-  return `<div class="view"><div><p class="eyebrow">Profile · Look</p><h1 style="margin-top:6px">${esc(profile.name)}</h1></div>
+  const staff=profile.position==="Staff", last=profile.last||profile.first, longest=Math.max(...last.split(/[\s-]+/).map(w=>w.length+1)), nameSize=Math.min(2.1,Math.max(1,15.5/longest)).toFixed(2);
+  return `<div class="view">
+   <section class="locker" aria-label="Your locker">
+    <div class="vents" aria-hidden="true"></div>
+    <div class="plate"><span>${esc(profile.first)}</span><h1 style="font-size:${nameSize}rem">${esc(last)}</h1></div>
+    <div class="lk-body"><div class="lk-num ${staff||!profile.num?"staff":""}" aria-label="${staff?"Staff":profile.num?"Jersey number "+esc(profile.num):"No jersey number"}">${staff?"STAFF":profile.num?esc(profile.num):"—"}</div>
+     <div class="lk-meta">${PATCH}<b>${esc(staff?(profile.role||"Staff"):(profile.position||"Orbit"))}</b><span>Los Angeles Orbit</span></div></div>
+    <span class="latch" aria-hidden="true"></span><span class="stripe" aria-hidden="true"></span>
+   </section>
    <div class="card stack">
-    <div class="row"><span class="grow muted">Team</span><b>Los Angeles Orbit</b></div>
-    <div class="row"><span class="grow muted">Position</span><b>${esc(posLabel()||"—")}</b></div>
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
-    <div class="row"><span class="grow muted">Jersey</span><b>${profile.num?"#"+esc(profile.num):"—"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
-   <section><h2>Color scheme</h2><p class="muted" style="font-size:.86rem">All in Orbit team colors.</p><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
-   <section><h2>Background</h2><p class="muted" style="font-size:.86rem">Orbit art behind every screen. Works with any color scheme.</p>
+   <section><h2>Color scheme</h2><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
+   <section><h2>Background</h2>
     <div class="bgs">${BACKGROUNDS.map(x=>`<button class="bgopt" data-bg="${x.k}" aria-pressed="${(prefs.bg||"stars")===x.k}" aria-label="${x.n}: ${x.d}"><i style="background-image:${bgURL(x.k,isDarkNow())}"></i><b>${x.n}</b></button>`).join("")}</div></section>
-   <section><h2>Game-day theme</h2><p class="muted" style="font-size:.86rem">On match days the app turns black and orange, then goes back to your scheme the next day.</p>
-    <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">On match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
+   <section><h2>Game-day theme</h2>
+    <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">Auto on match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
 </div>`;
@@ -1917,7 +1942,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 function vEdit(){
   if(!ED)ED=clone(DATA);
   const dirty=JSON.stringify(ED)!==JSON.stringify(DATA);
-  return `<div class="view"><div><p class="eyebrow">Content editor · only editors see this</p><h1 style="margin-top:6px">Announcements</h1></div>
+  return `<div class="view"><div><p class="eyebrow">Content editor · only editors see this</p><h1 style="margin-top:4px">Announcements</h1></div>
    ${ED.announcements.map((x,i)=>`<div class="card stack">
       <div class="row"><input aria-label="Tag" data-ed="${i}.tag" value="${esc(x.tag)}" placeholder="Tag (Nutrition, Training, Travel…)" style="flex:1"><button type="button" class="btn ghost sm" data-edrm="${i}">Remove</button></div>
       <input aria-label="Headline" data-ed="${i}.t" value="${esc(x.t)}" placeholder="Headline">
@@ -1962,7 +1987,7 @@ function vJournal(){
   const d=jGet(jDate), today=isoToday();
   const list=[...d.entries].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const m=SCHEDULE.find(x=>x.d===jDate);
-  return `<div class="view"><div><p class="eyebrow">Saved on this phone</p><h1 style="margin-top:6px">Performance Journal</h1></div>
+  return `<div class="view"><div><h1 style="margin-top:4px">Performance Journal</h1></div>
    <div class="datebar"><button class="btn ghost sm" data-jday="-1" aria-label="Previous day">‹</button><b>${jLabel(jDate)}</b><button class="btn ghost sm" data-jday="1" aria-label="Next day" ${jDate>=today?"disabled":""}>›</button></div>
    ${m?`<p class="chip ${m.home?"accent":"violet"}" style="align-self:flex-start">Match day: ${m.home?"vs":"at"} ${esc(m.opp)}</p>`:""}
    <div class="card stack">
@@ -1976,13 +2001,12 @@ function vJournal(){
       <div class="meal-top"><span class="eyebrow">${jTime(e.time)} · ${esc(e.occ)}</span>${e.gut?`<span class="chip ${e.gut==="Upset"?"stop":""}">Stomach: ${esc(e.gut)}</span>`:""}</div>
       <div class="row" style="align-items:flex-start">${e.photo?`<img src="${e.photo}" alt="" class="jthumb">`:""}<p class="grow">${esc(e.what)||'<span class="muted">No description</span>'}</p></div>
       ${e.energy||e.notes?`<p class="muted" style="font-size:.82rem">${e.energy?`Energy ${e.energy}/5`:""}${e.energy&&e.notes?" · ":""}${esc(e.notes||"")}</p>`:""}
-     </button>`).join("")}</div>`:`<div class="card stack"><p>Nothing logged for ${jLabel(jDate)==="Today"?"today":jLabel(jDate)} yet.</p><p class="muted" style="font-size:.88rem">Log meals, snacks and drinks as you go. A quick photo plus a few words is enough.</p></div>`}
-    <button class="btn block" data-jnew="1">Log a meal or drink</button></section>
-   <p class="stamp">Everything you log stays in your Performance Journal on this phone.</p></div>`;
+     </button>`).join("")}</div>`:`<div class="card stack"><p>Nothing logged for ${jLabel(jDate)==="Today"?"today":jLabel(jDate)} yet.</p></div>`}
+    <button class="btn block" data-jnew="1">Log a meal or drink</button></section></div>`;
 }
 function vJournalForm(){
   const e=jEdit, isNew=!jGet(jDate).entries.some(x=>x.id===e.id);
-  return `<div class="view"><div><p class="eyebrow">${jLabel(jDate)}</p><h1 style="margin-top:6px">${isNew?"Log a meal":"Edit entry"}</h1></div>
+  return `<div class="view"><div><p class="eyebrow">${jLabel(jDate)}</p><h1 style="margin-top:4px">${isNew?"Log a meal":"Edit entry"}</h1></div>
    <form class="card stack" id="j-form">
     <div class="stack" style="gap:6px"><span class="eyebrow">What was it</span><div class="choice mini">${OCC.map(o=>`<button type="button" data-jpick="occ" data-v="${o}" aria-pressed="${e.occ===o}">${o}</button>`).join("")}</div></div>
     <label for="j-time">Time<input id="j-time" type="time" value="${e.time||""}"></label>
@@ -2057,17 +2081,17 @@ function showInstall(plat){
   const share='<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
   const plus='<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
   const dots='<svg class="glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
-  const steps=plat==="ios-safari"?[`Tap the Share button ${share} at the bottom of Safari (top right on iPad).`,`Scroll down and tap <b>Add to Home Screen</b> ${plus}.`,`Tap <b>Add</b>. Then open Orbit Performance from its new icon.`]
-   :plat==="ios-other"?[`On iPhone, this works best in <b>Safari</b>. Tap the Share button ${share} in this browser (or copy the link and open it in Safari).`,`Choose <b>Add to Home Screen</b> ${plus}.`,`Tap <b>Add</b>, then open the app from its new icon.`]
-   :[`Tap the menu ${dots} in the top-right corner of Chrome.`,`Tap <b>Install app</b> or <b>Add to Home screen</b>.`,`Confirm, then open Orbit Performance from its new icon.`];
+  const steps=plat==="ios-safari"?[`Tap ${share} Share`,`Tap ${plus} <b>Add to Home Screen</b>`,`Tap <b>Add</b>, then open from the icon`]
+   :plat==="ios-other"?[`Open this link in <b>Safari</b>, tap ${share} Share`,`Tap ${plus} <b>Add to Home Screen</b>`,`Tap <b>Add</b>, then open from the icon`]
+   :[`Tap ${dots} in Chrome`,`Tap <b>Install app</b>`,`Open from the icon`];
   const icon=(document.querySelector('link[rel="apple-touch-icon"]')||{}).href||"";
   const el=document.createElement("div");el.className="ins-back";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-labelledby","ins-h");
-  el.innerHTML=`<div class="ins"><div class="ins-top">${icon?`<img src="${icon}" alt="">`:""}<div class="stack" style="gap:4px"><span class="eyebrow">One quick step</span><h3 id="ins-h">Add Orbit Performance to your Home Screen</h3></div></div>
-   <p class="why">It opens full screen like a real app, keeps your journal and check-ins in one place, and is one tap away before practice.${plat.startsWith("ios")?" Do it now, before you log anything: on iPhone the Home Screen app can keep its own saved data, so you may need to sign up once more when you open it.":""}</p>
+  el.innerHTML=`<div class="ins"><div class="ins-top">${icon?`<img src="${icon}" alt="">`:""}<div class="stack" style="gap:4px"><h3 id="ins-h">Add to Home Screen</h3></div></div>
+   <p class="why">${plat.startsWith("ios")?"Do this before logging anything. The Home Screen app keeps its own data.":"Opens full screen, one tap away."}</p>
    ${plat==="android"?`<button class="btn block" id="ins-native" ${deferredInstall?"":"hidden"}>Install now</button>`:""}
    <ol>${steps.map((t,i)=>`<li><span class="n">${i+1}</span><span>${t}</span></li>`).join("")}</ol>
    <button class="btn ghost block" data-insdone="1">I've already added it</button>
-   <button class="linkbtn" data-inslater="1" style="align-self:center">Remind me next time</button></div>`;
+   <button class="linkbtn" data-inslater="1" style="align-self:center">Later</button></div>`;
   el.addEventListener("click",async e=>{
     if(e.target===el||e.target.closest("[data-inslater]")){closeInstall();return}
     if(e.target.closest("[data-insdone]")){store.set("installed",true);closeInstall();toast("Great. Open it from your Home Screen next time");return}
