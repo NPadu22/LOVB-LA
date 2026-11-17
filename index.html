@@ -2080,7 +2080,7 @@ function showInstall(plat){
   const icon=(document.querySelector('link[rel="apple-touch-icon"]')||{}).href||"";
   const el=document.createElement("div");el.className="ins-back";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-labelledby","ins-h");
   el.innerHTML=`<div class="ins"><div class="ins-top">${icon?`<img src="${icon}" alt="">`:""}<div class="stack" style="gap:4px"><span class="eyebrow">One quick step</span><h3 id="ins-h">Add Orbit Performance to your Home Screen</h3></div></div>
-   <p class="why">It opens full screen like a real app, keeps your journal and check-ins in one place, and is one tap away before practice.</p>
+   <p class="why">It opens full screen like a real app, keeps your journal and check-ins in one place, and is one tap away before practice.${plat.startsWith("ios")?" Do it now, before you log anything: on iPhone the Home Screen app can keep its own saved data, so you may need to sign up once more when you open it.":""}</p>
    ${plat==="android"?`<button class="btn block" id="ins-native" ${deferredInstall?"":"hidden"}>Install now</button>`:""}
    <ol>${steps.map((t,i)=>`<li><span class="n">${i+1}</span><span>${t}</span></li>`).join("")}</ol>
    <button class="btn ghost block" data-insdone="1">I've already added it</button>
