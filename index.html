@@ -23,7 +23,7 @@
 <meta name="theme-color" content="#0B132B">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Fraunces:ital,opsz,wght@1,9..144,300;1,9..144,500&display=swap">
 </head>
 <body>
 <style id="af-style">/* Orbit Performance. Story: a mission-control console for a team whose name is an orbit.
@@ -309,22 +309,19 @@ body{font-stretch:100%}
 .plan details.mdet summary::after{color:var(--ink-muted)}
 .plan details.mdet p{font-size:.84rem;color:var(--ink-muted);padding-bottom:8px}
 .plan details.mdet .stamp{color:var(--ink-muted)}
-/* ===== Me: profile card ===== */
-.prof{position:relative;overflow:hidden;border-radius:20px;padding:20px 18px 0;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line)}
-.prof::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:0 0 2px 2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.9}
-.prof-top{display:flex;gap:16px;align-items:center}
-.mono{flex:none;width:68px;height:68px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,var(--accent),#FFC9A3,var(--accent) 60%,color-mix(in srgb,var(--fg) 20%,transparent) 61%,color-mix(in srgb,var(--fg) 20%,transparent))}
-.mono span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:var(--surface);font:800 1.5rem/1 var(--display);font-stretch:112%;color:var(--fg);letter-spacing:-.01em}
-.mono span.sm{font-size:.95rem;letter-spacing:.06em}
-.prof-id{min-width:0;display:flex;flex-direction:column;gap:3px}
-.prof-id .eyebrow{letter-spacing:.18em}
-.prof h1{margin:0;text-transform:none;font:800 1.5rem/1.1 var(--display);font-stretch:108%;letter-spacing:-.005em;overflow-wrap:anywhere}
-.prof-id p{font-size:.88rem;color:var(--muted)}
-.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);margin:18px -18px 0;border-top:1px solid var(--line)}
-.prof-stats div{padding:12px 6px 14px;text-align:center;display:flex;flex-direction:column;gap:3px}
-.prof-stats div+div{border-left:1px solid var(--line)}
-.prof-stats b{font:800 1.25rem/1 var(--display);font-stretch:108%}
-.prof-stats span{font:600 .6rem/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+/* ===== Me: profile card (editorial) ===== */
+.prof{position:relative;overflow:hidden;border-radius:22px;padding:26px 22px 24px;min-height:248px;color:#FFF1E2;isolation:isolate;
+ background:radial-gradient(120% 90% at 100% 0%,rgb(255 201 163 / .55) 0%,rgb(255 94 26 / .55) 30%,transparent 62%),radial-gradient(90% 70% at 0% 100%,rgb(194 65 12 / .45),transparent 60%),linear-gradient(160deg,#14203F 0%,#0B132B 55%,#070B18 100%);
+ box-shadow:0 18px 40px rgb(0 0 0 / .35),inset 0 0 0 1px rgb(255 241 226 / .08)}
+.prof .grain{position:absolute;inset:0;z-index:-1;opacity:.35;mix-blend-mode:soft-light;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.prof .bignum{position:absolute;z-index:-1;right:-6px;bottom:-34px;font:900 13rem/1 var(--display);font-stretch:125%;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px rgb(255 241 226 / .32);user-select:none}
+.prof .bignum.sm{font-size:7.5rem;bottom:-10px}
+.prof .ey{font:600 .64rem/1 var(--mono);letter-spacing:.32em;text-transform:uppercase;color:rgb(255 241 226 / .72)}
+.prof .first{display:block;margin-top:22px;font:italic 300 2.4rem/1 "Fraunces",Georgia,"Times New Roman",serif;letter-spacing:-.01em;color:#FFE3CF}
+.prof h1{margin:4px 0 0;text-transform:uppercase;font:900 clamp(1.9rem,9.5vw,2.6rem)/.95 var(--display);font-stretch:125%;letter-spacing:.02em;color:#FFF1E2;overflow-wrap:break-word;max-width:92%}
+.prof .rule{width:56px;height:2px;margin:16px 0 12px;background:linear-gradient(90deg,#FFC857,#FF5E1A);border-radius:2px}
+.prof .role{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font:600 .74rem/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#FFF1E2}
+.prof .role i{font:italic 500 1rem/1 "Fraunces",Georgia,serif;letter-spacing:0;text-transform:none;color:#FFC9A3}
 /* ===== Welcome animation: launch into orbit ===== */
 .wa{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;cursor:pointer;
  background:radial-gradient(120% 70% at 50% 110%,rgb(255 94 26 / .35),transparent 60%),radial-gradient(80% 60% at 50% 40%,#14203F,#05070F 70%);color:#fff;animation:waOut .5s ease 3.5s forwards}
@@ -508,7 +505,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <meta name="theme-color" content="#0B132B">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Fraunces:ital,opsz,wght@1,9..144,300;1,9..144,500&display=swap">
 </script>
 <script id="af-main">
 /* ===== EDIT THESE before you share the app ===== */
@@ -1918,15 +1915,16 @@ function faqHTML(){
   return list.length?list.map(f=>`<details><summary>${f.q}</summary><div class="ans">${f.a.map(p=>`<p>${p}</p>`).join("")}<p class="src">Source: ${f.s}</p></div></details>`).join(""):`<p class="muted">No answers match "${esc(draft.q)}" yet.</p>`;
 }
 function vMe(){
-  const staff=profile.position==="Staff", mono=staff?"STAFF":profile.num?profile.num:((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase();
-  const sub=[staff?(profile.role||"Staff"):profile.position,(!staff&&profile.num)?"#"+profile.num:""].filter(Boolean).join(" · ");
-  const wk=[...Array(7)].map((_,i)=>jShift(mondayOf(isoToday()),i)).filter(d=>d<=isoToday());
-  const stars=wk.filter(starLit).length, checks=[...Array(7)].map((_,i)=>jShift(isoToday(),-i)).filter(d=>rScore(jGet(d).ready)!=null).length;
+  const staff=profile.position==="Staff", big=staff?((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase():(profile.num||((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase());
+  const role=staff?(profile.role||"Staff"):(profile.position||""), last=profile.last||"", longest=Math.max(1,...last.split(/[\s-]+/).map(w=>w.length+1)), lastSize=Math.min(2.6,Math.max(1.1,16/longest)).toFixed(2);
   return `<div class="view">
    <section class="prof" aria-label="Your profile">
-    <div class="prof-top"><div class="mono" aria-hidden="true"><span class="${mono.length>3?"sm":""}">${esc(mono)}</span></div>
-     <div class="prof-id"><span class="eyebrow">Los Angeles Orbit</span><h1>${esc(profile.name)}</h1>${sub?`<p>${esc(sub)}</p>`:""}</div></div>
-    <div class="prof-stats" title="This week"><div><b>${EDU.learned.length}</b><span>Lessons</span></div><div><b>${stars}/7</b><span>Stars</span></div><div><b>${checks}</b><span>Check-ins</span></div></div>
+    <div class="grain" aria-hidden="true"></div><span class="bignum ${big.length>2?"sm":""}" aria-hidden="true">${esc(big)}</span>
+    <span class="ey">Los Angeles Orbit</span>
+    <span class="first">${esc(profile.first)}</span>
+    <h1 aria-label="${esc(profile.name)}" style="font-size:${lastSize}rem">${esc(last)}</h1>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="role">${role?`<span>${esc(role)}</span>`:""}${!staff&&profile.num?`<i>No. ${esc(profile.num)}</i>`:""}</div>
    </section>
    <div class="card stack">
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
