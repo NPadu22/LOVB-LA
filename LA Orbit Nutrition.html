@@ -292,26 +292,22 @@ body{font-stretch:100%}
 .plan details.mdet summary::after{color:var(--ink-muted)}
 .plan details.mdet p{font-size:.84rem;color:var(--ink-muted);padding-bottom:8px}
 .plan details.mdet .stamp{color:var(--ink-muted)}
-/* ===== Me: locker nameplate ===== */
-.locker{position:relative;overflow:hidden;border-radius:16px;padding:12px 16px 18px;background:linear-gradient(180deg,#22325E 0%,#14203F 45%,#0B132B 100%);color:#fff;
- box-shadow:inset 0 0 0 2px rgb(255 255 255 / .07),inset 0 -40px 60px rgb(0 0 0 / .25),0 12px 28px rgb(0 0 0 / .3)}
-.locker::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 3px,rgb(255 255 255 / .018) 3px 4px);pointer-events:none}
-.locker .vents{width:56%;height:30px;margin:2px auto 14px;border-radius:4px;background:repeating-linear-gradient(180deg,#04060D 0 4px,rgb(255 255 255 / .1) 4px 5px,transparent 5px 8px);box-shadow:inset 0 1px 2px rgb(0 0 0 / .6)}
-.locker .plate{position:relative;margin:0 auto;max-width:300px;background:linear-gradient(180deg,#FFFFFF,#E3E7F0);color:#0B132B;border-radius:6px;padding:8px 22px 9px;text-align:center;
- box-shadow:inset 0 -2px 0 rgb(0 0 0 / .14),0 2px 0 rgb(0 0 0 / .45),0 6px 14px rgb(0 0 0 / .3)}
-.locker .plate::before,.locker .plate::after{content:"";position:absolute;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#8A93AB);box-shadow:inset 0 0 0 1px rgb(0 0 0 / .25)}
-.locker .plate::before{left:8px}.locker .plate::after{right:8px}
-.locker .plate span{display:block;font:700 .66rem/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#56607E}
-.locker .plate h1{margin:3px 0 0;font:900 clamp(1.5rem,8vw,2.1rem)/1 var(--display);font-stretch:125%;letter-spacing:.06em;text-transform:uppercase;color:#0B132B;overflow-wrap:break-word}
-.locker .lk-body{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-top:16px;padding-right:18px}
-.locker .lk-num{font:900 clamp(4.2rem,22vw,5.6rem)/.85 var(--display);font-stretch:125%;color:#FF5E1A;text-shadow:0 0 0 #fff,2px 2px 0 rgb(0 0 0 / .35);letter-spacing:-.02em;min-width:1.2ch;text-align:center}
-.locker .lk-num.staff{font-size:clamp(1.8rem,9vw,2.4rem);letter-spacing:.08em}
-.locker .lk-meta{display:flex;flex-direction:column;gap:6px;min-width:0}
-.locker .lk-meta .patch{width:52px;height:52px}
-.locker .lk-meta b{font:800 1rem/1.15 var(--display);font-stretch:125%;text-transform:uppercase;letter-spacing:.03em}
-.locker .lk-meta span{font:600 .68rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#A3AECB}
-.locker .latch{position:absolute;right:10px;top:62%;width:8px;height:54px;margin-top:-27px;border-radius:4px;background:linear-gradient(90deg,#9AA3BA,#E9ECF3 45%,#7C859C);box-shadow:0 2px 4px rgb(0 0 0 / .45)}
-.locker .stripe{position:absolute;left:0;right:0;bottom:0;height:4px;background:#FF5E1A}
+/* ===== Me: profile card ===== */
+.prof{position:relative;overflow:hidden;border-radius:20px;padding:20px 18px 0;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line)}
+.prof::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:0 0 2px 2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.9}
+.prof-top{display:flex;gap:16px;align-items:center}
+.mono{flex:none;width:68px;height:68px;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,var(--accent),#FFC9A3,var(--accent) 60%,color-mix(in srgb,var(--fg) 20%,transparent) 61%,color-mix(in srgb,var(--fg) 20%,transparent))}
+.mono span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:var(--surface);font:800 1.5rem/1 var(--display);font-stretch:112%;color:var(--fg);letter-spacing:-.01em}
+.mono span.sm{font-size:.95rem;letter-spacing:.06em}
+.prof-id{min-width:0;display:flex;flex-direction:column;gap:3px}
+.prof-id .eyebrow{letter-spacing:.18em}
+.prof h1{margin:0;text-transform:none;font:800 1.5rem/1.1 var(--display);font-stretch:108%;letter-spacing:-.005em;overflow-wrap:anywhere}
+.prof-id p{font-size:.88rem;color:var(--muted)}
+.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);margin:18px -18px 0;border-top:1px solid var(--line)}
+.prof-stats div{padding:12px 6px 14px;text-align:center;display:flex;flex-direction:column;gap:3px}
+.prof-stats div+div{border-left:1px solid var(--line)}
+.prof-stats b{font:800 1.25rem/1 var(--display);font-stretch:108%}
+.prof-stats span{font:600 .6rem/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 /* ===== Welcome animation: launch into orbit ===== */
 .wa{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;cursor:pointer;
  background:radial-gradient(120% 70% at 50% 110%,rgb(255 94 26 / .35),transparent 60%),radial-gradient(80% 60% at 50% 40%,#14203F,#05070F 70%);color:#fff;animation:waOut .5s ease 3.5s forwards}
@@ -1905,14 +1901,15 @@ function faqHTML(){
   return list.length?list.map(f=>`<details><summary>${f.q}</summary><div class="ans">${f.a.map(p=>`<p>${p}</p>`).join("")}<p class="src">Source: ${f.s}</p></div></details>`).join(""):`<p class="muted">No answers match "${esc(draft.q)}" yet.</p>`;
 }
 function vMe(){
-  const staff=profile.position==="Staff", last=profile.last||profile.first, longest=Math.max(...last.split(/[\s-]+/).map(w=>w.length+1)), nameSize=Math.min(2.1,Math.max(1,15.5/longest)).toFixed(2);
+  const staff=profile.position==="Staff", mono=staff?"STAFF":profile.num?profile.num:((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase();
+  const sub=[staff?(profile.role||"Staff"):profile.position,(!staff&&profile.num)?"#"+profile.num:""].filter(Boolean).join(" · ");
+  const wk=[...Array(7)].map((_,i)=>jShift(mondayOf(isoToday()),i)).filter(d=>d<=isoToday());
+  const stars=wk.filter(starLit).length, checks=[...Array(7)].map((_,i)=>jShift(isoToday(),-i)).filter(d=>rScore(jGet(d).ready)!=null).length;
   return `<div class="view">
-   <section class="locker" aria-label="Your locker">
-    <div class="vents" aria-hidden="true"></div>
-    <div class="plate"><span>${esc(profile.first)}</span><h1 style="font-size:${nameSize}rem">${esc(last)}</h1></div>
-    <div class="lk-body"><div class="lk-num ${staff||!profile.num?"staff":""}" aria-label="${staff?"Staff":profile.num?"Jersey number "+esc(profile.num):"No jersey number"}">${staff?"STAFF":profile.num?esc(profile.num):"—"}</div>
-     <div class="lk-meta">${PATCH}<b>${esc(staff?(profile.role||"Staff"):(profile.position||"Orbit"))}</b><span>Los Angeles Orbit</span></div></div>
-    <span class="latch" aria-hidden="true"></span><span class="stripe" aria-hidden="true"></span>
+   <section class="prof" aria-label="Your profile">
+    <div class="prof-top"><div class="mono" aria-hidden="true"><span class="${mono.length>3?"sm":""}">${esc(mono)}</span></div>
+     <div class="prof-id"><span class="eyebrow">Los Angeles Orbit</span><h1>${esc(profile.name)}</h1>${sub?`<p>${esc(sub)}</p>`:""}</div></div>
+    <div class="prof-stats" title="This week"><div><b>${EDU.learned.length}</b><span>Lessons</span></div><div><b>${stars}/7</b><span>Stars</span></div><div><b>${checks}</b><span>Check-ins</span></div></div>
    </section>
    <div class="card stack">
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
