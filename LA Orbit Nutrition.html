@@ -1597,7 +1597,8 @@ const PATCHES=[
  {k:"constellation",n:"Match Point",shape:"hex",glyph:"score",c:"#7FA2FF",how:"Light a star all 7 nights of a week",lore:"Seven days in a row. That's how you close a set."},
  {k:"galley",n:"Training Table",shape:"shield",glyph:"bowl",c:"#3DD69B",how:"Log 5 meals from your meal plan",lore:"Fuel planned is fuel you actually eat."},
  {k:"roadwarrior",n:"Road Warrior",shape:"hex",glyph:"plane",c:"#FF8A4C",how:"Log a meal on a travel or road match day",lore:"The gym changes. The standard doesn't."},
- {k:"scholar",n:"Film Study",shape:"square",glyph:"film",c:"#C9A7FF",how:"Learn 5 lessons",lore:"The best players watch the tape."}
+ {k:"scholar",n:"Film Study",shape:"square",glyph:"film",c:"#C9A7FF",how:"Learn 5 lessons",lore:"The best players watch the tape."},
+ {k:"ace",n:"Ace",shape:"circle",glyph:"ace",c:"#FF5A6E",how:"Log your recovery on a match night",lore:"Win the night after the match, not just the match."}
 ];
 function patchSVG(p,on){
   const metal=on?"url(#pinGold)":"none",rim=on?"#8C6A1F":"rgb(127 127 140 / .45)",enamel=on?p.c:"transparent",ink=on?"#0B132B":"rgb(127 127 140 / .55)",dash=on?"":"stroke-dasharray=\"3 3\"";
@@ -1610,6 +1611,7 @@ function patchSVG(p,on){
    score:`<rect x="28" y="33" width="44" height="30" rx="4" fill="${on?"#0B132B":"none"}" stroke="${ink}" stroke-width="2"/><text x="50" y="55" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="17" fill="${on?"#FF8A4C":ink}">25</text><path d="M40 63v6M60 63v6" stroke="${ink}" stroke-width="2"/>`,
    bowl:`<path d="M29 46h42a21 21 0 0 1-42 0z" fill="${W}" stroke="${ink}" stroke-width="2"/><path d="M42 38c0-5 4-5 4-10M54 38c0-5 4-5 4-10" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
    plane:`<path d="M45 53 28 46l2-4 17 2 10-12c2-2 6-2 6 2l-2 4-11 10 2 16-4 2-5-13z" fill="${W}" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/>`,
+   ace:`<path d="M24 40h16M20 50h18M24 60h16" stroke="${on?W:ink}" stroke-width="3" stroke-linecap="round"/><circle cx="58" cy="50" r="15" fill="${W}" stroke="${ink}" stroke-width="2"/><path d="M47 44c7 1 14-1 18-6M51 61c0-7 4-12 11-15M58 35c-3 5-2 12 3 21" stroke="${ink}" stroke-width="1.8" fill="none"/>`,
    film:`<circle cx="50" cy="50" r="17" fill="${W}" stroke="${ink}" stroke-width="2"/>${[0,72,144,216,288].map(a=>`<circle cx="50" cy="40" r="3.6" fill="${ink}" transform="rotate(${a} 50 50)"/>`).join("")}<circle cx="50" cy="50" r="2.4" fill="${ink}"/>`};
   return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="pinGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE7A3"/><stop offset=".45" stop-color="#E2B04A"/><stop offset="1" stop-color="#A87A22"/></linearGradient></defs>
    <g fill="${metal}" stroke="${rim}" stroke-width="2" ${dash}>${shapes[p.shape]}</g><g fill="${enamel}" stroke="${on?"#8C6A1F":"none"}" stroke-width="1.2">${inner[p.shape]}</g>
@@ -1625,6 +1627,7 @@ function earnedPatches(){
   if(days.reduce((a,d)=>a+jGet(d).entries.filter(e=>e.notes==="From meal plan").length,0)>=5)got.add("galley");
   const away=new Set();SCHEDULE.filter(m=>!m.home).forEach(m=>{away.add(m.d);away.add(jShift(m.d,-1))});if(days.some(d=>away.has(d)&&jGet(d).entries.length))got.add("roadwarrior");
   if(EDU.learned.length>=5)got.add("scholar");
+  if(SCHEDULE.some(m=>J.days[m.d]&&habitDone("recover",m.d)))got.add("ace");
   return got;
 }
 function checkPatches(){const got=earnedPatches(),seen=new Set(store.get("patches",[])),fresh=PATCHES.filter(p=>got.has(p.k)&&!seen.has(p.k));
