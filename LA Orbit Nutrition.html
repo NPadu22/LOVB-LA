@@ -1450,10 +1450,7 @@ function vAT(){
       ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([progWho(pg),pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
       ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
      :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}
-    <form class="card stack" id="code-form" style="margin-top:10px"><label for="at-code" style="font-weight:700">Program code from ${esc(CONFIG.atFirst)}</label>
-     <p class="muted" style="font-size:.84rem;margin-top:-4px">If ${esc(CONFIG.atFirst)} gives you a private code, enter it to see your own program.</p>
-     <div class="row" style="gap:8px"><input id="at-code" autocomplete="off" autocapitalize="characters" maxlength="16" placeholder="e.g. K7Q2" style="flex:1;min-width:0"><button class="btn sm" type="submit">Add</button></div>
-     ${AT_CODES.length?`<div class="row" style="flex-wrap:wrap;gap:6px">${AT_CODES.map(c=>`<button type="button" class="chip" data-codedel="${esc(c)}" aria-label="Remove code ${esc(c.toUpperCase())}">${esc(c.toUpperCase())} ×</button>`).join("")}</div>`:""}</form></section>
+    ${myCode()&&profile.position!=="Staff"?`<p class="muted" style="font-size:.84rem;margin-top:10px">Your program code: <b class="nums">${myCode()}</b>. ${esc(CONFIG.atFirst)} uses it to post a program just for you.</p>`:""}</section>
    <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
     ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
       <div class="row" style="flex-wrap:wrap;gap:8px">${IN_CLAUDE?"":`<button class="btn sm" data-remcal="${r.id}">Add to calendar</button>`}<a class="btn ${IN_CLAUDE?"":"ghost "}sm" href="${gcalHref(r)}" target="_blank" rel="noopener">Google Calendar</a><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
@@ -1601,14 +1598,17 @@ function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R
   return out}
 function allPrograms(){return CONFIG.programsSheetCSV&&SHEET.prog?SHEET.prog.rows:AT_PROGRAMS}
 /* "For" column: blank/Everyone, positions (Outside, Opposite, Middle, Setter, Libero, Pins), or a private athlete code. Several allowed: "Middle, Setter". */
-let AT_CODES=store.get("atcodes",[]);
+/* Each athlete's program code: first initial + first three letters of last name (Jordan Lee -> JLEE) */
+function myCode(){if(!profile)return "";const L=x=>(x||"").normalize("NFD").replace(/[^A-Za-z]/g,"");
+  const f=L(profile.first||(profile.name||"").split(" ")[0]),l=L(profile.last||(profile.name||"").split(" ").slice(1).join(""));
+  return f&&l?(f[0]+l.slice(0,3)).toUpperCase():""}
 const POS_WORDS={"Outside hitter":["outside","outsides","oh","pins","pin"],"Opposite":["opposite","opposites","opp","right side","rightside","pins","pin"],"Middle blocker":["middle","middles","mb","middle blocker","middle blockers"],"Setter":["setter","setters"],"Libero":["libero","liberos","defensive specialist","ds"]};
 function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.trim()).filter(Boolean)}
 function progIsCode(t){return !/^(everyone|all|team|all athletes|staff)$/.test(t)&&!Object.values(POS_WORDS).some(w=>w.includes(t))}
 function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
   if(profile&&profile.position==="Staff")return true;
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
-  return T.some(t=>AT_CODES.includes(t))}
+  const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
 function atPrograms(){return allPrograms().filter(progFor)}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
@@ -2230,7 +2230,6 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("button,a");if(!b)return;
   const ds=b.dataset;
   if(jClick(b))return;
-  if(ds.codedel){AT_CODES=AT_CODES.filter(c=>c!==ds.codedel);store.set("atcodes",AT_CODES);render();toast("Code removed");return}
   if(atClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
@@ -2276,9 +2275,6 @@ document.addEventListener("click",e=>{
 document.addEventListener("submit",e=>{
   e.preventDefault();const f=e.target;
   if(f.id==="j-form"){jSubmit();return}
-  if(f.id==="code-form"){const c=$("#at-code").value.trim().toLowerCase();if(!c){toast("Type the code first");return}
-    if(!AT_CODES.includes(c)){AT_CODES.push(c);store.set("atcodes",AT_CODES)}
-    const hit=allPrograms().some(pg=>progTokens(pg.who).includes(c));render();toast(hit?"Your program is added":"Code saved. Your program shows once "+CONFIG.atFirst+" posts it");return}
   if(f.id==="supp-form"){const name=$("#sp-name").value.trim(),brand=$("#sp-brand").value.trim(),why=$("#sp-why").value.trim();
     if(!name){toast("Add the product name");return}
     draft.spName=name;draft.spBrand=brand;draft.spWhy=why;
