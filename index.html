@@ -537,8 +537,8 @@ const CONFIG = {
   trainingCenter: "Seal Beach, CA",            // where the team trains
   atBookingLink: "",                           // Emma's booking link (Calendly etc.), when ready
   atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
-  atSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&sheet=Emma",   // Emma's announcements (Google Sheet, "Emma" tab)
-  teamSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&sheet=Team",  // Home announcements (Google Sheet, "Team" tab)
+  atSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=0",   // Emma's announcements (Google Sheet, "Emma" tab)
+  teamSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=1",  // Home announcements (Google Sheet, "Team" tab)
   appLink: "https://npadu22.github.io/LOVB-LA/",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
@@ -1459,7 +1459,7 @@ function vAT(){
     ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
     ${!CONFIG.atHours&&!CONFIG.atBookingLink?`<p>Booking and hours coming soon.</p>`:""}
     <button class="linkbtn" data-lesson="a-when" style="align-self:flex-start">When to see the athletic trainer ›</button></div></section>
-   <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
+   <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${CONFIG.atSheetCSV&&SHEET.at&&SHEET.at.fetched?`<span class="stamp">Synced ${syncAgo(SHEET.at.fetched)}</span>`:anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
     ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
    <section><h2>Prehab & rehab</h2>
     ${AT_PROGRAMS.length?AT_PROGRAMS.map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
@@ -1600,6 +1600,7 @@ function sheetRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=
 async function loadSheet(kind,url){if(!url)return;try{const r=await fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return;
   const rows=sheetRows(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
   const changed=JSON.stringify((SHEET[kind]||{}).rows)!==JSON.stringify(rows);SHEET[kind]=val;store.set("sheet_"+kind,val);if(changed&&profile&&!draft.editing)render()}catch(e){}}
+function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":fmtDate(t.slice(0,10))}
 function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV)}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
