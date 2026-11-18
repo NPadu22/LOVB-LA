@@ -305,6 +305,26 @@ body{font-stretch:100%}
 .prof .rule{width:56px;height:2px;margin:16px 0 12px;background:linear-gradient(90deg,#FFC857,#FF5E1A);border-radius:2px}
 .prof .role{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font:600 .74rem/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#FFF1E2}
 .prof .role i{font:italic 500 1rem/1 "Fraunces",Georgia,serif;letter-spacing:0;text-transform:none;color:#FFC9A3}
+/* ===== Story layer: mission patches, stamp, station log ===== */
+.patches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pt{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 2px;border-radius:14px}
+.pt svg{width:100%;max-width:74px;height:auto;filter:drop-shadow(0 4px 8px rgb(0 0 0 / .25))}
+.pt:not(.on) svg{filter:none;opacity:.8}
+.pt b{font:700 .66rem/1.15 var(--body);text-align:center;color:var(--muted)}
+.pt.on b{color:var(--fg)}
+.pt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pt.on:active svg{transform:rotate(-6deg) scale(1.05)}
+.pstamp{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-bottom:12vh;pointer-events:none;
+ background:radial-gradient(circle at 50% 44%,rgb(5 7 15 / .88) 0,rgb(5 7 15 / .7) 120px,rgb(5 7 15 / .25) 230px,transparent 320px);animation:pstFade 2.1s ease both}
+.pstamp>*{animation:pst 2.1s cubic-bezier(.2,1.4,.4,1) both}
+.pstamp svg{width:140px;height:140px;filter:drop-shadow(0 10px 24px rgb(0 0 0 / .45))}
+.pstamp b{font:900 1.4rem var(--display);font-stretch:125%;text-transform:uppercase;letter-spacing:.04em;color:#FFF1E2}
+.pstamp span{font:600 .7rem var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#FF8A4C}
+@keyframes pst{0%{opacity:0;transform:scale(1.8) rotate(-14deg)}22%{opacity:1;transform:scale(1) rotate(-4deg)}100%{transform:scale(1) rotate(-4deg)}}
+@keyframes pstFade{0%{opacity:0}12%{opacity:1}80%{opacity:1}100%{opacity:0}}
+.hero .patch{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.hero .patch.spin{transform:rotate(360deg)}
+.module{color:var(--accent-text)}
 /* ===== Welcome animation: launch into orbit ===== */
 .wa{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;cursor:pointer;
  background:radial-gradient(120% 70% at 50% 110%,rgb(255 94 26 / .35),transparent 60%),radial-gradient(80% 60% at 50% 40%,#14203F,#05070F 70%);color:#fff;animation:waOut .5s ease 3.5s forwards}
@@ -1318,7 +1338,7 @@ function vLearn(){
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
      <div class="stack" id="faq">${faqHTML()}</div>`;
   }
-  return `<div class="view"><div><p class="eyebrow">${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
+  return `<div class="view"><div><p class="eyebrow"><span class="module">The archive</span> · ${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
    <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1415,7 +1435,7 @@ function vAT(){
   const anns=atAnns();
   const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
   const L=LESSONS.filter(l=>l.tr==="at");
-  return `<div class="view"><div><p class="eyebrow">${esc(CONFIG.atName)} · ${esc(CONFIG.atTitle)}</p><h1 style="margin-top:4px">Training room</h1></div>
+  return `<div class="view"><div><p class="eyebrow"><span class="module">Med bay</span> · ${esc(CONFIG.atName)}</p><h1 style="margin-top:4px">Training room</h1></div>
    <section><h2>See ${esc(CONFIG.atFirst)}</h2><div class="card stack">
     ${CONFIG.atHours?`<div class="row" style="align-items:flex-start"><span class="chip violet">Hours</span><p style="font-size:.9rem">${esc(CONFIG.atHours)}</p></div>`:""}
     ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
@@ -1567,6 +1587,56 @@ function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnou
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadSheets()});
 
+/* ===== Orbit Station story layer (Joe Rohde-style: one world, earned artifacts, hidden discoveries) ===== */
+/* Mission patches: embroidered artifacts earned by real habits. Each carries a one-line backstory. */
+const PATCHES=[
+ {k:"firstlight",n:"First Light",shape:"circle",glyph:"sun",c:"#FF5E1A",how:"Save your first check-in",lore:"Every mission starts with a status report."},
+ {k:"liftoff",n:"Liftoff",shape:"shield",glyph:"rocket",c:"#5E82F0",how:"Check in 3 days in a row",lore:"Momentum is the hardest part to build."},
+ {k:"fullorbit",n:"Full Orbit",shape:"circle",glyph:"ring",c:"#FFC857",how:"Light all 5 moons in one day",lore:"A day where nothing was left to chance."},
+ {k:"constellation",n:"Constellation",shape:"hex",glyph:"stars",c:"#7FA2FF",how:"Light a star all 7 nights of a week",lore:"Seven nights, one picture in the sky."},
+ {k:"galley",n:"Galley Chef",shape:"shield",glyph:"bowl",c:"#3DD69B",how:"Log 5 meals from your meal plan",lore:"Fuel planned is fuel you actually eat."},
+ {k:"roadwarrior",n:"Road Warrior",shape:"hex",glyph:"plane",c:"#FF8A4C",how:"Log a meal on a travel or road match day",lore:"The kitchen changes. The standard doesn't."},
+ {k:"scholar",n:"Archivist",shape:"circle",glyph:"book",c:"#C9A7FF",how:"Learn 5 lessons",lore:"The best crews study the flight manual."}
+];
+function patchSVG(p,on){
+  const rim=on?"#FFF1E2":"rgb(127 127 140 / .45)",fill=on?"#0B132B":"transparent",acc=on?p.c:"rgb(127 127 140 / .5)",dash=on?"2 1.6":"1.4 2.2";
+  const shapes={circle:`<circle cx="50" cy="50" r="44"/>`,shield:`<path d="M50 6 88 18v30c0 24-17 40-38 46C29 88 12 72 12 48V18z"/>`,hex:`<path d="M50 5 89 27.5v45L50 95 11 72.5v-45z"/>`};
+  const G={sun:`<circle cx="50" cy="48" r="11" fill="${acc}"/>${[...Array(8)].map((_,i)=>`<line x1="50" y1="30" x2="50" y2="24" stroke="${acc}" stroke-width="3" stroke-linecap="round" transform="rotate(${i*45} 50 48)"/>`).join("")}<path d="M24 66h52" stroke="${acc}" stroke-width="2.5" stroke-linecap="round"/>`,
+   rocket:`<path d="M50 22c8 7 11 17 9 30H41c-2-13 1-23 9-30z" fill="${acc}"/><path d="M41 52l-6 9h8M59 52l6 9h-8" fill="${acc}"/><path d="M46 62q4 10 4 12q0-2 4-12" stroke="#FFC857" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="${on?1:.5}"/>`,
+   ring:`<circle cx="50" cy="48" r="12" fill="${acc}"/><ellipse cx="50" cy="48" rx="27" ry="8" fill="none" stroke="${acc}" stroke-width="2.5" transform="rotate(-18 50 48)"/><circle cx="74" cy="41" r="3" fill="${acc}"/>`,
+   stars:`<path d="M28 60 40 42 54 50 70 32" fill="none" stroke="${acc}" stroke-width="1.6" stroke-dasharray="2 2"/>${[[28,60,3.5],[40,42,4.5],[54,50,3.5],[70,32,5]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${acc}"/>`).join("")}`,
+   bowl:`<path d="M27 46h46a23 23 0 0 1-46 0z" fill="${acc}"/><path d="M41 38c0-5 4-5 4-10M55 38c0-5 4-5 4-10" stroke="${acc}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+   plane:`<path d="M44 52 26 45l2-4 18 2 10-12c2-2 6-2 6 2l-2 4-11 10 2 17-4 2-6-14z" fill="${acc}"/><path d="M28 70q22-6 46-22" stroke="${acc}" stroke-width="1.6" stroke-dasharray="2 3" fill="none"/>`,
+   book:`<path d="M24 32q13-4 26 2v34q-13-6-26-2z" fill="${acc}"/><path d="M76 32q-13-4-26 2v34q13-6 26-2z" fill="${acc}" opacity="${on?.75:1}"/>`};
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="${fill}" stroke="${rim}" stroke-width="3">${shapes[p.shape]}</g><g fill="none" stroke="${acc}" stroke-width="1.4" stroke-dasharray="${dash}" transform="translate(50 50) scale(.86) translate(-50 -50)">${shapes[p.shape]}</g>${G[p.glyph]}</svg>`;
+}
+function earnedPatches(){
+  const days=Object.keys(J.days).sort(), got=new Set();
+  const checked=days.filter(d=>rScore(jGet(d).ready)!=null);
+  if(checked.length)got.add("firstlight");
+  if(checked.some(d=>checked.includes(jShift(d,1))&&checked.includes(jShift(d,2))))got.add("liftoff");
+  if(days.some(d=>habits().every(h=>habitDone(h.k,d))))got.add("fullorbit");
+  const mons=[...new Set(days.map(mondayOf))];if(mons.some(m=>[...Array(7)].every((_,i)=>starLit(jShift(m,i)))))got.add("constellation");
+  if(days.reduce((a,d)=>a+jGet(d).entries.filter(e=>e.notes==="From meal plan").length,0)>=5)got.add("galley");
+  const away=new Set();SCHEDULE.filter(m=>!m.home).forEach(m=>{away.add(m.d);away.add(jShift(m.d,-1))});if(days.some(d=>away.has(d)&&jGet(d).entries.length))got.add("roadwarrior");
+  if(EDU.learned.length>=5)got.add("scholar");
+  return got;
+}
+function checkPatches(){const got=earnedPatches(),seen=new Set(store.get("patches",[])),fresh=PATCHES.filter(p=>got.has(p.k)&&!seen.has(p.k));
+  if(!fresh.length)return;store.set("patches",[...got]);if(seen.size||fresh.length)setTimeout(()=>patchStamp(fresh[0]),900)}
+function patchStamp(p){let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+  toast("Patch earned: "+p.n);if(rm||document.querySelector(".wa,.ins-back"))return;
+  const el=document.createElement("div");el.className="pstamp";el.setAttribute("aria-hidden","true");el.innerHTML=`${patchSVG(p,true)}<b>${esc(p.n)}</b><span>Patch earned</span>`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+function patchesHTML(){const got=earnedPatches();
+  return `<section><div class="sec-head"><h2>Mission patches</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
+   <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
+/* Hidden discovery: the Home patch keeps a station log */
+const STATION_LOG=["Station log: all crew accounted for. Fuel up.","Station log: the sky is clear over Seal Beach tonight.","Station log: every serve is a launch window.",
+ "Station log: recovery is part of the mission, not after it.","Station log: road crews, pack the kit before the bus.","Station log: you found the log. Tell no one. (Tell your setter.)"];
+let logIdx=0;
+function greeting(){const h=new Date().getHours();return h<5?"Late night":h<12?"Good morning":h<17?"Good afternoon":"Good evening"}
+
 /* ===== Views ===== */
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
@@ -1621,7 +1691,7 @@ function vHome(){
    <header class="hero">
     <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${profile.position==="Staff"?esc(posLabel()):profile.num?"Los Angeles Orbit · #"+esc(profile.num):"Los Angeles Orbit"}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">Orbit</p><p class="wordmark-sub">Performance</p>
-    <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`Welcome back, ${esc(first)}.`}</p>
+    <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`${greeting()}, ${esc(first)}.`}</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
    </header>
@@ -1875,7 +1945,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><h1 style="margin-top:4px">Fuel</h1></div>
+  return `<div class="view"><div><p class="eyebrow module">The galley</p><h1 style="margin-top:4px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1903,7 +1973,7 @@ function vMe(){
   return `<div class="view">
    <section class="prof" aria-label="Your profile">
     <div class="grain" aria-hidden="true"></div><span class="bignum ${big.length>2?"sm":""}" aria-hidden="true">${esc(big)}</span>
-    <span class="ey">Los Angeles Orbit</span>
+    <span class="ey">Crew quarters</span>
     <span class="first">${esc(profile.first)}</span>
     <h1 aria-label="${esc(profile.name)}" style="font-size:${lastSize}rem">${esc(last)}</h1>
     <div class="rule" aria-hidden="true"></div>
@@ -1913,6 +1983,7 @@ function vMe(){
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
+   ${patchesHTML()}
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
    <section><h2>Color scheme</h2><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
@@ -1982,7 +2053,7 @@ function vJournal(){
   const d=jGet(jDate), today=isoToday();
   const list=[...d.entries].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const m=SCHEDULE.find(x=>x.d===jDate);
-  return `<div class="view"><div><h1 style="margin-top:4px">Performance Journal</h1></div>
+  return `<div class="view"><div><p class="eyebrow module">Flight log</p><h1 style="margin-top:4px">Performance Journal</h1></div>
    <div class="datebar"><button class="btn ghost sm" data-jday="-1" aria-label="Previous day">‹</button><b>${jLabel(jDate)}</b><button class="btn ghost sm" data-jday="1" aria-label="Next day" ${jDate>=today?"disabled":""}>›</button></div>
    ${m?`<p class="chip ${m.home?"accent":"violet"}" style="align-self:flex-start">Match day: ${m.home?"vs":"at"} ${esc(m.opp)}</p>`:""}
    <div class="card stack">
@@ -2106,14 +2177,16 @@ function render(){
   if(tab==="edit"&&!canEdit)tab="me";
   app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
-  renderTabs();scheduleInstall();
+  renderTabs();scheduleInstall();checkPatches();
 }
 document.addEventListener("click",e=>{
+  const hp=e.target.closest(".hero .patch");if(hp&&tab==="home"){hp.classList.toggle("spin");toast(STATION_LOG[logIdx++%STATION_LOG.length]);return}
   const b=e.target.closest("button,a");if(!b)return;
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
   if(planClick(b))return;
+  if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.tab){tab=ds.tab;learnLesson=null;if(tab==="ready")rDraft=null;render();scrollTo({top:0});return}
   if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}render();scrollTo({top:0});return}
