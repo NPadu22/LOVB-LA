@@ -539,6 +539,7 @@ const CONFIG = {
   atHours: "",                                 // treatment-room hours, e.g. "Mon–Fri 8–10 am & 2–5 pm, Training room"
   atSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=0",   // Emma's announcements (Google Sheet, "Emma" tab)
   teamSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=1",  // Home announcements (Google Sheet, "Team" tab)
+  programsSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=3",  // Emma's prehab & rehab programs (Google Sheet, "Programs" tab)
   appLink: "https://npadu22.github.io/LOVB-LA/",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
@@ -1462,10 +1463,14 @@ function vAT(){
    <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${CONFIG.atSheetCSV&&SHEET.at&&SHEET.at.fetched?`<span class="stamp">Synced ${syncAgo(SHEET.at.fetched)}</span>`:anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
     ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
    <section><h2>Prehab & rehab</h2>
-    ${AT_PROGRAMS.length?AT_PROGRAMS.map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
-      ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([pg.who,pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
-      ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
-     :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}</section>
+    ${atPrograms().length?atPrograms().map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
+      ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([progWho(pg),pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
+      ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
+     :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}
+    <form class="card stack" id="code-form" style="margin-top:10px"><label for="at-code" style="font-weight:700">Program code from ${esc(CONFIG.atFirst)}</label>
+     <p class="muted" style="font-size:.84rem;margin-top:-4px">If ${esc(CONFIG.atFirst)} gives you a private code, enter it to see your own program.</p>
+     <div class="row" style="gap:8px"><input id="at-code" autocomplete="off" autocapitalize="characters" maxlength="16" placeholder="e.g. K7Q2" style="flex:1;min-width:0"><button class="btn sm" type="submit">Add</button></div>
+     ${AT_CODES.length?`<div class="row" style="flex-wrap:wrap;gap:6px">${AT_CODES.map(c=>`<button type="button" class="chip" data-codedel="${esc(c)}" aria-label="Remove code ${esc(c.toUpperCase())}">${esc(c.toUpperCase())} ×</button>`).join("")}</div>`:""}</form></section>
    <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
     ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
       <div class="row" style="flex-wrap:wrap;gap:8px">${IN_CLAUDE?"":`<button class="btn sm" data-remcal="${r.id}">Add to calendar</button>`}<a class="btn ${IN_CLAUDE?"":"ghost "}sm" href="${gcalHref(r)}" target="_blank" rel="noopener">Google Calendar</a><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
@@ -1583,7 +1588,7 @@ function vFeedback(){return `<div class="view"><div><h1 style="margin-top:4px">A
 /* ===== Announcements from Google Sheets (published to the web as CSV).
    Columns (header row, any order, case-insensitive): Date | Tag | Headline | Details | Hide after | Show
    Last good copy is kept on the phone; if a sheet can't be reached the app shows that copy, then the built-in list. ===== */
-let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null)};
+let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null),prog:store.get("sheet_prog",null)};
 function parseCSV(text){const rows=[];let row=[],f="",q=false;
   for(let i=0;i<text.length;i++){const c=text[i];
     if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
@@ -1598,10 +1603,31 @@ function sheetRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=
   return R.slice(1).map(r=>({when:sheetDate(r[iD]),tag:(r[iT]||"").trim(),t:(r[iH]||"").trim(),d:(r[iX]||"").trim(),hide:sheetDate(r[iE]),show:(r[iS]||"yes").trim().toLowerCase()}))
    .filter(a=>a.t&&a.show!=="no"&&!(a.hide&&a.hide<today)&&!(a.when&&a.when>today)).sort((a,b)=>(b.when||"").localeCompare(a.when||""))}
 async function loadSheet(kind,url){if(!url)return;try{const r=await fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return;
-  const rows=sheetRows(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
+  const rows=(kind==="prog"?progRows:sheetRows)(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
   const changed=JSON.stringify((SHEET[kind]||{}).rows)!==JSON.stringify(rows);SHEET[kind]=val;store.set("sheet_"+kind,val);if(changed&&profile&&!draft.editing)render()}catch(e){}}
 function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":fmtDate(t.slice(0,10))}
-function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV)}
+function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV)}
+/* Programs tab: one row per exercise; rows sharing a Program name form one program, in row order */
+function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
+  if(iP<0||iE<0)return null;const out=[],by={};const g=(r,i)=>i<0?"":(r[i]||"").trim();
+  for(const r of R.slice(1)){const name=g(r,iP),n=g(r,iE);if(!name||!n||g(r,iS).toLowerCase()==="no")continue;
+    const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    if(!by[id]){by[id]={id,name,who:g(r,iF),when:g(r,iW),note:"",ex:[]};out.push(by[id])}
+    const v=g(r,iV);by[id].ex.push({n,dose:g(r,iD),cue:g(r,iC),video:/^https:\/\//i.test(v)?v:""})}
+  return out}
+function allPrograms(){return CONFIG.programsSheetCSV&&SHEET.prog?SHEET.prog.rows:AT_PROGRAMS}
+/* "For" column: blank/Everyone, positions (Outside, Opposite, Middle, Setter, Libero, Pins), or a private athlete code. Several allowed: "Middle, Setter". */
+let AT_CODES=store.get("atcodes",[]);
+const POS_WORDS={"Outside hitter":["outside","outsides","oh","pins","pin"],"Opposite":["opposite","opposites","opp","right side","rightside","pins","pin"],"Middle blocker":["middle","middles","mb","middle blocker","middle blockers"],"Setter":["setter","setters"],"Libero":["libero","liberos","defensive specialist","ds"]};
+function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.trim()).filter(Boolean)}
+function progIsCode(t){return !/^(everyone|all|team|all athletes|staff)$/.test(t)&&!Object.values(POS_WORDS).some(w=>w.includes(t))}
+function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
+  if(profile&&profile.position==="Staff")return true;
+  const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
+  return T.some(t=>AT_CODES.includes(t))}
+function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
+function atPrograms(){return allPrograms().filter(progFor)}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadSheets()});
@@ -2221,6 +2247,7 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("button,a");if(!b)return;
   const ds=b.dataset;
   if(jClick(b))return;
+  if(ds.codedel){AT_CODES=AT_CODES.filter(c=>c!==ds.codedel);store.set("atcodes",AT_CODES);render();toast("Code removed");return}
   if(atClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
@@ -2266,6 +2293,9 @@ document.addEventListener("click",e=>{
 document.addEventListener("submit",e=>{
   e.preventDefault();const f=e.target;
   if(f.id==="j-form"){jSubmit();return}
+  if(f.id==="code-form"){const c=$("#at-code").value.trim().toLowerCase();if(!c){toast("Type the code first");return}
+    if(!AT_CODES.includes(c)){AT_CODES.push(c);store.set("atcodes",AT_CODES)}
+    const hit=allPrograms().some(pg=>progTokens(pg.who).includes(c));render();toast(hit?"Your program is added":"Code saved. Your program shows once "+CONFIG.atFirst+" posts it");return}
   if(f.id==="supp-form"){const name=$("#sp-name").value.trim(),brand=$("#sp-brand").value.trim(),why=$("#sp-why").value.trim();
     if(!name){toast("Add the product name");return}
     draft.spName=name;draft.spBrand=brand;draft.spWhy=why;
