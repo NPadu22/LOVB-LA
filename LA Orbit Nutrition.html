@@ -305,7 +305,8 @@ body{font-stretch:100%}
 .prof .rule{width:56px;height:2px;margin:16px 0 12px;background:linear-gradient(90deg,#FFC857,#FF5E1A);border-radius:2px}
 .prof .role{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font:600 .74rem/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#FFF1E2}
 .prof .role i{font:italic 500 1rem/1 "Fraunces",Georgia,serif;letter-spacing:0;text-transform:none;color:#FFC9A3}
-/* ===== Story layer: mission patches, stamp, station log ===== */
+/* ===== Story layer: tournament pins, stamp, timeout whiteboard ===== */
+.hello-sub{display:block;margin-top:4px;font-size:.88rem;opacity:.8}
 .patches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .pt{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 2px;border-radius:14px}
 .pt svg{width:100%;max-width:74px;height:auto;filter:drop-shadow(0 4px 8px rgb(0 0 0 / .25))}
@@ -1338,7 +1339,7 @@ function vLearn(){
     body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
      <div class="stack" id="faq">${faqHTML()}</div>`;
   }
-  return `<div class="view"><div><p class="eyebrow"><span class="module">The archive</span> · ${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
+  return `<div class="view"><div><p class="eyebrow"><span class="module">Film room</span> · ${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
    <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1435,7 +1436,7 @@ function vAT(){
   const anns=atAnns();
   const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
   const L=LESSONS.filter(l=>l.tr==="at");
-  return `<div class="view"><div><p class="eyebrow"><span class="module">Med bay</span> · ${esc(CONFIG.atName)}</p><h1 style="margin-top:4px">Training room</h1></div>
+  return `<div class="view"><div><p class="eyebrow"><span class="module">The tape table</span> · ${esc(CONFIG.atName)}</p><h1 style="margin-top:4px">Training room</h1></div>
    <section><h2>See ${esc(CONFIG.atFirst)}</h2><div class="card stack">
     ${CONFIG.atHours?`<div class="row" style="align-items:flex-start"><span class="chip violet">Hours</span><p style="font-size:.9rem">${esc(CONFIG.atHours)}</p></div>`:""}
     ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
@@ -1587,28 +1588,32 @@ function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnou
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadSheets()});
 
-/* ===== Orbit Station story layer (Joe Rohde-style: one world, earned artifacts, hidden discoveries) ===== */
-/* Mission patches: embroidered artifacts earned by real habits. Each carries a one-line backstory. */
+/* ===== Volleyball story layer (Joe Rohde-style: one world, earned artifacts, hidden discoveries) ===== */
+/* Tournament pins: club volleyball's pin-trading tradition. Earned by real habits; each carries a one-line backstory. Keys stay stable so earned pins persist. */
 const PATCHES=[
- {k:"firstlight",n:"First Light",shape:"circle",glyph:"sun",c:"#FF5E1A",how:"Save your first check-in",lore:"Every mission starts with a status report."},
- {k:"liftoff",n:"Liftoff",shape:"shield",glyph:"rocket",c:"#5E82F0",how:"Check in 3 days in a row",lore:"Momentum is the hardest part to build."},
- {k:"fullorbit",n:"Full Orbit",shape:"circle",glyph:"ring",c:"#FFC857",how:"Light all 5 moons in one day",lore:"A day where nothing was left to chance."},
- {k:"constellation",n:"Constellation",shape:"hex",glyph:"stars",c:"#7FA2FF",how:"Light a star all 7 nights of a week",lore:"Seven nights, one picture in the sky."},
- {k:"galley",n:"Galley Chef",shape:"shield",glyph:"bowl",c:"#3DD69B",how:"Log 5 meals from your meal plan",lore:"Fuel planned is fuel you actually eat."},
- {k:"roadwarrior",n:"Road Warrior",shape:"hex",glyph:"plane",c:"#FF8A4C",how:"Log a meal on a travel or road match day",lore:"The kitchen changes. The standard doesn't."},
- {k:"scholar",n:"Archivist",shape:"circle",glyph:"book",c:"#C9A7FF",how:"Learn 5 lessons",lore:"The best crews study the flight manual."}
+ {k:"firstlight",n:"First Touch",shape:"circle",glyph:"ball",c:"#FF5E1A",how:"Save your first check-in",lore:"Every rally starts with the first contact."},
+ {k:"liftoff",n:"Side Out",shape:"shield",glyph:"sideout",c:"#5E82F0",how:"Check in 3 days in a row",lore:"Win the point that gets the serve back. Then keep it."},
+ {k:"fullorbit",n:"Full Rotation",shape:"square",glyph:"rotation",c:"#FFC857",how:"Light all 5 moons in one day",lore:"Every spot on the court covered. Nothing drops."},
+ {k:"constellation",n:"Match Point",shape:"hex",glyph:"score",c:"#7FA2FF",how:"Light a star all 7 nights of a week",lore:"Seven days in a row. That's how you close a set."},
+ {k:"galley",n:"Training Table",shape:"shield",glyph:"bowl",c:"#3DD69B",how:"Log 5 meals from your meal plan",lore:"Fuel planned is fuel you actually eat."},
+ {k:"roadwarrior",n:"Road Warrior",shape:"hex",glyph:"plane",c:"#FF8A4C",how:"Log a meal on a travel or road match day",lore:"The gym changes. The standard doesn't."},
+ {k:"scholar",n:"Film Study",shape:"square",glyph:"film",c:"#C9A7FF",how:"Learn 5 lessons",lore:"The best players watch the tape."}
 ];
 function patchSVG(p,on){
-  const rim=on?"#FFF1E2":"rgb(127 127 140 / .45)",fill=on?"#0B132B":"transparent",acc=on?p.c:"rgb(127 127 140 / .5)",dash=on?"2 1.6":"1.4 2.2";
-  const shapes={circle:`<circle cx="50" cy="50" r="44"/>`,shield:`<path d="M50 6 88 18v30c0 24-17 40-38 46C29 88 12 72 12 48V18z"/>`,hex:`<path d="M50 5 89 27.5v45L50 95 11 72.5v-45z"/>`};
-  const G={sun:`<circle cx="50" cy="48" r="11" fill="${acc}"/>${[...Array(8)].map((_,i)=>`<line x1="50" y1="30" x2="50" y2="24" stroke="${acc}" stroke-width="3" stroke-linecap="round" transform="rotate(${i*45} 50 48)"/>`).join("")}<path d="M24 66h52" stroke="${acc}" stroke-width="2.5" stroke-linecap="round"/>`,
-   rocket:`<path d="M50 22c8 7 11 17 9 30H41c-2-13 1-23 9-30z" fill="${acc}"/><path d="M41 52l-6 9h8M59 52l6 9h-8" fill="${acc}"/><path d="M46 62q4 10 4 12q0-2 4-12" stroke="#FFC857" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="${on?1:.5}"/>`,
-   ring:`<circle cx="50" cy="48" r="12" fill="${acc}"/><ellipse cx="50" cy="48" rx="27" ry="8" fill="none" stroke="${acc}" stroke-width="2.5" transform="rotate(-18 50 48)"/><circle cx="74" cy="41" r="3" fill="${acc}"/>`,
-   stars:`<path d="M28 60 40 42 54 50 70 32" fill="none" stroke="${acc}" stroke-width="1.6" stroke-dasharray="2 2"/>${[[28,60,3.5],[40,42,4.5],[54,50,3.5],[70,32,5]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${acc}"/>`).join("")}`,
-   bowl:`<path d="M27 46h46a23 23 0 0 1-46 0z" fill="${acc}"/><path d="M41 38c0-5 4-5 4-10M55 38c0-5 4-5 4-10" stroke="${acc}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
-   plane:`<path d="M44 52 26 45l2-4 18 2 10-12c2-2 6-2 6 2l-2 4-11 10 2 17-4 2-6-14z" fill="${acc}"/><path d="M28 70q22-6 46-22" stroke="${acc}" stroke-width="1.6" stroke-dasharray="2 3" fill="none"/>`,
-   book:`<path d="M24 32q13-4 26 2v34q-13-6-26-2z" fill="${acc}"/><path d="M76 32q-13-4-26 2v34q13-6 26-2z" fill="${acc}" opacity="${on?.75:1}"/>`};
-  return `<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="${fill}" stroke="${rim}" stroke-width="3">${shapes[p.shape]}</g><g fill="none" stroke="${acc}" stroke-width="1.4" stroke-dasharray="${dash}" transform="translate(50 50) scale(.86) translate(-50 -50)">${shapes[p.shape]}</g>${G[p.glyph]}</svg>`;
+  const metal=on?"url(#pinGold)":"none",rim=on?"#8C6A1F":"rgb(127 127 140 / .45)",enamel=on?p.c:"transparent",ink=on?"#0B132B":"rgb(127 127 140 / .55)",dash=on?"":"stroke-dasharray=\"3 3\"";
+  const shapes={circle:`<circle cx="50" cy="50" r="42"/>`,shield:`<path d="M50 8 86 20v28c0 23-16 38-36 44C30 86 14 71 14 48V20z"/>`,hex:`<path d="M50 7 87 28.5v43L50 93 13 71.5v-43z"/>`,square:`<rect x="10" y="10" width="80" height="80" rx="18"/>`};
+  const inner={circle:`<circle cx="50" cy="50" r="34"/>`,shield:`<path d="M50 16 78 26v22c0 18-12 30-28 35C34 78 22 66 22 48V26z"/>`,hex:`<path d="M50 15 80 32v36L50 85 20 68V32z"/>`,square:`<rect x="18" y="18" width="64" height="64" rx="13"/>`};
+  const W="#FFF8EC";
+  const G={ball:`<circle cx="50" cy="50" r="15" fill="${W}" stroke="${ink}" stroke-width="2"/><path d="M38 44c8 1 16-1 21-7M43 62c0-8 5-14 13-17M50 35c-3 6-2 14 4 24" stroke="${ink}" stroke-width="1.8" fill="none"/>`,
+   sideout:`<circle cx="50" cy="52" r="10" fill="${W}" stroke="${ink}" stroke-width="2"/><path d="M30 44a22 22 0 0 1 38-8" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M68 28l1 9-9 0" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+   rotation:`<rect x="30" y="32" width="40" height="36" rx="3" fill="none" stroke="${ink}" stroke-width="2.2"/><line x1="30" y1="50" x2="70" y2="50" stroke="${ink}" stroke-width="2.2" stroke-dasharray="3 2"/>${[[38,40],[50,40],[62,40],[38,60],[50,60],[62,60]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.4" fill="${on?W:ink}" stroke="${ink}" stroke-width="1.4"/>`).join("")}`,
+   score:`<rect x="28" y="33" width="44" height="30" rx="4" fill="${on?"#0B132B":"none"}" stroke="${ink}" stroke-width="2"/><text x="50" y="55" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="17" fill="${on?"#FF8A4C":ink}">25</text><path d="M40 63v6M60 63v6" stroke="${ink}" stroke-width="2"/>`,
+   bowl:`<path d="M29 46h42a21 21 0 0 1-42 0z" fill="${W}" stroke="${ink}" stroke-width="2"/><path d="M42 38c0-5 4-5 4-10M54 38c0-5 4-5 4-10" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+   plane:`<path d="M45 53 28 46l2-4 17 2 10-12c2-2 6-2 6 2l-2 4-11 10 2 16-4 2-5-13z" fill="${W}" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/>`,
+   film:`<circle cx="50" cy="50" r="17" fill="${W}" stroke="${ink}" stroke-width="2"/>${[0,72,144,216,288].map(a=>`<circle cx="50" cy="40" r="3.6" fill="${ink}" transform="rotate(${a} 50 50)"/>`).join("")}<circle cx="50" cy="50" r="2.4" fill="${ink}"/>`};
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="pinGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE7A3"/><stop offset=".45" stop-color="#E2B04A"/><stop offset="1" stop-color="#A87A22"/></linearGradient></defs>
+   <g fill="${metal}" stroke="${rim}" stroke-width="2" ${dash}>${shapes[p.shape]}</g><g fill="${enamel}" stroke="${on?"#8C6A1F":"none"}" stroke-width="1.2">${inner[p.shape]}</g>
+   ${on?`<path d="M26 26q12-10 26-10" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>`:""}${G[p.glyph]}</svg>`;
 }
 function earnedPatches(){
   const days=Object.keys(J.days).sort(), got=new Set();
@@ -1623,19 +1628,30 @@ function earnedPatches(){
   return got;
 }
 function checkPatches(){const got=earnedPatches(),seen=new Set(store.get("patches",[])),fresh=PATCHES.filter(p=>got.has(p.k)&&!seen.has(p.k));
-  if(!fresh.length)return;store.set("patches",[...got]);if(seen.size||fresh.length)setTimeout(()=>patchStamp(fresh[0]),900)}
+  if(!fresh.length)return;store.set("patches",[...got]);setTimeout(()=>patchStamp(fresh[0]),900)}
 function patchStamp(p){let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
-  toast("Patch earned: "+p.n);if(rm||document.querySelector(".wa,.ins-back"))return;
-  const el=document.createElement("div");el.className="pstamp";el.setAttribute("aria-hidden","true");el.innerHTML=`${patchSVG(p,true)}<b>${esc(p.n)}</b><span>Patch earned</span>`;
+  toast("Pin earned: "+p.n);if(rm||document.querySelector(".wa,.ins-back"))return;
+  const el=document.createElement("div");el.className="pstamp";el.setAttribute("aria-hidden","true");el.innerHTML=`${patchSVG(p,true)}<b>${esc(p.n)}</b><span>Pin earned</span>`;
   document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function patchesHTML(){const got=earnedPatches();
-  return `<section><div class="sec-head"><h2>Mission patches</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
+  return `<section><div class="sec-head"><h2>Pin collection</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
    <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
-/* Hidden discovery: the Home patch keeps a station log */
-const STATION_LOG=["Station log: all crew accounted for. Fuel up.","Station log: the sky is clear over Seal Beach tonight.","Station log: every serve is a launch window.",
- "Station log: recovery is part of the mission, not after it.","Station log: road crews, pack the kit before the bus.","Station log: you found the log. Tell no one. (Tell your setter.)"];
+/* Hidden discovery: tap the Home patch for the coach's timeout whiteboard */
+const STATION_LOG=["Timeout: talk on every ball.","Timeout: first contact sets the tone.","Timeout: next ball. Let the last one go.",
+ "Timeout: serve tough, pass to target.","Timeout: recovery tonight wins Saturday's fifth set.","Timeout: you found the whiteboard. Tell your setter."];
 let logIdx=0;
-function greeting(){const h=new Date().getHours();return h<5?"Late night":h<12?"Good morning":h<17?"Good afternoon":"Good evening"}
+/* Living greeting: reads the clock, the schedule and today's check-in */
+function greeting(first){const h=new Date().getHours(),t=isoToday(),checked=rScore(jGet(t).ready)!=null,next=nextMatch(),days=next?daysBetween(t,next.d):99;
+  const part=h<5?"Late night":h<12?"Good morning":h<17?"Good afternoon":"Good evening";
+  let tail;
+  if(h<5||h>=22)tail="Recovery is a rep too. Get to bed.";
+  else if(!checked&&h<12)tail="First touch: check in.";
+  else if(days===1)tail=`Match tomorrow ${next.home?"vs":"at"} ${next.opp.replace("LOVB ","")}. Fuel up tonight.`;
+  else if(days===2&&!next.home)tail="Road trip soon. Pack the kit.";
+  else if(checked&&h<12)tail="Side out. Now fuel the day.";
+  else if(h<17)tail="Eat before practice, not after hunger hits.";
+  else tail="Recover well. Next ball.";
+  return {part,tail};}
 
 /* ===== Views ===== */
 function vOnboard(){
@@ -1689,9 +1705,9 @@ function vHome(){
   ];
   return `<div class="view">
    <header class="hero">
-    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${profile.position==="Staff"?esc(posLabel()):profile.num?"Los Angeles Orbit · #"+esc(profile.num):"Los Angeles Orbit"}</span><span class="eyebrow">${dateLine}</span></div></div>
+    <div class="hero-top">${PATCH}<div style="text-align:right;display:flex;flex-direction:column;gap:6px"><span class="eyebrow"><span class="module" style="color:inherit;opacity:.95">Center court</span>${profile.position==="Staff"?"":profile.num?" · #"+esc(profile.num):""}</span><span class="eyebrow">${dateLine}</span></div></div>
     <p class="wordmark">Orbit</p><p class="wordmark-sub">Performance</p>
-    <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`${greeting()}, ${esc(first)}.`}</p>
+    <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`${(g=>`${g.part}, ${esc(first)}.<span class="hello-sub">${esc(g.tail)}</span>`)(greeting(first))}`}</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
    </header>
@@ -1945,7 +1961,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><p class="eyebrow module">The galley</p><h1 style="margin-top:4px">Fuel</h1></div>
+  return `<div class="view"><div><p class="eyebrow module">The training table</p><h1 style="margin-top:4px">Fuel</h1></div>
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -1973,7 +1989,7 @@ function vMe(){
   return `<div class="view">
    <section class="prof" aria-label="Your profile">
     <div class="grain" aria-hidden="true"></div><span class="bignum ${big.length>2?"sm":""}" aria-hidden="true">${esc(big)}</span>
-    <span class="ey">Crew quarters</span>
+    <span class="ey">On the roster</span>
     <span class="first">${esc(profile.first)}</span>
     <h1 aria-label="${esc(profile.name)}" style="font-size:${lastSize}rem">${esc(last)}</h1>
     <div class="rule" aria-hidden="true"></div>
@@ -2053,7 +2069,7 @@ function vJournal(){
   const d=jGet(jDate), today=isoToday();
   const list=[...d.entries].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const m=SCHEDULE.find(x=>x.d===jDate);
-  return `<div class="view"><div><p class="eyebrow module">Flight log</p><h1 style="margin-top:4px">Performance Journal</h1></div>
+  return `<div class="view"><div><p class="eyebrow module">Scorebook</p><h1 style="margin-top:4px">Performance Journal</h1></div>
    <div class="datebar"><button class="btn ghost sm" data-jday="-1" aria-label="Previous day">‹</button><b>${jLabel(jDate)}</b><button class="btn ghost sm" data-jday="1" aria-label="Next day" ${jDate>=today?"disabled":""}>›</button></div>
    ${m?`<p class="chip ${m.home?"accent":"violet"}" style="align-self:flex-start">Match day: ${m.home?"vs":"at"} ${esc(m.opp)}</p>`:""}
    <div class="card stack">
