@@ -193,6 +193,16 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 /* prehab check rows */
 .ex{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:11px 0;border-bottom:1px solid rgb(11 19 43 / .09)}
 .ex:last-child{border-bottom:0}
+.mpick{display:block;position:relative}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mpick select{appearance:none;-webkit-appearance:none;width:100%;background:#fff;color:var(--ink);border:1.5px solid rgb(11 19 43 / .16);border-radius:12px;padding:10px 36px 10px 12px;font-weight:700;font-size:.92rem;line-height:1.25;text-overflow:ellipsis;cursor:pointer}
+.mpick::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:2px solid #D9480F;border-bottom:2px solid #D9480F;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.mpick select:focus{border-color:#FF5E1A;outline:2px solid rgb(255 94 26 / .25)}
+.pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
+.pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
+.pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pdays button .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#1F9D63;margin-left:6px;vertical-align:1px}
+.pphase{font:700 .68rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#C2410C;padding:14px 0 2px;border-bottom:1px solid rgb(11 19 43 / .09)}
 .ex b{color:var(--ink)}
 .ex .dose{font:700 .72rem var(--mono);color:#D9480F;align-self:start;text-align:right}
 .ex p{grid-column:1/-1;font-size:.84rem;color:var(--ink-muted)}
@@ -1435,34 +1445,14 @@ function todayRemCard(){const L=remToday().sort((a,b)=>remNext(a)-remNext(b));if
   return `<section><div class="sec-head"><h2>Today's reminders</h2><button class="linkbtn" data-tab="at">Training room</button></div><div class="card" style="padding-block:2px">${L.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${clock(+r.time.split(":")[0]*60+ +r.time.split(":")[1])}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}</div>`).join("")}</div></section>`}
 function vAT(){
   const anns=atAnns();
-  const sorted=[...REMS].sort((a,b)=>remNext(a)-remNext(b));
   const L=LESSONS.filter(l=>l.tr==="at");
   return `<div class="view"><div><p class="eyebrow"><span class="module">The tape table</span> · ${esc(CONFIG.atName)}</p><h1 style="margin-top:4px">Training room</h1></div>
-   <section><h2>See ${esc(CONFIG.atFirst)}</h2><div class="card stack">
-    ${CONFIG.atHours?`<div class="row" style="align-items:flex-start"><span class="chip violet">Hours</span><p style="font-size:.9rem">${esc(CONFIG.atHours)}</p></div>`:""}
-    ${CONFIG.atBookingLink?`<a class="btn block" href="${CONFIG.atBookingLink}" target="_blank" rel="noopener">Book a time with ${esc(CONFIG.atFirst)}</a>`:""}
-    ${!CONFIG.atHours&&!CONFIG.atBookingLink?`<p>Booking and hours coming soon.</p>`:""}
-    <button class="linkbtn" data-lesson="a-when" style="align-self:flex-start">When to see the athletic trainer ›</button></div></section>
-   <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${CONFIG.atSheetCSV&&SHEET.at&&SHEET.at.fetched?`<span class="stamp">Synced ${syncAgo(SHEET.at.fetched)}</span>`:anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
-    ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
-   <section><h2>Prehab & rehab</h2>
-    ${atPrograms().length?atPrograms().map(pg=>{const done=pg.ex.filter((_,i)=>progDone(pg.id,i)).length;return `<div class="plan">${planHead(esc(pg.name),`${done}/${pg.ex.length} TODAY`)}
-      ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([progWho(pg),pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
-      ${pg.ex.map((x,i)=>{const on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`}).join("")}</div>`}).join("")
+   <section><h2>Your programs</h2>
+    ${atPrograms().length?atPrograms().map(progCard).join("")
      :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}
     ${myCode()&&profile.position!=="Staff"?`<p class="muted" style="font-size:.84rem;margin-top:10px">Your program code: <b class="nums">${myCode()}</b>. ${esc(CONFIG.atFirst)} uses it to post a program just for you.</p>`:""}</section>
-   <section><div class="sec-head"><h2>My reminders</h2><span class="stamp">Saved on this phone</span></div>
-    ${sorted.length?`<div class="card" style="padding-block:2px">${sorted.map(r=>`<div class="item"><div class="meal-top"><b>${esc(r.title)}</b><span class="nums">${esc(remWhen(r))}</span></div>${r.note?`<p class="muted" style="font-size:.86rem">${esc(r.note)}</p>`:""}
-      <div class="row" style="flex-wrap:wrap;gap:8px">${IN_CLAUDE?"":`<button class="btn sm" data-remcal="${r.id}">Add to calendar</button>`}<a class="btn ${IN_CLAUDE?"":"ghost "}sm" href="${gcalHref(r)}" target="_blank" rel="noopener">Google Calendar</a><button class="btn ghost sm" data-remdel="${r.id}">Delete</button></div></div>`).join("")}</div>`:""}
-    ${remDraft?`<form class="card stack" id="rem-form">
-      <div class="choice mini">${REM_PRESETS.map(t=>`<button type="button" data-rempreset="${esc(t)}" aria-pressed="${remDraft.title===t}">${esc(t)}</button>`).join("")}</div>
-      <label for="rem-title">Reminder<input id="rem-title" value="${esc(remDraft.title||"")}" placeholder="e.g. Ankle rehab"></label>
-      <div class="namerow"><label for="rem-date">Date<input id="rem-date" type="date" value="${remDraft.date}"></label><label for="rem-time">Time<input id="rem-time" type="time" value="${remDraft.time}"></label></div>
-      <div class="stack" style="gap:6px"><span class="eyebrow">Repeat</span><div class="choice mini" data-remrep="1">${[["none","Once"],["daily","Every day"],["weekly","Every week"]].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${remDraft.repeat===v}">${l}</button>`).join("")}</div></div>
-      <label for="rem-note">Note (optional)<input id="rem-note" value="${esc(remDraft.note||"")}" placeholder="e.g. Bring tape, 3 sets each side"></label>
-      <button class="btn block" type="submit">Save reminder</button><button type="button" class="btn ghost block" data-remcancel="1">Cancel</button></form>`
-     :`<button class="btn block ${sorted.length?"ghost":""}" data-remnew="1">Add a reminder</button>`}
-    <p class="stamp">Calendar reminders alert you 10 min before.</p></section>
+   <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${CONFIG.atSheetCSV&&SHEET.at&&SHEET.at.fetched?`<span class="stamp">Synced ${syncAgo(SHEET.at.fetched)}</span>`:anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
+    ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
    <section><h2>Learn</h2><div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div></section></div>`;
 }
 function atClick(b){
@@ -1473,6 +1463,7 @@ function atClick(b){
   if(b.closest("[data-remrep]")){remSync();remDraft.repeat=ds.v;render();return true}
   if(ds.remcal){const r=REMS.find(x=>x.id===ds.remcal);if(r)remCalendar(r);return true}
   if(ds.remdel){REMS=REMS.filter(x=>x.id!==ds.remdel);store.set("rems",REMS);render();toast("Reminder deleted");return true}
+  if(ds.progday!==undefined){progDaySel[ds.progday]=ds.day;render();return true}
   if(ds.prog){const t=isoToday(),d=jGet(t);d.prehab=d.prehab||[];d.prehab=d.prehab.includes(ds.prog)?d.prehab.filter(x=>x!==ds.prog):[...d.prehab,ds.prog];if(jPut(t,d)){render();if(d.prehab.includes(ds.prog))logStamp("Logged")}return true}
   return false;
 }
@@ -1589,13 +1580,32 @@ function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<
 function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV)}
 /* Programs tab: one row per exercise; rows sharing a Program name form one program, in row order */
 function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
-  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iDy=col("day"),iPh=col("phase"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
   if(iP<0||iE<0)return null;const out=[],by={};const g=(r,i)=>i<0?"":(r[i]||"").trim();
   for(const r of R.slice(1)){const name=g(r,iP),n=g(r,iE);if(!name||!n||g(r,iS).toLowerCase()==="no")continue;
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
     if(!by[id]){by[id]={id,name,who:g(r,iF),when:g(r,iW),note:"",ex:[]};out.push(by[id])}
-    const v=g(r,iV);by[id].ex.push({n,dose:g(r,iD),cue:g(r,iC),video:/^https:\/\//i.test(v)?v:""})}
+    const v=g(r,iV);by[id].ex.push({n,dose:g(r,iD),cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
   return out}
+/* Phase: Pre-practice / Practice / Post-practice (anything else shown as typed). Day: "Day 1", "Mon", "Week 2 Day 3"... */
+function progPhase(v){const t=(v||"").trim().toLowerCase();if(!t)return "";if(/^pre/.test(t))return "Pre-practice";if(/^post/.test(t))return "Post-practice";if(/^(practice|during|in[- ]practice)/.test(t))return "Practice";return v.trim()}
+const PHASE_ORDER={"Pre-practice":0,"Practice":1,"Post-practice":2};
+const WEEKDAYS=["sun","mon","tue","wed","thu","fri","sat"];
+let progDaySel={};
+function progDays(pg){const D=[];pg.ex.forEach(x=>{if(!D.includes(x.day))D.push(x.day)});return D}
+function progCurDay(pg){const D=progDays(pg);if(D.length<2)return D[0]||"";if(D.includes(progDaySel[pg.id]))return progDaySel[pg.id];
+  const wd=WEEKDAYS[new Date().getDay()];const m=D.find(d=>d.toLowerCase().startsWith(wd));return m!==undefined?m:D[0]}
+function progCard(pg){const D=progDays(pg),cur=progCurDay(pg);
+  const idx=pg.ex.map((x,i)=>i).filter(i=>pg.ex[i].day===cur);
+  const done=idx.filter(i=>progDone(pg.id,i)).length;
+  const dayDone=d=>{const I=pg.ex.map((x,i)=>i).filter(i=>pg.ex[i].day===d);return I.length&&I.every(i=>progDone(pg.id,i))};
+  const phases=[];idx.forEach(i=>{const ph=pg.ex[i].phase;if(!phases.includes(ph))phases.push(ph)});
+  phases.sort((a,b)=>(a in PHASE_ORDER?PHASE_ORDER[a]:3)-(b in PHASE_ORDER?PHASE_ORDER[b]:3));
+  const exHTML=i=>{const x=pg.ex[i],on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`};
+  return `<div class="plan">${planHead(esc(pg.name),`${done}/${idx.length} TODAY`)}
+    ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([progWho(pg),pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
+    ${D.length>1?`<div class="pdays" role="group" aria-label="Program day">${D.map(d=>`<button type="button" data-progday="${esc(pg.id)}" data-day="${esc(d)}" aria-pressed="${d===cur}">${esc(d||"Other")}${dayDone(d)?'<span class="dot" aria-label="done today"></span>':""}</button>`).join("")}</div>`:""}
+    ${phases.map(ph=>`${ph&&(phases.length>1||ph)?`<div class="pphase">${esc(ph)}</div>`:""}${idx.filter(i=>pg.ex[i].phase===ph).map(exHTML).join("")}`).join("")}</div>`}
 function allPrograms(){return CONFIG.programsSheetCSV&&SHEET.prog?SHEET.prog.rows:AT_PROGRAMS}
 /* "For" column: blank/Everyone, positions (Outside, Opposite, Middle, Setter, Libero, Pins), or a private athlete code. Several allowed: "Middle, Setter". */
 /* Each athlete's program code: first initial + first three letters of last name (Jordan Lee -> JLEE) */
@@ -1743,7 +1753,7 @@ function vHome(){
    </header>
    ${(()=>{const m=todayMatch();return m?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))} · First serve ${esc(matchLocal(m))}</span></div><button class="btn sm" data-go="fuel" data-seg="match">Plan</button></div>`:""})()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
-   ${planHomeCard()}${matchDayCard()}${roadTripCard()}${todayRemCard()}
+   ${planHomeCard()}${matchDayCard()}${roadTripCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
    ${feat?`<section><div class="sec-head"><h2>Announcements</h2><span class="stamp">Updated ${fmtDate(DATA.updated)}</span></div>
@@ -1932,10 +1942,10 @@ function planHTML(){
      if(x.bank==="during")return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
      const pick=pickFor(type,i,x.bank,iso),done=pick&&isToday&&loggedOn(iso,pick.n),n=mealOptions(x.bank).length;
      return `<div class="step"><span class="when">${clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}${x.plate?` · ${PLATE[x.plate]}`:""}</span>
-      ${pick?`<b>${esc(pick.n)}</b>`:`<b>No option fits your allergies here</b><p>Ask your dietitian for a swap.</p>`}
+      ${pick?(n>1?`<label class="mpick"><span class="sr">Choose ${esc(x.n.toLowerCase())}</span><select data-planpick="${iso}|${type}|${PLANPREF.pt}|${i}|${x.bank}">${mealOptions(x.bank).map((o,j)=>`<option value="${j}" ${o===pick?"selected":""}>${esc(o.n)}</option>`).join("")}</select></label>`:`<b>${esc(pick.n)}</b>`):`<b>No option fits your allergies here</b><p>Ask your dietitian for a swap.</p>`}
       ${BANKNOTE[x.bank]?`<p>${BANKNOTE[x.bank]}</p>`:""}
       ${pick&&pick.r?`<details class="mdet"><summary>How to make it</summary><p>${esc(pick.r)}</p>${pick.g&&pick.g.length?`<p class="stamp">You'll need: ${esc(pick.g.map(k=>(ING[k]||[k])[0].toLowerCase()).join(", "))}</p>`:""}</details>`:""}
-      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${n>1?`<button class="btn ghost sm" data-planswap="${iso}:${type}:${PLANPREF.pt}:${i}">Swap</button>`:""}${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
+      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
   </div>
   ${grocery}
   <p class="src">Thomas, Erdman & Burke, ACSM/AND/DC position stand 2016; Kerksick et al., ISSN nutrient timing 2017; USOPC & University of Colorado Athlete's Plates</p>`;
@@ -2315,7 +2325,8 @@ document.addEventListener("submit",e=>{
     location.href=`mailto:${CONFIG.feedbackEmail}?subject=${encodeURIComponent("LA Orbit app · "+type)}&body=${encodeURIComponent(body)}`;
     draft.appFbNote="";draft.appFbType="";setTimeout(render,400);toast("Opening your email app");return}
 });
-document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.planpick){const [iso,type,pt,i,bank]=e.target.dataset.planpick.split("|"),j=+e.target.value;
+  const day=Math.round(new Date(iso+"T12:00:00")/864e5),rot=bank==="pre"||bank==="prebed"?0:1;PLANPREF.sel[iso+":"+type+":"+pt+":"+i]=j-(+i)-Math.floor(day/2)*rot;savePlan();render();return}if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
   if(t.dataset&&t.dataset.ed&&ED){const [i,k]=t.dataset.ed.split(".");ED.announcements[+i][k]=t.value;edStatus();return}
   if(t.id==="q"){draft.q=t.value;const f=$("#faq");if(f)f.innerHTML=faqHTML()}});
