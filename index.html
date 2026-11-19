@@ -850,6 +850,9 @@ addT([["No allergens listed","アレルゲンなし","Nenhum alergênico informa
 ["Personalize your path","あなたのパスをカスタマイズ","Personalize sua trilha"],["optional","任意","opcional"],["stays on this phone","このスマホに保存","fica neste celular"],["Used only to pick lessons. Nothing is sent anywhere.","レッスン選びにのみ使用。どこにも送信されません。","Usado só para escolher aulas. Nada é enviado."],["Units for the sweat test","発汗テストの単位","Unidades do teste de suor"],["What do you want to work on?","取り組みたいことは?","No que você quer trabalhar?"],
 ["Performance & power","パフォーマンス・パワー","Desempenho e potência"],["Build strength","筋力アップ","Ganhar força"],["Iron & energy","鉄・エネルギー","Ferro e energia"],["Bone health","骨の健康","Saúde óssea"],["Game-day stomach","試合日の胃腸","Estômago no dia de jogo"],["Plant-based","植物性中心","Base vegetal"],["Your cycle","あなたの月経周期","Seu ciclo"],["Regular periods","規則的","Menstruação regular"],["Irregular","不規則","Irregular"],["No period 3+ months","3か月以上来ていない","Sem menstruação há 3+ meses"],["On hormonal contraception","ホルモン避妊薬を使用中","Uso contraceptivo hormonal"],["Prefer not to say","答えたくない","Prefiro não dizer"],["Not applicable","該当なし","Não se aplica"],["Planning a pregnancy","妊娠を計画中","Planejando gravidez"],["Pregnant","妊娠中","Grávida"],["Postpartum","産後","Pós-parto"],["Breastfeeding","授乳中","Amamentando"],["Build my path","パスを作る","Montar minha trilha"]]);
 addR([[/^at (LOVB )?(.+)$/,"$2戦(アウェー)","contra $2 (fora)"],[/^vs (LOVB )?(.+)$/,"$2戦(ホーム)","contra $2 (em casa)"],[/^First serve (.+)$/,"ファーストサーブ $1","Primeiro saque $1"],[/^Pre-match meal about (.+), snack about (.+)\.$/,"試合前の食事は$1ごろ、スナックは$2ごろ。","Refeição pré-jogo por volta de $1, lanche por volta de $2."],[/^Road trip continues to (.+) in (\d+) days?\. Pack for both stops\.$/,"遠征は$2日後に$1へ続きます。両方の滞在分を準備しよう。","A viagem continua para $1 em $2 dia(s). Faça a mala para as duas paradas."]]);
+addT([["Language preference","使用言語","Preferência de idioma"],["Sex","性別","Sexo"],["Female","女性","Feminino"],["Male","男性","Masculino"],["Choose female or male","性別を選択してください","Escolha feminino ou masculino"],
+["Starting point: men need about 125 oz (3.7 L) of water a day from food and drinks, about 100 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.","目安:男性は運動を除いて1日約125 oz(3.7 L)の水分が必要で、そのうち約100 ozは飲み物から。練習日は汗で失う分を足しましょう。正確な量は発汗テストでわかります。","Ponto de partida: homens precisam de cerca de 125 oz (3,7 L) de água por dia vindos de alimentos e bebidas, cerca de 100 oz de bebidas, sem contar o exercício. Some as perdas de suor nos dias de treino. Seu teste de suor dá o número real."]]);
+addT([["Saved on this phone only. Staff don't see it unless you send it in a message.","このスマホにのみ保存されます。あなたが送らない限りスタッフには見えません。","Salvo só neste celular. A comissão não vê, a menos que você envie em uma mensagem."]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -859,7 +862,7 @@ function translateDOM(root){if(LANG==="en"||!root)return;const w=document.create
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
  root.querySelectorAll("[placeholder],[aria-label],[title]").forEach(e=>["placeholder","aria-label","title"].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}}))}
-function langPicker(){return `<div class="stack" style="gap:6px"><span class="eyebrow">Language</span><div class="choice mini" data-notr="1">${LANGS.map(([k,l])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" lang="${k}">${l}</button>`).join("")}</div>${LANG==="en"?"":`<p class="stamp">Lessons, recipes, city guides and staff posts stay in English for now.</p>`}</div>`}
+function langPicker(label){return `<div class="stack" style="gap:6px"><span class="eyebrow">${label||"Language"}</span><div class="choice mini" data-notr="1">${LANGS.map(([k,l])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" lang="${k}">${l}</button>`).join("")}</div>${LANG==="en"?"":`<p class="stamp">Lessons, recipes, city guides and staff posts stay in English for now.</p>`}</div>`}
 function setLang(k){LANG=k;store.set("lang",k);document.documentElement.lang=k==="pt"?"pt-BR":k;tabsBuilt=false;render()}
 
 function myAllergens(){return profile?profile.allergies||[]:[]}
@@ -1101,7 +1104,7 @@ function vHydrate(){const t=isoToday(),d=jGet(t),oz=ozOf(d),pct=Math.min(100,Mat
    <div class="choice mini" data-hsize="1">${BOTTLES.map(s=>`<button type="button" data-v="${s}" aria-pressed="${HYD.size===s}">${s} oz</button>`).join("")}</div>
    <span class="eyebrow" style="margin-top:6px">Daily goal</span>
    <div class="choice mini" data-hgoal="1">${HGOALS.map(g=>`<button type="button" data-v="${g}" aria-pressed="${HYD.goal===g}">${g} oz</button>`).join("")}</div>
-   <p class="stamp">Starting point: women need about 91 oz (2.7 L) of water a day from food and drinks, about 74 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.</p>
+   <p class="stamp">${isFemale()?"Starting point: women need about 91 oz (2.7 L) of water a day from food and drinks, about 74 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.":"Starting point: men need about 125 oz (3.7 L) of water a day from food and drinks, about 100 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number."}</p>
    <button class="linkbtn" data-lesson="c-sweat" style="align-self:flex-start">Measure your sweat rate ›</button></div></section>
   <section><h2>Last 7 days</h2><div class="card stack">
    <div class="spark" aria-label="Ounces over the last 7 days">${days.map(x=>{const o=ozOf(jGet(x));return `<span class="${o?"":"none"}" style="height:${o?Math.max(10,Math.min(100,o/HYD.goal*100)):6}%" title="${fmtDate(x)}: ${o} oz"></span>`}).join("")}</div>
@@ -1137,6 +1140,7 @@ function vRecover(){const t=isoToday(),y=jShift(t,-1),iso=recDate===y?y:t;
 const FLOWS=[["","None"],["spot","Spotting"],["light","Light"],["medium","Medium"],["heavy","Heavy"]];
 const CSYM=[["cramps","Cramps"],["bloat","Bloating"],["head","Headache"],["tired","Fatigue"],["mood","Low mood"],["breast","Breast tenderness"],["back","Back pain"],["sleep","Poor sleep"],["crave","Cravings"],["gi","Stomach upset"]];
 let cycDate=null;
+function isFemale(){return !profile||profile.sex!=="male"}
 function cycOf(iso){return jGet(iso).cyc||{flow:"",sym:[]}}
 function isBleed(iso){return ["light","medium","heavy"].includes(cycOf(iso).flow)}
 const dDiff=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
@@ -1601,8 +1605,8 @@ function setupHTML(){
    <p class="muted" style="font-size:.86rem">Used only to pick lessons. Nothing is sent anywhere.</p>
    <div class="stack" style="gap:6px"><span class="eyebrow">Units for the sweat test</span><div class="choice mini" data-ep="unit">${["lb","kg"].map(u=>`<button type="button" data-v="${u}" aria-pressed="${EDU.unit===u}">${u}</button>`).join("")}</div></div>
    <div class="stack" style="gap:6px"><span class="eyebrow">What do you want to work on?</span><div class="choice mini" data-ep="goals" data-multi="1">${GOALS.map(g=>`<button type="button" data-v="${g}" aria-pressed="${EDU.goals.includes(g)}">${g}</button>`).join("")}</div></div>
-   <div class="stack" style="gap:6px"><span class="eyebrow">Your cycle</span><div class="choice mini" data-ep="cycle">${CYCLES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.cycle===v}">${l}</button>`).join("")}</div></div>
-   <div class="stack" style="gap:6px"><span class="eyebrow">Pregnancy & postpartum</span><div class="choice mini" data-ep="stage">${STAGES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.stage===v}">${l}</button>`).join("")}</div></div>
+   ${isFemale()?`   <div class="stack" style="gap:6px"><span class="eyebrow">Your cycle</span><div class="choice mini" data-ep="cycle">${CYCLES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.cycle===v}">${l}</button>`).join("")}</div></div>
+   <div class="stack" style="gap:6px"><span class="eyebrow">Pregnancy & postpartum</span><div class="choice mini" data-ep="stage">${STAGES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.stage===v}">${l}</button>`).join("")}</div></div>`:""}
    <button class="btn block" type="submit">Build my path</button></form>`;
 }
 let learnTab="path", libTrack="core", editPath=false;
@@ -1975,9 +1979,10 @@ function vOnboard(){
   return `<div class="view">
    <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">Orbit</p><p class="wordmark-sub">Performance</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens across the app.</p><div class="grain"></div><div class="horizon"></div></div>
    <form id="onb" class="stack card">
-    ${langPicker()}
+    ${langPicker("Language preference")}
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
-    <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option value="${x}" ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
+    <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option value="${x}" ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-sex">Sex<select id="f-sex"><option value="">Select</option>${[["female","Female"],["male","Male"]].map(([v,l])=>`<option value="${v}" ${p.sex===v?"selected":""}>${l}</option>`).join("")}</select></label></div>
+    <div class="namerow"><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
     <label for="f-area">Where do you live? (optional)<select id="f-area"><option value="">Choose your area</option>${AREAS.map(a=>`<option value="${a.k}" ${p.area===a.k?"selected":""}>${esc(a.n)}</option>`).join("")}<option value="other" ${p.area==="other"?"selected":""}>Somewhere else</option></select></label>
     <label for="f-role" id="role-wrap" ${p.position==="Staff"?"":"hidden"}>Your staff role<input id="f-role" value="${esc(p.role||"")}" placeholder="e.g. Athletic trainer, assistant coach, S&C"></label>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
@@ -2017,7 +2022,7 @@ function vHome(){
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["hydrate","","Hydration","Bottles, ounces, your goal",I.drop],
    ["recover","","Recovery","What helps you bounce back",I.heart],
-   ...(profile.position==="Staff"?[]:[["cycle","","Cycle","Private tracker on this phone",I.cycle]]),
+   ...(isFemale()?[["cycle","","Cycle","Private tracker on this phone",I.cycle]]:[]),
    ["journal","","Journal","Meals, water, training, energy",I.journal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
@@ -2592,7 +2597,8 @@ document.addEventListener("submit",e=>{
     const first=$("#f-first").value.trim(),last=$("#f-last").value.trim(),name=(first+" "+last).trim();
     if(!first||!last){toast("Add your first and last name");return}
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
-    const pos=$("#f-pos").value;profile={name,first,last,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
+    const pos=$("#f-pos").value,sex=$("#f-sex").value;if(!sex){toast("Choose female or male");return}
+    profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
     store.set("profile",profile);draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
