@@ -679,12 +679,12 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function isoToday(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function jShift(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function fmtDate(iso){if(!iso)return "";const d=new Date(iso+"T12:00:00");return isNaN(d)?iso:d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}
+function fmtDate(iso){if(!iso)return "";const d=new Date(iso+"T12:00:00");return isNaN(d)?iso:d.toLocaleDateString(LOCALE(),{weekday:"short",month:"short",day:"numeric"})}
 function daysBetween(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5)}
-function clock(min){min=((min%1440)+1440)%1440;let h=Math.floor(min/60),m=min%60;const ap=h>=12?"pm":"am";h=h%12||12;return h+(m?":"+String(m).padStart(2,"0"):"")+" "+ap}
+function clock(min){min=((min%1440)+1440)%1440;let h=Math.floor(min/60),m=min%60;if(LANG!=="en")return h+":"+String(m).padStart(2,"0");const ap=h>=12?"pm":"am";h=h%12||12;return h+(m?":"+String(m).padStart(2,"0"):"")+" "+ap}
 function sb(t,big){t=String(t);return `<span class="sb${big?" big":""}"><span class="sb-ghost" aria-hidden="true">${t.replace(/[0-9]/g,"8")}</span><span class="sb-on">${t}</span></span>`}
 function mmdd(iso){const d=new Date(iso+"T12:00:00");return String(d.getMonth()+1).padStart(2,"0")+"."+String(d.getDate()).padStart(2,"0")}
-function dow(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"short"}).toUpperCase()}
+function dow(iso){return new Date(iso+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"short"}).toUpperCase()}
 /* ===== Orbit backgrounds: decorative layers behind every screen, drawn as SVG in the current scheme's ink ===== */
 const BACKGROUNDS=[
  {k:"stars",n:"Starfield",d:"A quiet night sky"},
@@ -718,7 +718,133 @@ function applyBg(){const k=prefs.bg||"stars";document.documentElement.style.setP
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyBg())}catch(e){}
 function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large);applyBg()}
 function todayMatch(){const t=isoToday();return SCHEDULE.find(m=>m.d===t)||null}
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
+function toast(m){const t=$("#toast");t.textContent=tr(m);t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
+/* ===== Languages: English, 日本語, Português (Brasil). UI is translated after each render; lessons, recipes, city guides and staff posts stay as written. ===== */
+let LANG=store.get("lang","en");
+try{document.documentElement.lang=LANG==="pt"?"pt-BR":LANG}catch(e){}
+const LANGS=[["en","English"],["ja","日本語"],["pt","Português (Brasil)"]];
+function LOCALE(){return {ja:"ja-JP",pt:"pt-BR"}[LANG]||"en-US"}
+const I18N={ja:{},pt:{}},I18R={ja:[],pt:[]};
+function addT(rows){rows.forEach(([en,ja,pt])=>{I18N.ja[en]=ja;I18N.pt[en]=pt})}
+function addR(rows){rows.forEach(([re,ja,pt])=>{I18R.ja.push([re,ja]);I18R.pt.push([re,pt])})}
+addT([
+/* navigation */
+["Home","ホーム","Início"],["Fuel","栄養","Alimentação"],["Training","トレーニング","Treino"],["Learn","学ぶ","Aprender"],["Me","マイページ","Perfil"],
+["More","その他","Mais"],["Meal plan","食事プラン","Plano alimentar"],["Game-day fuel","試合日の栄養","Alimentação no dia de jogo"],["Travel fuel","遠征の栄養","Alimentação em viagem"],["Hydration","水分補給","Hidratação"],["Recovery","リカバリー","Recuperação"],["Cycle","月経周期","Ciclo"],["Journal","日誌","Diário"],["Constellations","星座","Constelações"],["App feedback","アプリへの意見","Feedback do app"],["Season","シーズン","Temporada"],["Check-in","チェックイン","Check-in"],
+/* onboarding + profile */
+["Athlete setup","アスリート設定","Cadastro da atleta"],["Welcome to the Orbit. Takes about a minute.","Orbitへようこそ。約1分で完了します。","Bem-vinda ao Orbit. Leva cerca de um minuto."],["Your answers flag allergens across the app.","回答内容はアプリ全体のアレルゲン表示に使われます。","Suas respostas sinalizam alergênicos em todo o app."],
+["First name","名","Nome"],["Last name","姓","Sobrenome"],["Position","ポジション","Posição"],["Select","選択","Selecione"],
+["Outside hitter","アウトサイドヒッター","Ponteira"],["Opposite","オポジット","Oposta"],["Middle blocker","ミドルブロッカー","Central"],["Setter","セッター","Levantadora"],["Libero","リベロ","Líbero"],["Staff","スタッフ","Comissão técnica"],
+["Jersey #","背番号","Número da camisa"],["Where do you live? (optional)","お住まいの地域(任意)","Onde você mora? (opcional)"],["Choose your area","地域を選択","Escolha sua região"],["Somewhere else","その他の地域","Outro lugar"],["Your staff role","スタッフの役職","Sua função na comissão"],
+["Food allergies","食物アレルギー","Alergias alimentares"],["Dairy","乳製品","Laticínios"],["Egg","卵","Ovo"],["Wheat/Gluten","小麦/グルテン","Trigo/Glúten"],["Peanut","ピーナッツ","Amendoim"],["Tree nut","ナッツ類","Castanhas"],["Soy","大豆","Soja"],["Fish","魚","Peixe"],["Shellfish","甲殻類・貝類","Frutos do mar"],["Sesame","ごま","Gergelim"],
+["Other allergy or medical diet","その他のアレルギー・食事制限","Outra alergia ou dieta médica"],["Enter orbit","Orbitに入る","Entrar no Orbit"],["e.g. Athletic trainer, assistant coach, S&C","例:アスレティックトレーナー、アシスタントコーチ、S&C","ex.: fisioterapeuta, assistente técnica, preparadora física"],["e.g. celiac, kiwi, low-FODMAP","例:セリアック病、キウイ、低FODMAP","ex.: doença celíaca, kiwi, low-FODMAP"],
+["Language","言語","Idioma"],["Lessons, recipes, city guides and staff posts stay in English for now.","レッスン、レシピ、都市ガイド、スタッフの投稿は現在英語のままです。","Aulas, receitas, guias de cidades e avisos da comissão continuam em inglês por enquanto."],
+["Update your profile.","プロフィールを更新","Atualize seu perfil."],["Save changes","変更を保存","Salvar alterações"],["Cancel","キャンセル","Cancelar"],
+/* welcome */
+["You're in","登録完了","Tudo pronto"],["to the LA Orbit","LA Orbitへ","ao LA Orbit"],["Start here","まずはここから","Comece aqui"],["Do your first check-in","最初のチェックイン","Faça seu primeiro check-in"],["Sleep, soreness, energy, mood and stress in 15 seconds","睡眠・筋肉痛・エネルギー・気分・ストレスを15秒で","Sono, dor muscular, energia, humor e estresse em 15 segundos"],
+["Log a meal","食事を記録","Registre uma refeição"],["Your Performance Journal lights the Fuel moon","パフォーマンス日誌で「食事記録」の月が光ります","Seu Diário de desempenho acende a lua Refeições"],["Build your path","学習パスを作る","Monte sua trilha"],["Lessons picked for you and your position","あなたとポジションに合わせたレッスン","Aulas escolhidas para você e sua posição"],["Meet Emma","Emmaを紹介","Conheça a Emma"],["Athletic training: your programs","アスレティックトレーニング:あなたのプログラム","Treinamento atlético: seus programas"],["Go to Home","ホームへ","Ir para o início"],
+/* home */
+["Center court","センターコート","Quadra central"],["Your orbit","あなたのオービット","Sua órbita"],["Fuel log","食事記録","Refeições"],["Hydrate","水分補給","Hidratação"],["Recover","リカバリー","Recuperação"],["Sleep 7h+","睡眠7時間+","Sono 7h+"],
+["Recovery is a rep too. Get to bed.","リカバリーも練習のうち。もう寝よう。","Recuperar também é treino. Hora de dormir."],["First touch: check in.","まずはチェックインから。","Primeiro toque: faça o check-in."],["Road trip soon. Pack the kit.","もうすぐ遠征。キットを準備しよう。","Viagem chegando. Arrume o kit."],["Side out. Now fuel the day.","サイドアウト。さあ1日の栄養を。","Side out. Agora abasteça o dia."],["Eat before practice, not after hunger hits.","空腹になる前に、練習前に食べよう。","Coma antes do treino, não depois que a fome bater."],["Recover well. Next ball.","しっかり回復。次の1本へ。","Recupere bem. Próxima bola."],
+["Today's meal plan","今日の食事プラン","Plano alimentar de hoje"],["Practice day","練習日","Dia de treino"],["Rest day","休養日","Dia de descanso"],["Two-a-day","二部練","Treino duplo"],["Match day","試合日","Dia de jogo"],["Plan","プラン","Plano"],["Next match","次の試合","Próximo jogo"],["T-minus","試合まで","Faltam"],["days","日","dias"],["Game-day plan","試合日プラン","Plano do dia de jogo"],["Full season","全日程","Temporada completa"],
+["This week's constellation","今週の星座","Constelação da semana"],["Announcements","お知らせ","Avisos"],["That's the day","今日はここまで","Dia concluído"],["Eat to appetite and hydrate. Plan tomorrow tonight.","食欲に合わせて食べ、水分補給を。明日の計画は今夜のうちに。","Coma conforme a fome e hidrate-se. Planeje amanhã hoje à noite."],
+/* fuel */
+["The training table","トレーニングテーブル","Mesa de treino"],["Home game","ホーム戦","Jogo em casa"],["Road game","アウェー戦","Jogo fora"],["Travel","遠征","Viagem"],["Eating out","外食","Comer fora"],["At home","自炊","Em casa"],["TODAY","今日","HOJE"],["Today","今日","Hoje"],["Practice","練習","Treino"],["Today is a…","今日は…","Hoje é…"],["Rest / light","休養/軽め","Descanso/leve"],["Practice time","練習時間","Horário do treino"],["Morning","午前","Manhã"],["Midday","昼","Meio-dia"],["Afternoon","午後","Tarde"],["Vegetarian","ベジタリアン","Vegetariano"],
+["Breakfast","朝食","Café da manhã"],["Lunch","昼食","Almoço"],["Dinner","夕食","Jantar"],["Pre-practice","練習前","Pré-treino"],["Post-practice","練習後","Pós-treino"],["Before bed","就寝前","Antes de dormir"],["Practice plate","練習日のプレート","Prato de treino"],["Easy plate","軽めのプレート","Prato leve"],["Match plate","試合日のプレート","Prato de jogo"],
+["How to make it","作り方","Como preparar"],["Log it","記録","Registrar"],["Logged ✓","記録済み ✓","Registrado ✓"],["Build my grocery list for the week","1週間の買い物リストを作る","Montar minha lista de compras da semana"],["Hide grocery list","買い物リストを閉じる","Ocultar lista de compras"],["Show my prep plan (batch-cook)","作り置きプランを見る","Ver meu plano de preparo (marmitas)"],["Hide prep plan","作り置きプランを閉じる","Ocultar plano de preparo"],["Plan a day this week","今週の1日を計画","Planejar um dia desta semana"],
+["Carbs + protein + fruit.","炭水化物+たんぱく質+果物。","Carboidrato + proteína + fruta."],["Quick, familiar carbs.","食べ慣れた素早い炭水化物。","Carboidratos rápidos e conhecidos."],["Water every break. Sports drink if long or hot.","休憩ごとに水を。長時間や暑い日はスポーツドリンクを。","Água em toda pausa. Isotônico se for longo ou quente."],["Carbs + protein within an hour.","1時間以内に炭水化物+たんぱく質。","Carboidrato + proteína em até uma hora."],["Protein for overnight repair.","夜間の回復のためのたんぱく質。","Proteína para a recuperação durante a noite."],
+["No option fits your allergies here","ここにはアレルギーに合うメニューがありません","Nenhuma opção serve para suas alergias aqui"],["Ask your dietitian for a swap.","管理栄養士に代わりを相談してください。","Peça uma troca à sua nutricionista."],
+["Home game day","ホーム戦の日","Dia de jogo em casa"],["Road game day","アウェー戦の日","Dia de jogo fora"],["Pre-match meal","試合前の食事","Refeição pré-jogo"],["After the match","試合後","Depois do jogo"],["First serve","ファーストサーブ","Primeiro saque"],["Between sets","セット間","Entre os sets"],["Within an hour","1時間以内","Em até uma hora"],["Next morning","翌朝","Na manhã seguinte"],["Day before","前日","Véspera"],["Travel day","移動日","Dia de viagem"],["Hotel breakfast","ホテルの朝食","Café da manhã no hotel"],["Lunch out","外での昼食","Almoço fora"],["Top-off snack","補給スナック","Lanche de reforço"],["Pack & go","準備して出発","Arrumar e sair"],["Travel home","帰路","Volta para casa"],["Refill","補給","Reabastecer"],
+["Airport & flight","空港と機内","Aeroporto e voo"],["Road kit","遠征キット","Kit de viagem"],["Heading east","東への移動","Indo para o leste"],["Ordering on the road","遠征先での注文","Pedindo na estrada"],["Coming road trips","今後の遠征","Próximas viagens"],["City food guides","都市別フードガイド","Guias de comida por cidade"],["Airport orders","空港での注文","Pedidos no aeroporto"],["On the plane","機内","No avião"],["Dining map ›","飲食店マップ ›","Mapa de restaurantes ›"],
+["Where do you live? Recommendations adapt to your area.","お住まいの地域は?おすすめが地域に合わせて変わります。","Onde você mora? As recomendações se adaptam à sua região."],["Fast staples and recipes for the days between road trips.","遠征の合間に使える定番食材とレシピ。","Básicos rápidos e receitas para os dias entre viagens."],["Grocery-run staples","買い出しの定番","Básicos do mercado"],["Batch-cook once","まとめて作り置き","Cozinhe uma vez para a semana"],["How to order near home and practice so it works for training and matches.","練習や試合に合う、自宅・練習場近くでの注文のしかた。","Como pedir perto de casa e do treino de um jeito que funcione para treinos e jogos."],
+/* training */
+["The tape table","テーピング台","Mesa de bandagem"],["Training room","トレーニングルーム","Sala de treino"],["Your programs","あなたのプログラム","Seus programas"],["Emma's programs will appear here.","Emmaのプログラムがここに表示されます。","Os programas da Emma aparecerão aqui."],["Your program code:","あなたのプログラムコード:","Seu código de programa:"],[". Emma uses it to post a program just for you.","。Emmaはこのコードであなた専用のプログラムを配信します。",". A Emma usa esse código para postar um programa só para você."],
+["From Emma","Emmaから","Da Emma"],["No announcements from Emma yet.","Emmaからのお知らせはまだありません。","Ainda não há avisos da Emma."],["Open","開く","Abrir"],["Mark done","完了にする","Marcar como feito"],["Done today ✓","今日完了 ✓","Feito hoje ✓"],["Watch demo ›","デモを見る ›","Ver demonstração ›"],["Just for you","あなた専用","Só para você"],["Everyone","全員","Todas"],
+/* learn */
+["Film room","フィルムルーム","Sala de vídeo"],["My path","マイパス","Minha trilha"],["Library","ライブラリ","Biblioteca"],["Tools","ツール","Ferramentas"],["Quick answers","クイックアンサー","Respostas rápidas"],["Your path","あなたのパス","Sua trilha"],["Edit","編集","Editar"],["Your plates","あなたのプレート","Seus pratos"],["Easy / rest day","軽め/休養日","Dia leve/descanso"],["Match or two-a-day","試合・二部練","Jogo ou treino duplo"],
+["Fuel basics","栄養の基本","Fundamentos da alimentação"],["Female athlete health","女性アスリートの健康","Saúde da atleta"],["Your position","あなたのポジション","Sua posição"],["Pregnancy & postpartum","妊娠・産後","Gestação e pós-parto"],["Supplements","サプリメント","Suplementos"],["Athletic training","アスレティックトレーニング","Treinamento atlético"],
+["Supplement check","サプリメントチェック","Checagem de suplemento"],["Sweat test","発汗テスト","Teste de suor"],["Product","製品","Produto"],["Brand","ブランド","Marca"],["Why you want it","使いたい理由","Por que você quer usar"],["Third-party certified?","第三者認証はある?","Tem certificação independente?"],["No","いいえ","Não"],["Not sure","わからない","Não sei"],["Does it say or include any of these?","次のいずれかの表示・成分はある?","Diz ou contém algum destes?"],["Pre-workout or stimulants","プレワークアウト・刺激物","Pré-treino ou estimulantes"],["Proprietary blend","独自配合(成分非公開)","Blend proprietário"],["Fat burner / weight loss","脂肪燃焼・減量","Termogênico/emagrecedor"],["Muscle builder / testosterone","筋肉増強・テストステロン","Construtor muscular/testosterona"],["Imported or bought online from an unknown seller","輸入品・不明な販売者からのネット購入","Importado ou comprado online de vendedor desconhecido"],["Check it","チェックする","Verificar"],
+["Weight before (lb)","練習前の体重 (lb)","Peso antes (lb)"],["Weight after (lb)","練習後の体重 (lb)","Peso depois (lb)"],["Drank during (oz)","練習中に飲んだ量 (oz)","Bebeu durante (oz)"],["Practice length (min)","練習時間 (分)","Duração do treino (min)"],["Calculate","計算","Calcular"],["Search: protein, hydration, iron, creatine…","検索:たんぱく質、水分、鉄、クレアチン…","Buscar: proteína, hidratação, ferro, creatina…"],
+/* me */
+["On the roster","ロスター","No elenco"],["Home area","居住エリア","Região"],["Allergies","アレルギー","Alergias"],["Edit profile","プロフィール編集","Editar perfil"],["Pin collection","ピンコレクション","Coleção de pins"],["Color scheme","カラー","Tema de cores"],["Background","背景","Fundo"],["Game-day theme","試合日テーマ","Tema de dia de jogo"],["Auto on match days","試合日に自動","Automático em dias de jogo"],["Off","オフ","Desligado"],["Text size","文字サイズ","Tamanho do texto"],["Standard text","標準","Padrão"],["Larger text","大きめ","Maior"],["Your profile","プロフィール","Seu perfil"],["Auto","自動","Automático"],
+["Deep Space by night, Starlight by day","夜はDeep Space、昼はStarlight","Deep Space à noite, Starlight de dia"],["Navy with Orbit Orange","ネイビー×オービットオレンジ","Azul-marinho com laranja Orbit"],["True black, easy on battery","真っ黒でバッテリーにやさしい","Preto puro, economiza bateria"],["White with navy and orange","白×ネイビー×オレンジ","Branco com azul-marinho e laranja"],["All-orange, like the Color Rush kit","Color Rushユニのようなオールオレンジ","Todo laranja, como o uniforme Color Rush"],["Warm sunset cream with navy and orange","夕焼けクリーム×ネイビー×オレンジ","Creme pôr do sol com azul-marinho e laranja"],
+["Starfield","星空","Céu estrelado"],["Orbit rings","惑星の輪","Anéis orbitais"],["LA horizon","LAの地平線","Horizonte de LA"],["Nebula","星雲","Nebulosa"],["Satellite trails","衛星の軌跡","Rastros de satélite"],["Plain","なし","Liso"],["Pin earned","ピン獲得","Pin conquistado"],
+/* journal */
+["Scorebook","スコアブック","Súmula"],["Performance Journal","パフォーマンス日誌","Diário de desempenho"],["Training this day","この日のトレーニング","Treino do dia"],["Rest","休養","Descanso"],["Lift","ウエイト","Musculação"],["Match","試合","Jogo"],["Rehab","リハビリ","Reabilitação"],["Water bottles","ボトル本数","Garrafas de água"],["Meals & drinks","食事・飲み物","Refeições e bebidas"],["logged","件記録","registrados"],["Nothing logged for today yet.","今日はまだ記録がありません。","Nada registrado hoje ainda."],["Log a meal or drink","食事・飲み物を記録","Registrar refeição ou bebida"],["Previous day","前の日","Dia anterior"],["Next day","次の日","Próximo dia"],["One less bottle","ボトルを1本減らす","Uma garrafa a menos"],["One more bottle","ボトルを1本増やす","Uma garrafa a mais"],
+/* check-in */
+["15 seconds","15秒","15 segundos"],["Hours slept last night","昨夜の睡眠時間","Horas de sono ontem à noite"],["Sleep quality","睡眠の質","Qualidade do sono"],["1 Poor · 5 Great","1 悪い · 5 とても良い","1 Ruim · 5 Ótima"],["Soreness","筋肉痛","Dor muscular"],["1 None · 5 Very sore","1 なし · 5 とても痛い","1 Nenhuma · 5 Muita dor"],["Energy","エネルギー","Energia"],["1 Drained · 5 Charged","1 消耗 · 5 満タン","1 Esgotada · 5 Carregada"],["Mood","気分","Humor"],["1 Low · 5 Great","1 落ち込み · 5 最高","1 Para baixo · 5 Ótimo"],["Stress","ストレス","Estresse"],["1 Calm · 5 Very stressed","1 落ち着いている · 5 とても強い","1 Calma · 5 Muito estressada"],
+["Yesterday, what helped you recover? (optional)","昨日、回復に役立ったことは?(任意)","Ontem, o que ajudou na sua recuperação? (opcional)"],["Anything else? (optional)","その他(任意)","Algo mais? (opcional)"],["Save check-in","チェックインを保存","Salvar check-in"],["Update check-in","チェックインを更新","Atualizar check-in"],["Last 7 days","過去7日間","Últimos 7 dias"],["e.g. right shoulder tight, period started, long travel day","例:右肩が張る、生理が始まった、長い移動日","ex.: ombro direito tenso, menstruação começou, dia longo de viagem"],["Readiness","コンディション","Prontidão"],["Sleep","睡眠","Sono"],["of 5","/ 5","de 5"],["Good to go.","準備OK。","Pronta para treinar."],["Each check-in is saved to your Performance Journal on this phone.","チェックインはこのスマホのパフォーマンス日誌に保存されます。","Cada check-in é salvo no seu Diário de desempenho neste celular."],["Readiness over the last 7 days","過去7日間のコンディション","Prontidão nos últimos 7 dias"],
+/* recovery */
+["Slept 8+ hours","8時間以上睡眠","Dormi 8+ horas"],["Nap","昼寝","Cochilo"],["Recovery meal or shake","リカバリー食・シェイク","Refeição ou shake de recuperação"],["Hydrated well","しっかり水分補給","Me hidratei bem"],["Ice","アイシング","Gelo"],["Cold tub","冷水浴","Banheira de gelo"],["Heat or sauna","温熱・サウナ","Calor ou sauna"],["Stretch or mobility","ストレッチ・モビリティ","Alongamento ou mobilidade"],["Foam roll","フォームローラー","Rolo de liberação"],["Treatment with Emma","Emmaの治療","Atendimento com a Emma"],["Massage","マッサージ","Massagem"],["Compression","コンプレッション","Compressão"],["Easy walk or spin","軽い散歩・バイク","Caminhada ou bike leve"],["Off my feet","足を休めた","Descansei as pernas"],
+["What did you do?","何をした?","O que você fez?"],["Yesterday","昨日","Ontem"],["What works for you","あなたに効くこと","O que funciona para você"],["What the research says","研究でわかっていること","O que a pesquisa diz"],
+["Tap everything that applies.","当てはまるものをすべてタップ。","Toque em tudo que se aplica."],["Tap everything that applies. Logging anything lights your Recover moon.","当てはまるものをすべてタップ。1つでも記録するとリカバリーの月が光ります。","Toque em tudo que se aplica. Registrar qualquer item acende a lua Recuperação."],
+["Log your recovery and check in each morning. After about a week, this shows which habits come before your best mornings.","リカバリーを記録し、毎朝チェックインしよう。約1週間で、調子の良い朝の前日に何をしていたかがわかります。","Registre sua recuperação e faça o check-in todas as manhãs. Em cerca de uma semana, aqui aparecem os hábitos que vêm antes das suas melhores manhãs."],
+["Sleep comes first","まずは睡眠","O sono vem primeiro"],["The recovery tool with the strongest evidence. Aim for 8+ hours; a nap helps after a short night or a late match.","最もエビデンスの強いリカバリー法。8時間以上を目標に。睡眠不足や遅い試合の後は昼寝も有効です。","A ferramenta de recuperação com a evidência mais forte. Busque 8+ horas; um cochilo ajuda depois de uma noite curta ou um jogo tarde."],
+["Refuel","栄養補給","Reabasteça"],["Carbs plus 20–40 g protein within about an hour, then a normal meal, especially before a second session or a match the next day.","約1時間以内に炭水化物と20〜40 gのたんぱく質を。その後は通常の食事を。2部練や翌日の試合の前は特に大切です。","Carboidrato mais 20–40 g de proteína em cerca de uma hora, depois uma refeição normal, principalmente antes de um segundo treino ou de um jogo no dia seguinte."],
+["Cold and ice","冷却とアイシング","Frio e gelo"],["Cold water immersion can ease soreness for a day or two. Used right after strength sessions it may blunt strength gains, so save it for match weeks and back-to-backs.","冷水浴は1〜2日の筋肉痛を和らげることがあります。筋トレ直後に使うと筋力向上を妨げる可能性があるので、試合週や連戦のときに。","A imersão em água fria pode aliviar a dor muscular por um ou dois dias. Logo após a musculação, pode atrapalhar o ganho de força; use em semanas de jogo e jogos seguidos."],
+["Compression, massage, rolling","コンプレッション・マッサージ・ローラー","Compressão, massagem, rolo"],["Small benefits for feeling less sore. Use what you like.","筋肉痛を和らげる小さな効果。好きなものを使おう。","Benefícios pequenos para sentir menos dor. Use o que você gosta."],
+["Pain is different","痛みは別物","Dor é diferente"],["Pain that lingers, swelling or anything that changes how you move: see Emma. Don't just ice it.","長引く痛み、腫れ、動きが変わるような症状はEmmaへ。冷やすだけで済ませないで。","Dor que persiste, inchaço ou qualquer coisa que mude como você se move: procure a Emma. Não fique só no gelo."],
+/* hydration */
+["Hydrate focus","水分補給フォーカス","Foco em hidratação"],["Goal reached. Keep sipping with meals and at practice.","目標達成!食事や練習中もこまめに飲もう。","Meta atingida. Continue bebendo nas refeições e no treino."],["Your bottle","あなたのボトル","Sua garrafa"],["Bottle size","ボトルサイズ","Tamanho da garrafa"],["Daily goal","1日の目標","Meta diária"],["Measure your sweat rate ›","発汗量を測る ›","Medir sua taxa de suor ›"],["Your hydration focus","水分補給のポイント","Seu foco em hidratação"],
+["Starting point: women need about 91 oz (2.7 L) of water a day from food and drinks, about 74 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.","目安:女性は運動を除いて1日約91 oz(2.7 L)の水分が必要で、そのうち約74 ozは飲み物から。練習日は汗で失う分を足しましょう。正確な量は発汗テストでわかります。","Ponto de partida: mulheres precisam de cerca de 91 oz (2,7 L) de água por dia vindos de alimentos e bebidas, cerca de 74 oz de bebidas, sem contar o exercício. Some as perdas de suor nos dias de treino. Seu teste de suor dá o número real."],
+["Start the day","1日のはじまり","Comece o dia"],["A big glass or half a bottle with breakfast. You wake up a little behind.","朝食と一緒にコップ1杯かボトル半分。起きたときは少し不足しています。","Um copo grande ou meia garrafa no café da manhã. Você acorda um pouco atrás."],
+["Before practice","練習前","Antes do treino"],["About 2–4 hours before, roughly 5–7 ml per kg (12–16 oz for most players), then sips until warm-up.","練習の2〜4時間前に体重1 kgあたり約5〜7 ml(多くの選手で12〜16 oz)。その後はウォームアップまで少しずつ。","Cerca de 2–4 horas antes, uns 5–7 ml por kg (12–16 oz para a maioria), depois goles até o aquecimento."],
+["During","練習中","Durante"],["Drink at every break. Longer than an hour, a hot gym or salty sweat: add a sports drink or electrolytes.","休憩ごとに飲もう。1時間以上、暑い体育館、汗が塩辛い人はスポーツドリンクや電解質を。","Beba em toda pausa. Mais de uma hora, ginásio quente ou suor salgado: acrescente isotônico ou eletrólitos."],
+["After","練習後","Depois"],["About 20–24 oz for every pound lost in practice, with a salty snack or meal.","練習で減った体重1ポンドごとに約20〜24 oz。塩分のある軽食や食事と一緒に。","Cerca de 20–24 oz para cada libra perdida no treino, com um lanche ou refeição salgada."],
+["Check the color","尿の色をチェック","Confira a cor"],["Pale yellow is the goal. Dark like apple juice: drink now.","薄い黄色が目標。りんごジュースのように濃ければすぐ飲もう。","Amarelo-claro é a meta. Escuro como suco de maçã: beba agora."],["Ounces over the last 7 days","過去7日間の水分量","Onças nos últimos 7 dias"],
+/* cycle */
+["Private","プライベート","Privado"],["· Saved only on this phone","· このスマホにのみ保存","· Salvo só neste celular"],["Cycle day","周期日","Dia do ciclo"],["Next period","次の生理","Próxima menstruação"],["Estimate uses 28 days until you've logged two periods.","2回分の生理を記録するまでは28日周期で予測します。","A estimativa usa 28 dias até você registrar duas menstruações."],["Log the first day of your next period below. The tracker estimates your next one after that.","次の生理の初日を下で記録してください。その後、次回を予測します。","Registre abaixo o primeiro dia da sua próxima menstruação. Depois disso o app estima a seguinte."],
+["Flow","経血量","Fluxo"],["None","なし","Nenhum"],["Spotting","少量の出血","Escape"],["Light","少ない","Leve"],["Medium","普通","Médio"],["Heavy","多い","Intenso"],["Symptoms","症状","Sintomas"],["Cramps","腹痛","Cólica"],["Bloating","お腹の張り","Inchaço"],["Headache","頭痛","Dor de cabeça"],["Fatigue","だるさ","Cansaço"],["Low mood","気分の落ち込み","Humor baixo"],["Breast tenderness","胸の張り","Sensibilidade nos seios"],["Back pain","腰痛","Dor nas costas"],["Poor sleep","睡眠不良","Sono ruim"],["Cravings","食欲の増加","Desejos alimentares"],["Stomach upset","胃腸の不調","Mal-estar estomacal"],
+["Last six weeks","過去6週間","Últimas seis semanas"],["Period","生理","Menstruação"],["Predicted","予測","Previsto"],["Tap a day to log or edit it.","日付をタップして記録・編集","Toque em um dia para registrar ou editar."],["Fuel and feel","食事とコンディション","Alimentação e bem-estar"],["Heavy days","経血が多い日","Dias de fluxo intenso"],["Keep fueling","しっかり食べる","Continue se alimentando"],["Performance","パフォーマンス","Desempenho"],["Your period is a vital sign ›","生理はバイタルサイン ›","Sua menstruação é um sinal vital ›"],["Delete all cycle data","周期データをすべて削除","Apagar todos os dados do ciclo"],["Previous day","前の日","Dia anterior"],
+["Iron-rich foods (red meat, chicken thighs, lentils, beans, spinach, fortified cereal) with vitamin C (citrus, peppers, berries) to help absorption.","鉄分の多い食品(赤身肉、鶏もも肉、レンズ豆、豆類、ほうれん草、強化シリアル)をビタミンC(柑橘類、ピーマン、ベリー)と一緒に摂ると吸収が良くなります。","Alimentos ricos em ferro (carne vermelha, sobrecoxa de frango, lentilha, feijão, espinafre, cereal fortificado) com vitamina C (frutas cítricas, pimentão, frutas vermelhas) para ajudar na absorção."],
+["Heat and light movement help many players. Ask your team doctor or Emma about pain medication before using it regularly.","温めることや軽い運動が多くの選手に役立ちます。鎮痛薬を常用する前にチームドクターかEmmaに相談を。","Calor e movimento leve ajudam muitas atletas. Pergunte ao médico do time ou à Emma sobre analgésicos antes de usar com frequência."],
+["Appetite can rise before your period. That's normal: regular meals and snacks support training.","生理前は食欲が増えることがあります。それは普通のこと。規則的な食事と間食がトレーニングを支えます。","O apetite pode aumentar antes da menstruação. É normal: refeições e lanches regulares sustentam o treino."],
+["Research finds small, inconsistent changes across the cycle and big differences between women. Your own log beats generic phase rules.","研究では、周期による変化は小さく一貫せず、個人差が大きいことがわかっています。一般的な周期ルールより自分の記録を。","A pesquisa mostra mudanças pequenas e inconsistentes ao longo do ciclo e grandes diferenças entre mulheres. Seu próprio registro vale mais que regras genéricas por fase."],
+["No period logged for 3+ months","3か月以上生理の記録なし","Sem menstruação registrada há 3+ meses"],["A cycle longer than 35 days","35日を超える周期","Um ciclo com mais de 35 dias"],["A cycle shorter than 21 days","21日より短い周期","Um ciclo com menos de 21 dias"],["Heavy or long periods","経血が多い・長い生理","Menstruações intensas ou longas"],
+["Missing periods is a health signal, often of low energy availability, not a sign of hard training. Talk to your dietitian or team doctor.","生理が来ないのは健康のサインで、多くはエネルギー不足によるもの。練習が頑張れている証拠ではありません。管理栄養士かチームドクターに相談を。","Ficar sem menstruação é um sinal de saúde, muitas vezes de baixa disponibilidade energética, não de treino puxado. Fale com sua nutricionista ou com o médico do time."],
+["Long or irregular cycles can be an early sign of under-fueling. Worth mentioning to your dietitian or team doctor.","長い・不規則な周期はエネルギー不足の早期サインのことがあります。管理栄養士かチームドクターに伝えましょう。","Ciclos longos ou irregulares podem ser um sinal precoce de alimentação insuficiente. Vale comentar com sua nutricionista ou com o médico do time."],
+["Very short cycles are worth a check with your team doctor.","とても短い周期はチームドクターに確認してもらいましょう。","Ciclos muito curtos merecem uma avaliação com o médico do time."],
+["These raise your iron needs. Ask your dietitian about iron-rich meals and whether a ferritin blood test makes sense.","鉄の必要量が増えます。鉄分の多い食事やフェリチン検査について管理栄養士に相談を。","Isso aumenta sua necessidade de ferro. Pergunte à sua nutricionista sobre refeições ricas em ferro e se vale fazer um exame de ferritina."],
+/* season, sky, feedback, install */
+["All","すべて","Todos"],["Home games","ホーム","Em casa"],["Road","アウェー","Fora"],["Away","アウェー","Fora"],["Your week","今週","Sua semana"],["How a star lights","星が灯る条件","Como uma estrela acende"],["Past weeks","過去の週","Semanas anteriores"],
+["Idea","アイデア","Ideia"],["Something's broken","不具合","Algo quebrou"],["Content is wrong","内容の誤り","Conteúdo errado"],["Other","その他","Outro"],["Your feedback","ご意見","Seu feedback"],["Send by email","メールで送信","Enviar por e-mail"],["What happened, where in the app, and what you expected","何が起きたか、アプリのどこか、期待していた動作","O que aconteceu, onde no app e o que você esperava"],
+["Add to Home Screen","ホーム画面に追加","Adicionar à Tela de Início"],["Tap","タップ:","Toque em"],["Share","共有","Compartilhar"],["Add","追加","Adicionar"],[", then open from the icon","→ アイコンから開く",", depois abra pelo ícone"],["I've already added it","追加済み","Já adicionei"],["Later","あとで","Depois"],["Install app","アプリをインストール","Instalar app"],["Open from the icon","アイコンから開く","Abrir pelo ícone"],["Install now","今すぐインストール","Instalar agora"],
+["Do this before logging anything. The Home Screen app keeps its own data.","記録を始める前に追加してください。ホーム画面のアプリはデータを別に保存します。","Faça isso antes de registrar qualquer coisa. O app da Tela de Início guarda os próprios dados."],["Opens full screen, one tap away.","ワンタップで全画面で開けます。","Abre em tela cheia, a um toque."],
+/* toasts */
+["Check-in saved","チェックインを保存しました","Check-in salvo"],["Check-in saved. Tonight's star is lit","チェックインを保存しました。今夜の星が灯りました","Check-in salvo. A estrela de hoje acendeu"],["Recovery logged · Recover moon lit","リカバリーを記録 · リカバリーの月が光りました","Recuperação registrada · Lua Recuperação acesa"],["Goal reached","目標達成","Meta atingida"],["Logged","記録しました","Registrado"],["LOGGED","記録","FEITO"],["Cycle data deleted","周期データを削除しました","Dados do ciclo apagados"],["Answer all six, it's 15 seconds","6項目すべてに答えてください。15秒です","Responda as seis, leva 15 segundos"]
+]);
+addR([
+[/^(Good morning), (.+)\.$/,"おはよう、$2。","Bom dia, $2."],[/^(Good afternoon), (.+)\.$/,"こんにちは、$2。","Boa tarde, $2."],[/^(Good evening), (.+)\.$/,"こんばんは、$2。","Boa noite, $2."],[/^(Late night), (.+)\.$/,"遅い時間だね、$2。","Ainda acordada, $2."],
+[/^Game day, (.+)\. Fuel the win\.$/,"試合日だよ、$1。勝利のために食べよう。","Dia de jogo, $1. Alimente a vitória."],[/^Welcome, (.+)$/,"ようこそ、$1","Bem-vinda, $1"],
+[/^Light (\d) (?:more )?moons? for tonight's star\.$/,"あと$1つ月を光らせて今夜の星を灯そう。","Acenda $1 lua(s) para a estrela de hoje."],
+[/^Hiding options with (.+)\.$/,"$1を含むメニューは非表示です。","Ocultando opções com $1."],[/^You'll need: (.+)$/,"材料:$1","Você vai precisar: $1"],
+[/^(\d+)\/(\d+) TODAY$/,"今日 $1/$2","$1/$2 HOJE"],[/^Day (\d+)$/,"$1日目","Dia $1"],[/^(\d+) of (\d+) done$/,"$1/$2 完了","$1 de $2 feitas"],[/^· (\d+)\/(\d+) learned$/,"· $1/$2 習得","· $1/$2 aprendidas"],[/^(\d+)\/7 stars$/,"$1/7 つの星","$1/7 estrelas"],
+[/^Synced just now$/,"同期:たった今","Sincronizado agora"],[/^Synced (\d+) min ago$/,"同期:$1分前","Sincronizado há $1 min"],[/^Synced (\d+) h ago$/,"同期:$1時間前","Sincronizado há $1 h"],[/^Updated (.+)$/,"更新:$1","Atualizado: $1"],
+[/^No\. (\d+)$/,"背番号 $1","Nº $1"],[/^(\d+) allergens? flagged$/,"アレルゲン $1件","$1 alergênico(s) sinalizado(s)"],
+[/^(\d+) oz of (\d+) oz · (\d+) oz bottle$/,"$1 oz / $2 oz · $3 ozボトル","$1 oz de $2 oz · garrafa de $3 oz"],[/^of (\d+) oz$/,"/ $1 oz","de $1 oz"],[/^(\d+) oz to go, about (\d+) more bottles?\.$/,"あと$1 oz、ボトル約$2本。","Faltam $1 oz, cerca de $2 garrafa(s)."],[/^\+ 1 bottle · (\d+) oz$/,"+ ボトル1本 · $1 oz","+ 1 garrafa · $1 oz"],
+[/^\+([\d.]+) next-day readiness · (\d+)×$/,"翌日コンディション +$1 · $2回","+$1 de prontidão no dia seguinte · $2×"],[/^From (\d+) mornings\. A pattern, not proof: travel, matches and busy days change how you feel too\.$/,"$1回の朝から算出。因果ではなく傾向です。移動、試合、忙しい日も体調に影響します。","De $1 manhãs. Um padrão, não uma prova: viagens, jogos e dias corridos também mudam como você se sente."],
+[/^Log your recovery and check in each morning\. After about a week, this shows which habits come before your best mornings\. (\d+) of 5 mornings so far\.$/,"リカバリーを記録し、毎朝チェックインしよう。約1週間で、調子の良い朝の前日に何をしていたかがわかります。現在$1/5回。","Registre sua recuperação e faça o check-in todas as manhãs. Em cerca de uma semana, aqui aparecem os hábitos que vêm antes das suas melhores manhãs. $1 de 5 manhãs até agora."],
+[/^(\d+) days? late$/,"$1日遅れ","$1 dia(s) de atraso"],[/^Average cycle (\d+) days · period (\d+) days · from (\d+) cycles?(.*)$/,"平均周期 $1日 · 生理 $2日 · $3周期分$4","Ciclo médio de $1 dias · menstruação de $2 dias · de $3 ciclo(s)$4"],
+[/^(.+) · (\d+) matches$/,"$1 · 全$2試合","$1 · $2 jogos"],[/^Week of (.+)$/,"$1の週","Semana de $1"],[/^Mon, (.+) · (\d)\/7$/,"$1 · $2/7","$1 · $2/7"],
+[/^Recover well\. Next ball\.$/,"しっかり回復。次の1本へ。","Recupere bem. Próxima bola."],[/^Match tomorrow (vs|at) (.+)\. Fuel up tonight\.$/,"明日は$2戦。今夜しっかり食べよう。","Jogo amanhã contra $2. Abasteça hoje à noite."],
+[/^Check-in saved · (\d) more moons? for tonight's star$/,"チェックインを保存しました · あと$1つで今夜の星","Check-in salvo · mais $1 lua(s) para a estrela de hoje"]
+]);
+addT([["No allergens listed","アレルゲンなし","Nenhum alergênico informado"],["15-second check-in","15秒チェックイン","Check-in de 15 segundos"],["Any meal or snack logged","食事か間食を1つ記録","Qualquer refeição ou lanche registrado"],["Reach your daily ounces","1日の目標量に到達","Atingir sua meta diária"],["Log what you did to recover","回復のためにしたことを記録","Registre o que você fez para se recuperar"],["Tap if you slept 7+ hours","7時間以上眠れたらタップ","Toque se dormiu 7+ horas"],
+["Personalize your path","あなたのパスをカスタマイズ","Personalize sua trilha"],["optional","任意","opcional"],["stays on this phone","このスマホに保存","fica neste celular"],["Used only to pick lessons. Nothing is sent anywhere.","レッスン選びにのみ使用。どこにも送信されません。","Usado só para escolher aulas. Nada é enviado."],["Units for the sweat test","発汗テストの単位","Unidades do teste de suor"],["What do you want to work on?","取り組みたいことは?","No que você quer trabalhar?"],
+["Performance & power","パフォーマンス・パワー","Desempenho e potência"],["Build strength","筋力アップ","Ganhar força"],["Iron & energy","鉄・エネルギー","Ferro e energia"],["Bone health","骨の健康","Saúde óssea"],["Game-day stomach","試合日の胃腸","Estômago no dia de jogo"],["Plant-based","植物性中心","Base vegetal"],["Your cycle","あなたの月経周期","Seu ciclo"],["Regular periods","規則的","Menstruação regular"],["Irregular","不規則","Irregular"],["No period 3+ months","3か月以上来ていない","Sem menstruação há 3+ meses"],["On hormonal contraception","ホルモン避妊薬を使用中","Uso contraceptivo hormonal"],["Prefer not to say","答えたくない","Prefiro não dizer"],["Not applicable","該当なし","Não se aplica"],["Planning a pregnancy","妊娠を計画中","Planejando gravidez"],["Pregnant","妊娠中","Grávida"],["Postpartum","産後","Pós-parto"],["Breastfeeding","授乳中","Amamentando"],["Build my path","パスを作る","Montar minha trilha"]]);
+addR([[/^at (LOVB )?(.+)$/,"$2戦(アウェー)","contra $2 (fora)"],[/^vs (LOVB )?(.+)$/,"$2戦(ホーム)","contra $2 (em casa)"],[/^First serve (.+)$/,"ファーストサーブ $1","Primeiro saque $1"],[/^Pre-match meal about (.+), snack about (.+)\.$/,"試合前の食事は$1ごろ、スナックは$2ごろ。","Refeição pré-jogo por volta de $1, lanche por volta de $2."],[/^Road trip continues to (.+) in (\d+) days?\. Pack for both stops\.$/,"遠征は$2日後に$1へ続きます。両方の滞在分を準備しよう。","A viagem continua para $1 em $2 dia(s). Faça a mala para as duas paradas."]]);
+function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
+ let v=D[k];
+ if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
+ if(v==null)for(const sep of [" · ",": "]){if(k.includes(sep)){const parts=k.split(sep),tp=parts.map(p=>D[p]);if(tp.some(x=>x!=null)){v=parts.map((p,i)=>tp[i]!=null?tp[i]:p).join(sep===": "&&LANG==="ja"?":":sep);break}}}
+ if(v==null)return s;return s.match(/^\s*/)[0]+v+s.match(/\s*$/)[0]}
+function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
+ while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
+ L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
+ root.querySelectorAll("[placeholder],[aria-label],[title]").forEach(e=>["placeholder","aria-label","title"].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}}))}
+function langPicker(){return `<div class="stack" style="gap:6px"><span class="eyebrow">Language</span><div class="choice mini" data-notr="1">${LANGS.map(([k,l])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" lang="${k}">${l}</button>`).join("")}</div>${LANG==="en"?"":`<p class="stamp">Lessons, recipes, city guides and staff posts stay in English for now.</p>`}</div>`}
+function setLang(k){LANG=k;store.set("lang",k);document.documentElement.lang=k==="pt"?"pt-BR":k;tabsBuilt=false;render()}
+
 function myAllergens(){return profile?profile.allergies||[]:[]}
 function shakeName(){return "protein shake"}
 
@@ -1029,7 +1155,7 @@ function vCycle(){const t=isoToday(),iso=cycDate&&cycDate<=t?cycDate:t,c=cycOf(i
     <div class="choice mini" data-csym="${iso}">${CSYM.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(c.sym||[]).includes(v)}">${l}</button>`).join("")}</div>
    </div></section>
   <section><h2>Last six weeks</h2><div class="card stack">
-   <div class="cgrid">${["M","T","W","T","F","S","S"].map(x=>`<span class="stamp">${x}</span>`).join("")}${cells.map(cell).join("")}</div>
+   <div class="cgrid">${cells.slice(0,7).map(d=>`<span class="stamp">${new Date(d+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"narrow"})}</span>`).join("")}${cells.map(cell).join("")}</div>
    <div class="row" style="gap:14px;flex-wrap:wrap"><span class="stamp"><i class="ckey f-medium"></i>Period</span><span class="stamp"><i class="ckey f-spot"></i>Spotting</span><span class="stamp"><i class="ckey pred"></i>Predicted</span></div>
    <p class="stamp">Tap a day to log or edit it.</p></div></section>
   <section><h2>Fuel and feel</h2><div class="card stack" style="gap:12px">${tips.map(([a,b])=>`<div><b>${a}</b><p class="muted" style="font-size:.9rem">${b}</p></div>`).join("")}
@@ -1627,12 +1753,12 @@ function welcomeAnim(){
    <p class="nm">${esc(profile.name)}</p><span class="skip">Tap to continue</span>`;
   const done=()=>{if(el.isConnected)el.remove()};
   el.addEventListener("click",done);el.addEventListener("animationend",e=>{if(e.target===el&&e.animationName==="waOut")done()});
-  document.body.appendChild(el);setTimeout(done,4300);
+  translateDOM(el);document.body.appendChild(el);setTimeout(done,4300);
 }
 function vWelcome(){
   const staff=profile.position==="Staff",gd=todayMatch();
   const steps=staff?[["at","","Training room","Reminders, programs and announcements from "+CONFIG.atFirst,I.at],["learn","","Learn","Nutrition and athletic-training lessons the team sees",I.book],["fuel","match","Game-day fuel","What athletes eat, hour by hour",I.plate]]
-   :[["ready","","Do your first check-in","Sleep, soreness, energy, mood and stress in 15 seconds",I.moon],["journal","","Log a meal","Your Performance Journal lights the Fuel moon",I.journal],["learn","","Build your path","Lessons picked for you and your position",I.book],["at","","Meet "+CONFIG.atFirst,"Athletic training: rehab, prehab and reminders",I.at]];
+   :[["ready","","Do your first check-in","Sleep, soreness, energy, mood and stress in 15 seconds",I.moon],["journal","","Log a meal","Your Performance Journal lights the Fuel moon",I.journal],["learn","","Build your path","Lessons picked for you and your position",I.book],["at","","Meet "+CONFIG.atFirst,"Athletic training: your programs",I.at]];
   return `<div class="view">
    <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">You're in</span></div>
     <p class="wordmark">Welcome, ${esc(profile.first)}</p><p class="wordmark-sub">to the LA Orbit</p>
@@ -1805,7 +1931,7 @@ function checkPatches(){const got=earnedPatches(),seen=new Set(store.get("patche
 function patchStamp(p){let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
   toast("Pin earned: "+p.n);if(rm||document.querySelector(".wa,.ins-back"))return;
   const el=document.createElement("div");el.className="pstamp";el.setAttribute("aria-hidden","true");el.innerHTML=`${patchSVG(p,true)}<b>${esc(p.n)}</b><span>Pin earned</span>`;
-  document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+  translateDOM(el);document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
 function patchesHTML(){const got=earnedPatches();
   return `<section><div class="sec-head"><h2>Pin collection</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
    <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
@@ -1832,8 +1958,9 @@ function vOnboard(){
   return `<div class="view">
    <div class="hero"><div class="hero-top">${PATCH}<span class="eyebrow">Athlete setup</span></div><p class="wordmark">Orbit</p><p class="wordmark-sub">Performance</p><p class="hello">${p.editing?"Update your profile.":"Welcome to the Orbit. Takes about a minute."}</p><p class="muted" style="margin-top:6px">Your answers flag allergens across the app.</p><div class="grain"></div><div class="horizon"></div></div>
    <form id="onb" class="stack card">
+    ${langPicker()}
     <div class="namerow"><label for="f-first">First name<input id="f-first" required value="${esc(p.first||"")}" placeholder="First name" autocomplete="given-name"></label><label for="f-last">Last name<input id="f-last" required value="${esc(p.last||"")}" placeholder="Last name" autocomplete="family-name"></label></div>
-    <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
+    <div class="namerow"><label for="f-pos">Position<select id="f-pos"><option value="">Select</option>${POSITIONS.map(x=>`<option value="${x}" ${p.position===x?"selected":""}>${x}</option>`).join("")}</select></label><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
     <label for="f-area">Where do you live? (optional)<select id="f-area"><option value="">Choose your area</option>${AREAS.map(a=>`<option value="${a.k}" ${p.area===a.k?"selected":""}>${esc(a.n)}</option>`).join("")}<option value="other" ${p.area==="other"?"selected":""}>Somewhere else</option></select></label>
     <label for="f-role" id="role-wrap" ${p.position==="Staff"?"":"hidden"}>Your staff role<input id="f-role" value="${esc(p.role||"")}" placeholder="e.g. Athletic trainer, assistant coach, S&C"></label>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
@@ -1863,7 +1990,7 @@ function launchCard(m,compact){
 function vHome(){
   const first=profile.first;
   const [feat,...rest]=teamAnns();
-  const dateLine=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  const dateLine=new Date().toLocaleDateString(LOCALE(),{weekday:"long",month:"long",day:"numeric"});
   const pre=jGet(isoToday()).prehab||[];
   const go=[
    ["fuel","plan","Meal plan","Your day of eating, meal by meal",I.plate],
@@ -2063,7 +2190,7 @@ function weekStrip(sel){
 function planHTML(){
   const iso=planDate&&weekDays().includes(planDate)?planDate:isoToday(), isToday=iso===isoToday();
   const type=planType(iso),items=type==="match"?null:dayTemplate(type,PLANPREF.pt);
-  const dayName=isToday?"Today":new Date(iso+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});
+  const dayName=isToday?"Today":new Date(iso+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"long"});
   const head=`${weekStrip(iso)}<div class="card stack"><span class="eyebrow">${esc(dayName)} is a…</span><div class="choice mini" data-planday="1">${DAYTYPES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${type===k}">${l}</button>`).join("")}</div>
     ${type==="practice"?`<span class="eyebrow" style="margin-top:4px">Practice time</span><div class="choice mini" data-planpt="1">${PRACTICE_TIMES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${PLANPREF.pt===k}">${l}</button>`).join("")}</div>`:""}
     <div class="choice mini" data-planveg="1"><button type="button" data-v="1" aria-pressed="${!!PLANPREF.veg}">Vegetarian</button></div>
@@ -2144,10 +2271,10 @@ function vFuel(){
 function vSeason(){
   const t=isoToday(), nx=nextMatch();
   const list=SCHEDULE.filter(m=>seasonSeg==="all"||(seasonSeg==="home"?m.home:!m.home));
-  const months={};list.forEach(m=>{const k=new Date(m.d+"T12:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});(months[k]=months[k]||[]).push(m)});
+  const months={};list.forEach(m=>{const k=new Date(m.d+"T12:00:00").toLocaleDateString(LOCALE(),{month:"long",year:"numeric"});(months[k]=months[k]||[]).push(m)});
   return `<div class="view"><div><p class="eyebrow">2026–27 · 22 matches</p><h1 style="margin-top:4px">Season</h1></div>
    ${launchCard(nx,true)}
-   <div class="seg" data-segset="season">${[["all","All"],["home","Home"],["away","Road"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${seasonSeg===k}">${l}</button>`).join("")}</div>
+   <div class="seg" data-segset="season">${[["all","All"],["home",LANG==="en"?"Home":"Home games"],["away","Road"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${seasonSeg===k}">${l}</button>`).join("")}</div>
    ${Object.entries(months).map(([mo,L])=>`<section><h2>${mo}</h2><div class="card" style="padding-block:0">${L.map(m=>{const notes=matchNotes(m);
      return `<div class="match ${nx&&m.i===nx.i?"next":""} ${m.d<t?"past":""}"><span class="d"><em>${dow(m.d)}</em>${sb(mmdd(m.d))}</span><span class="stack" style="gap:2px"><b>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))}</b><span class="stamp">${matchLocal(m)}${m.off!==-2?` · ${clock(m.pt)} PT`:""} · ${esc(m.venue||m.city)}</span></span><span class="chip ${m.home?"accent":"violet"}">${m.home?"Home":"Away"}</span>
       <p class="mnote">${esc(notes.slice(1).join(" ")||notes[0])}</p></div>`}).join("")}</div></section>`).join("")}
@@ -2183,6 +2310,7 @@ function vMe(){
     <div class="bgs">${BACKGROUNDS.map(x=>`<button class="bgopt" data-bg="${x.k}" aria-pressed="${(prefs.bg||"stars")===x.k}" aria-label="${x.n}: ${x.d}"><i style="background-image:${bgURL(x.k,isDarkNow())}"></i><b>${x.n}</b></button>`).join("")}</div></section>
    <section><h2>Game-day theme</h2>
     <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">Auto on match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
+   <section><h2>Language</h2><div class="card">${langPicker()}</div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
 </div>`;
@@ -2308,7 +2436,7 @@ function logStamp(msg){
   let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
   toast(msg);if(rm)return;
   const el=document.createElement("div");el.className="logstamp";el.setAttribute("aria-hidden","true");
-  el.innerHTML=`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="12" fill="#FFFFFF"/><ellipse cx="50" cy="50" rx="40" ry="13" fill="none" stroke="var(--accent)" stroke-width="3" transform="rotate(-20 50 50)"/><circle cx="86" cy="37" r="5" fill="#FFC857"/></svg><b>LOGGED</b>`;
+  el.innerHTML=`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="12" fill="#FFFFFF"/><ellipse cx="50" cy="50" rx="40" ry="13" fill="none" stroke="var(--accent)" stroke-width="3" transform="rotate(-20 50 50)"/><circle cx="86" cy="37" r="5" fill="#FFC857"/></svg><b>${tr("LOGGED")}</b>`;
   document.body.appendChild(el);setTimeout(()=>el.remove(),1350);
 }
 function jSubmit(){
@@ -2354,11 +2482,12 @@ function showInstall(plat){
     if(e.target===el||e.target.closest("[data-inslater]")){closeInstall();return}
     if(e.target.closest("[data-insdone]")){store.set("installed",true);closeInstall();toast("Great. Open it from your Home Screen next time");return}
     if(e.target.closest("#ins-native")&&deferredInstall){deferredInstall.prompt();try{const c=await deferredInstall.userChoice;if(c&&c.outcome==="accepted"){store.set("installed",true);closeInstall()}}catch(err){}deferredInstall=null}});
-  document.body.appendChild(el);const first=el.querySelector("#ins-native:not([hidden]),[data-insdone]");if(first)first.focus({preventScroll:true});
+  translateDOM(el);document.body.appendChild(el);const first=el.querySelector("#ins-native:not([hidden]),[data-insdone]");if(first)first.focus({preventScroll:true});
 }
 function closeInstall(){const el=document.querySelector(".ins-back");if(el)el.remove()}
 addEventListener("keydown",e=>{if(e.key==="Escape")closeInstall()});
-function render(){
+function render(){_render();translateDOM(document.getElementById("app"));translateDOM(document.querySelector("nav.tabs"))}
+function _render(){
   applyPrefs();
   const app=$("#app");
   if(!profile||draft.editing){$("nav.tabs").hidden=true;app.innerHTML=vOnboard();return}
@@ -2372,6 +2501,7 @@ function render(){
   renderTabs();scheduleInstall();checkPatches();
 }
 document.addEventListener("click",e=>{
+  {const lb=e.target.closest("[data-lang]");if(lb){setLang(lb.dataset.lang);return}}
   const hp=e.target.closest(".hero .patch");if(hp&&tab==="home"){hp.classList.toggle("spin");toast(STATION_LOG[logIdx++%STATION_LOG.length]);return}
   const b=e.target.closest("button,a");if(!b)return;
   const ds=b.dataset;
