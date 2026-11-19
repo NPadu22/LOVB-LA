@@ -215,6 +215,20 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .mpick select{appearance:none;-webkit-appearance:none;width:100%;background:#fff;color:var(--ink);border:1.5px solid rgb(11 19 43 / .16);border-radius:12px;padding:10px 36px 10px 12px;font-weight:700;font-size:.92rem;line-height:1.25;text-overflow:ellipsis;cursor:pointer}
 .mpick::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:2px solid #D9480F;border-bottom:2px solid #D9480F;transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .mpick select:focus{border-color:#FF5E1A;outline:2px solid rgb(255 94 26 / .25)}
+.hyd-top{display:flex;gap:18px;align-items:center}
+.hyd-bottle{flex:none;width:56px;height:118px;border-radius:14px 14px 18px 18px;border:2.5px solid color-mix(in srgb,var(--fg) 55%,transparent);position:relative;overflow:hidden;margin-top:12px}
+.hyd-bottle::before{content:"";position:absolute;left:50%;top:-12px;width:24px;height:12px;transform:translateX(-50%)}
+.hyd-bottle i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#5EC8FF,#2E7DF6);transition:height .5s}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
+.cday{all:unset;cursor:pointer;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;font:600 .78rem var(--mono);background:var(--surface-2);color:var(--fg)}
+.cday:disabled{opacity:.35;cursor:default}
+.cday.f-spot{background:color-mix(in srgb,#E5484D 30%,var(--surface-2))}
+.cday.f-light{background:#F28B8E;color:#3A0A0C}.cday.f-medium{background:#E5484D;color:#fff}.cday.f-heavy{background:#A51D2D;color:#fff}
+.cday.pred{background:transparent;box-shadow:inset 0 0 0 2px #E5484D}
+.cday.today{outline:2px solid var(--accent);outline-offset:1px}.cday.sel{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
+.cday.pred.sel{box-shadow:inset 0 0 0 2px #E5484D,0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
+.ckey{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.ckey.f-medium{background:#E5484D}.ckey.f-spot{background:color-mix(in srgb,#E5484D 30%,var(--surface-2))}.ckey.pred{box-shadow:inset 0 0 0 2px #E5484D}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -760,6 +774,9 @@ const I={
  plus:s24('<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="10" stroke-width="1.2"/>'),
  sky:s24('<path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>'),
  moon:s24('<path d="M20 14a8 8 0 1 1-10-10 6 6 0 0 0 10 10z"/>'),
+ drop:s24('<path d="M12 3c3.5 4.5 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 2.5-6.5 6-11z"/>'),
+ heart:s24('<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'),
+ cycle:s24('<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16" fill="currentColor" fill-opacity=".25"/><circle cx="12" cy="4" r="1.6" fill="currentColor"/>'),
  at:s24('<path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z"/>'),
  learn:s24('<path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.5 3 5 3s5-1.5 5-3V9"/><path d="M21 7v6"/>')
 };
@@ -925,9 +942,11 @@ function vReady(){
    <form class="card stack" id="ready-form">
     <div class="stack" style="gap:6px"><span class="eyebrow">Hours slept last night</span><div class="choice mini" data-rq="sleepH">${SLEEPH.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${rDraft.sleepH===v}">${l}</button>`).join("")}</div></div>
     ${RQ.map(q=>`<div class="stack" style="gap:6px"><div class="row" style="justify-content:space-between"><span class="eyebrow">${q.n}</span><span class="stamp">1 ${q.lo} · 5 ${q.hi}</span></div><div class="choice mini rq5" data-rq="${q.k}">${[1,2,3,4,5].map(n=>`<button type="button" data-v="${n}" aria-pressed="${rDraft[q.k]===n}">${n}</button>`).join("")}</div></div>`).join("")}
+    <div class="stack" style="gap:6px"><span class="eyebrow">Yesterday, what helped you recover? (optional)</span>${recovChips(jShift(t,-1))}</div>
     <label for="r-note">Anything else? (optional)<input id="r-note" value="${esc(rDraft.note||"")}" placeholder="e.g. right shoulder tight, period started, long travel day"></label>
     <button class="btn block" type="submit">${done?"Update check-in":"Save check-in"}</button>
    </form>
+   ${done?`<section><div class="sec-head"><h2>What works for you</h2><button class="linkbtn" data-go="recover">Recovery</button></div><div class="card stack">${insightsHTML()}</div></section>`:""}
    <section><h2>Last 7 days</h2><div class="card stack">
     <div class="spark" aria-label="Readiness over the last 7 days">${days.map(x=>{const v=rScore(jGet(x).ready);return `<span class="${v==null?"none":""}" style="height:${v==null?6:Math.max(10,v*20)}%" title="${fmtDate(x)}: ${v==null?"no check-in":v.toFixed(1)+"/5"}"></span>`}).join("")}</div>
     <div class="row" style="justify-content:space-between">${days.map(x=>`<span class="stamp" style="flex:1;text-align:center">${dow(x)[0]}</span>`).join("")}</div>
@@ -935,14 +954,128 @@ function vReady(){
    </div></section>
    <p class="src">Why: self-reported wellness tends to pick up training stress earlier and more reliably than many objective markers. Source: Saw, Main & Gastin, Br J Sports Med 2016.</p></div>`;
 }
-function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"journal"},{k:"recover",n:"Recover",tap:1},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
+/* ===== Hydrate focus: bottles x bottle size = ounces ===== */
+let HYD=store.get("hyd",{size:24,goal:80});
+const BOTTLES=[16,20,24,32,40], HGOALS=[64,80,96,112,128];
+function ozOf(d){return Math.round((d.water||0)*HYD.size)}
+function mlOf(oz){return Math.round(oz*29.5735/10)*10}
+function vHydrate(){const t=isoToday(),d=jGet(t),oz=ozOf(d),pct=Math.min(100,Math.round(oz/HYD.goal*100)),left=Math.max(0,HYD.goal-oz),more=Math.ceil(left/HYD.size);
+ const days=[...Array(7)].map((_,i)=>jShift(t,i-6));
+ const tips=[["Start the day","A big glass or half a bottle with breakfast. You wake up a little behind."],["Before practice","About 2–4 hours before, roughly 5–7 ml per kg (12–16 oz for most players), then sips until warm-up."],["During","Drink at every break. Longer than an hour, a hot gym or salty sweat: add a sports drink or electrolytes."],["After","About 20–24 oz for every pound lost in practice, with a salty snack or meal."],["Check the color","Pale yellow is the goal. Dark like apple juice: drink now."]];
+ return `<div class="view"><div><p class="eyebrow"><span class="module">Hydrate focus</span></p><h1 style="margin-top:4px">Hydration</h1></div>
+  <div class="card stack">
+   <div class="hyd-top"><div class="hyd-bottle" aria-hidden="true"><i style="height:${pct}%"></i></div>
+    <div class="stack" style="gap:6px;min-width:0"><span class="eyebrow">Today</span><div>${sb(String(oz).padStart(3,"0"),1)} <span class="eyebrow">of ${HYD.goal} oz</span></div>
+     <p class="stamp">${d.water} × ${HYD.size} oz · ${mlOf(oz)} ml</p>
+     <p style="font-size:.92rem">${oz>=HYD.goal?"Goal reached. Keep sipping with meals and at practice.":`${left} oz to go, about ${more} more bottle${more>1?"s":""}.`}</p></div></div>
+   <div class="row" style="gap:10px"><button class="btn ghost" data-hwater="-1" aria-label="One less bottle">−</button><button class="btn" data-hwater="1" style="flex:1">+ 1 bottle · ${HYD.size} oz</button></div>
+  </div>
+  <section><h2>Your bottle</h2><div class="card stack">
+   <span class="eyebrow">Bottle size</span>
+   <div class="choice mini" data-hsize="1">${BOTTLES.map(s=>`<button type="button" data-v="${s}" aria-pressed="${HYD.size===s}">${s} oz</button>`).join("")}</div>
+   <span class="eyebrow" style="margin-top:6px">Daily goal</span>
+   <div class="choice mini" data-hgoal="1">${HGOALS.map(g=>`<button type="button" data-v="${g}" aria-pressed="${HYD.goal===g}">${g} oz</button>`).join("")}</div>
+   <p class="stamp">Starting point: women need about 91 oz (2.7 L) of water a day from food and drinks, about 74 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.</p>
+   <button class="linkbtn" data-lesson="c-sweat" style="align-self:flex-start">Measure your sweat rate ›</button></div></section>
+  <section><h2>Last 7 days</h2><div class="card stack">
+   <div class="spark" aria-label="Ounces over the last 7 days">${days.map(x=>{const o=ozOf(jGet(x));return `<span class="${o?"":"none"}" style="height:${o?Math.max(10,Math.min(100,o/HYD.goal*100)):6}%" title="${fmtDate(x)}: ${o} oz"></span>`}).join("")}</div>
+   <div class="row" style="justify-content:space-between">${days.map(x=>`<span class="stamp" style="flex:1;text-align:center">${dow(x)[0]}</span>`).join("")}</div></div></section>
+  <section><h2>Your hydration focus</h2><div class="card stack" style="gap:12px">${tips.map(([a,b])=>`<div><b>${a}</b><p class="muted" style="font-size:.9rem">${b}</p></div>`).join("")}</div></section>
+  <p class="src">National Academies, Dietary Reference Intakes for water, 2005; Sawka et al., ACSM position stand on fluid replacement, 2007; Thomas, Erdman & Burke, ACSM/AND/DC position stand, 2016</p></div>`}
+
+/* ===== Recovery: log what you did; next morning's check-in shows what works for you ===== */
+const RECOV=[["sleep8","Slept 8+ hours"],["nap","Nap"],["meal","Recovery meal or shake"],["hydrate","Hydrated well"],["ice","Ice"],["cold","Cold tub"],["heat","Heat or sauna"],["stretch","Stretch or mobility"],["roll","Foam roll"],["treat","Treatment with Emma"],["massage","Massage"],["compress","Compression"],["walk","Easy walk or spin"],["rest","Off my feet"]];
+let recDate=null;
+function recovOf(iso){return jGet(iso).recov||[]}
+function recovChips(iso){const cur=recovOf(iso);return `<div class="choice mini" data-recov="${iso}">${RECOV.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${cur.includes(k)}">${esc(l)}</button>`).join("")}</div>`}
+function recovInsights(){const t=isoToday(),P=[];
+ for(let i=1;i<=90;i++){const y=jShift(t,-i),a=jGet(y).recov,r=rScore(jGet(jShift(y,1)).ready);if(r!=null&&a&&a.length)P.push({a,r})}
+ const avg=x=>x.reduce((s,v)=>s+v,0)/x.length,out=[];
+ if(P.length>=5)RECOV.forEach(([k,l])=>{const w=P.filter(p=>p.a.includes(k)).map(p=>p.r),wo=P.filter(p=>!p.a.includes(k)).map(p=>p.r);if(w.length>=3&&wo.length>=2)out.push({k,l,d:avg(w)-avg(wo),n:w.length})});
+ return {n:P.length,list:out.filter(x=>x.d>=0.2).sort((a,b)=>b.d-a.d).slice(0,3)}}
+function insightsHTML(){const ins=recovInsights();
+ return ins.list.length?ins.list.map(x=>`<div class="row" style="justify-content:space-between;gap:10px"><b>${esc(x.l)}</b><span class="stamp" style="text-align:right">+${x.d.toFixed(1)} next-day readiness · ${x.n}×</span></div>`).join("")+`<p class="stamp">From ${ins.n} mornings. A pattern, not proof: travel, matches and busy days change how you feel too.</p>`
+  :`<p class="muted" style="font-size:.9rem">Log your recovery and check in each morning. After about a week, this shows which habits come before your best mornings.${ins.n?` ${ins.n} of 5 mornings so far.`:""}</p>`}
+function vRecover(){const t=isoToday(),y=jShift(t,-1),iso=recDate===y?y:t;
+ const facts=[["Sleep comes first","The recovery tool with the strongest evidence. Aim for 8+ hours; a nap helps after a short night or a late match."],["Refuel","Carbs plus 20–40 g protein within about an hour, then a normal meal, especially before a second session or a match the next day."],["Cold and ice","Cold water immersion can ease soreness for a day or two. Used right after strength sessions it may blunt strength gains, so save it for match weeks and back-to-backs."],["Compression, massage, rolling","Small benefits for feeling less sore. Use what you like."],["Pain is different","Pain that lingers, swelling or anything that changes how you move: see Emma. Don't just ice it."]];
+ return `<div class="view"><div><p class="eyebrow"><span class="module">Recovery</span></p><h1 style="margin-top:4px">Recover</h1></div>
+  <section><div class="sec-head"><h2>What did you do?</h2></div><div class="card stack">
+   <div class="choice mini" data-recday="1"><button type="button" data-v="${t}" aria-pressed="${iso===t}">Today</button><button type="button" data-v="${y}" aria-pressed="${iso===y}">Yesterday</button></div>
+   ${recovChips(iso)}
+   <p class="stamp">Tap everything that applies.${iso===t?" Logging anything lights your Recover moon.":""}</p></div></section>
+  <section><h2>What works for you</h2><div class="card stack">${insightsHTML()}</div></section>
+  <section><h2>What the research says</h2><div class="card stack" style="gap:12px">${facts.map(([a,b])=>`<div><b>${a}</b><p class="muted" style="font-size:.9rem">${b}</p></div>`).join("")}</div></section>
+  <p class="src">Dupuy et al., Front Physiol 2018 (recovery techniques meta-analysis); Fullagar et al., Sports Med 2015 (sleep and performance); Roberts et al., J Physiol 2015 (cold water immersion and strength training)</p></div>`}
+
+/* ===== Cycle tracker: private, on this phone only ===== */
+const FLOWS=[["","None"],["spot","Spotting"],["light","Light"],["medium","Medium"],["heavy","Heavy"]];
+const CSYM=[["cramps","Cramps"],["bloat","Bloating"],["head","Headache"],["tired","Fatigue"],["mood","Low mood"],["breast","Breast tenderness"],["back","Back pain"],["sleep","Poor sleep"],["crave","Cravings"],["gi","Stomach upset"]];
+let cycDate=null;
+function cycOf(iso){return jGet(iso).cyc||{flow:"",sym:[]}}
+function isBleed(iso){return ["light","medium","heavy"].includes(cycOf(iso).flow)}
+const dDiff=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
+function periods(){const P=[];Object.keys(J.days).filter(isBleed).sort().forEach(d=>{const p=P[P.length-1];if(p&&dDiff(p.last,d)<=3)p.last=d;else P.push({s:d,last:d})});return P}
+function cycleStats(){const P=periods(),t=isoToday(),L=[];for(let i=1;i<P.length;i++)L.push(dDiff(P[i-1].s,P[i].s));
+ const rec=L.slice(-6),avg=rec.length?Math.round(rec.reduce((a,b)=>a+b,0)/rec.length):null;
+ const last=P[P.length-1]||null,lp=P.slice(-6),plen=lp.length?Math.round(lp.reduce((a,p)=>a+dDiff(p.s,p.last)+1,0)/lp.length):null;
+ const len=avg||28,day=last?dDiff(last.s,t)+1:null,next=last?jShift(last.s,len):null;
+ const heavy=last?Object.keys(J.days).filter(d=>d>=last.s&&d<=last.last&&cycOf(d).flow==="heavy").length:0;
+ return {P,L:rec,avg,len,plen,last,day,next,late:last&&day>len?day-len:0,heavy}}
+function cycleFlags(S){const F=[],hc=EDU.cycle==="contraception";
+ if(S.last&&S.day>90)F.push(["No period logged for 3+ months",hc?"If your contraception is expected to stop periods (some IUDs, implants or continuous pills), that can be normal. Otherwise, or if you're not sure, talk to your dietitian or team doctor.":"Missing periods is a health signal, often of low energy availability, not a sign of hard training. Talk to your dietitian or team doctor."]);
+ else if(S.L.some(x=>x>35))F.push(["A cycle longer than 35 days",'Long or irregular cycles can be an early sign of under-fueling. Worth mentioning to your dietitian or team doctor.']);
+ if(S.L.some(x=>x<21))F.push(["A cycle shorter than 21 days","Very short cycles are worth a check with your team doctor."]);
+ if(S.heavy>=3||(S.plen&&S.plen>=8))F.push(["Heavy or long periods","These raise your iron needs. Ask your dietitian about iron-rich meals and whether a ferritin blood test makes sense."]);
+ return F}
+function vCycle(){const t=isoToday(),iso=cycDate&&cycDate<=t?cycDate:t,c=cycOf(iso),S=cycleStats(),F=cycleFlags(S),hc=EDU.cycle==="contraception";
+ const mon=jShift(t,-((new Date(t+"T12:00:00").getDay()+6)%7)-28),cells=[...Array(42)].map((_,i)=>jShift(mon,i));
+ const predEnd=S.next?jShift(S.next,(S.plen||5)-1):null;
+ const cell=d=>{const f=cycOf(d).flow,pred=S.next&&!f&&d>=S.next&&d<=predEnd&&d>=t,fut=d>t;return `<button type="button" class="cday ${f?"f-"+f:""} ${pred?"pred":""} ${d===t?"today":""} ${d===iso?"sel":""}" ${fut?"disabled":""} data-cdate="${d}" aria-label="${fmtDate(d)}${f?": "+f:""}${pred?": predicted":""}">${+d.slice(8)}</button>`};
+ const tips=[["Heavy days","Iron-rich foods (red meat, chicken thighs, lentils, beans, spinach, fortified cereal) with vitamin C (citrus, peppers, berries) to help absorption."],["Cramps","Heat and light movement help many players. Ask your team doctor or Emma about pain medication before using it regularly."],["Keep fueling","Appetite can rise before your period. That's normal: regular meals and snacks support training."],["Performance","Research finds small, inconsistent changes across the cycle and big differences between women. Your own log beats generic phase rules."]];
+ return `<div class="view"><div><p class="eyebrow"><span class="module">Private</span> · Saved only on this phone</p><h1 style="margin-top:4px">Cycle</h1></div>
+  <div class="launch"><span class="eyebrow">Today</span>
+   ${S.last?`<div class="t"><span><i>Cycle day</i>${sb(String(S.day).padStart(2,"0"),1)}</span><span><i>Next period</i>${S.late?`<b style="font-size:1rem">${S.late} day${S.late>1?"s":""} late</b>`:`<b style="font-size:1rem">${fmtDate(S.next)}</b>`}</span></div>
+    <p class="stamp">${S.avg?`Average cycle ${S.avg} days · period ${S.plen} days · from ${S.L.length} cycle${S.L.length>1?"s":""}`:"Estimate uses 28 days until you've logged two periods."}${hc?" · On hormonal contraception, bleeds follow your method, not your natural cycle.":""}</p>`
+   :`<p style="font-size:.95rem">Log the first day of your next period below. The tracker estimates your next one after that.</p>`}</div>
+  ${F.map(([h,p])=>`<div class="stopbox"><h3>${h}</h3><p style="font-size:.9rem">${p}</p></div>`).join("")}
+  <section><div class="sec-head"><h2>${iso===t?"Today":fmtDate(iso)}</h2><div class="row" style="gap:6px"><button class="btn ghost sm" data-cstep="-1" aria-label="Previous day">‹</button><button class="btn ghost sm" data-cstep="1" aria-label="Next day" ${iso>=t?"disabled":""}>›</button></div></div>
+   <div class="card stack">
+    <span class="eyebrow">Flow</span>
+    <div class="choice mini" data-cflow="${iso}">${FLOWS.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(c.flow||"")===v}">${l}</button>`).join("")}</div>
+    <span class="eyebrow" style="margin-top:6px">Symptoms</span>
+    <div class="choice mini" data-csym="${iso}">${CSYM.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(c.sym||[]).includes(v)}">${l}</button>`).join("")}</div>
+   </div></section>
+  <section><h2>Last six weeks</h2><div class="card stack">
+   <div class="cgrid">${["M","T","W","T","F","S","S"].map(x=>`<span class="stamp">${x}</span>`).join("")}${cells.map(cell).join("")}</div>
+   <div class="row" style="gap:14px;flex-wrap:wrap"><span class="stamp"><i class="ckey f-medium"></i>Period</span><span class="stamp"><i class="ckey f-spot"></i>Spotting</span><span class="stamp"><i class="ckey pred"></i>Predicted</span></div>
+   <p class="stamp">Tap a day to log or edit it.</p></div></section>
+  <section><h2>Fuel and feel</h2><div class="card stack" style="gap:12px">${tips.map(([a,b])=>`<div><b>${a}</b><p class="muted" style="font-size:.9rem">${b}</p></div>`).join("")}
+   <button class="linkbtn" data-lesson="f-cycle" style="align-self:flex-start">Your period is a vital sign ›</button></div></section>
+  <button class="btn ghost block" data-cclear="1">Delete all cycle data</button>
+  <p class="src">McNulty et al., Sports Med 2020 (menstrual cycle phase and performance meta-analysis); Mountjoy et al., IOC consensus on REDs, 2023; Elliott-Sale et al., Sports Med 2021 (methods for menstrual cycle research)</p></div>`}
+function featClick(b){const ds=b.dataset;
+ if(ds.hwater){const t=isoToday(),d=jGet(t),was=habitDone("water",t);d.water=Math.max(0,Math.min(20,d.water+ +ds.hwater));if(jPut(t,d)){render();if(!was&&habitDone("water",t))logStamp("Goal reached")}return true}
+ const hs=b.closest("[data-hsize]");if(hs){HYD.size=+ds.v;store.set("hyd",HYD);render();return true}
+ const hg=b.closest("[data-hgoal]");if(hg){HYD.goal=+ds.v;store.set("hyd",HYD);render();return true}
+ const rd=b.closest("[data-recday]");if(rd){recDate=ds.v;render();return true}
+ const rc=b.closest("[data-recov]");if(rc){const iso=rc.dataset.recov,d=jGet(iso),cur=d.recov||[],wasM=habitDone("recover",isoToday());d.recov=cur.includes(ds.v)?cur.filter(x=>x!==ds.v):[...cur,ds.v];
+   if(jPut(iso,d)){b.setAttribute("aria-pressed",String(d.recov.includes(ds.v)));if(iso===isoToday()&&!wasM&&habitDone("recover",iso))toast("Recovery logged · Recover moon lit")}return true}
+ const cf=b.closest("[data-cflow]");if(cf){const iso=cf.dataset.cflow,d=jGet(iso),c={...(d.cyc||{flow:"",sym:[]})};c.flow=ds.v;d.cyc=c;if(jPut(iso,d))render();return true}
+ const cs=b.closest("[data-csym]");if(cs){const iso=cs.dataset.csym,d=jGet(iso),c={...(d.cyc||{flow:"",sym:[]})},s=c.sym||[];c.sym=s.includes(ds.v)?s.filter(x=>x!==ds.v):[...s,ds.v];d.cyc=c;if(jPut(iso,d)){b.setAttribute("aria-pressed",String(c.sym.includes(ds.v)))}return true}
+ if(ds.cdate){cycDate=ds.cdate;render();return true}
+ if(ds.cstep){const t=isoToday(),cur=cycDate&&cycDate<=t?cycDate:t,n=jShift(cur,+ds.cstep);cycDate=n>t?t:n;render();return true}
+ if(ds.cclear){if(confirm("Delete all cycle data on this phone? This can't be undone.")){Object.keys(J.days).forEach(k=>{if(J.days[k].cyc){delete J.days[k].cyc}});store.set("journal",J);cycDate=null;render();toast("Cycle data deleted")}return true}
+ return false}
+
+function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"hydrate"},{k:"recover",n:"Recover",go:"recover"},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
 function habitDone(k,iso){const d=jGet(iso);
   if(k==="ready")return rScore(d.ready)!=null;
   if(k==="fuel")return d.entries.length>=1;
-  if(k==="water")return d.water>=4;
-  if(k==="recover"||k==="sleep")return !!(d.habits&&d.habits[k]);
+  if(k==="water")return ozOf(d)>=HYD.goal;
+  if(k==="recover")return !!((d.recov&&d.recov.length)||(d.habits&&d.habits.recover));
+  if(k==="sleep")return !!(d.habits&&d.habits[k]);
   return false}
-const HINT={ready:"15-second check-in",fuel:"Any meal or snack logged",water:"4+ bottles",recover:"Tap once you've had your recovery",sleep:"Tap if you slept 7+ hours",rehab:"Today's rehab done"};
+const HINT={ready:"15-second check-in",fuel:"Any meal or snack logged",water:"Reach your daily ounces",recover:"Log what you did to recover",sleep:"Tap if you slept 7+ hours",rehab:"Today's rehab done"};
 function orbitHTML(){
   const t=isoToday(), H=habits(), n=H.length, lit=H.filter(h=>habitDone(h.k,t)).length;
   const label=profile.num?"#"+esc(profile.num):esc((profile.first[0]||"")+(profile.last[0]||""));
@@ -1755,6 +1888,9 @@ function vHome(){
    ["ready","","Check-in","Readiness in 15 seconds",I.moon],
    ["season","","Season","22 matches, fueling notes",I.cal],
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
+   ["hydrate","","Hydration","Bottles, ounces, your goal",I.drop],
+   ["recover","","Recovery","What helps you bounce back",I.heart],
+   ...(profile.position==="Staff"?[]:[["cycle","","Cycle","Private tracker on this phone",I.cycle]]),
    ["journal","","Journal","Meals, water, training, energy",I.journal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
@@ -2132,7 +2268,7 @@ function vJournal(){
    <div class="card stack">
     <span class="eyebrow">Training this day</span>
     <div class="choice mini">${TRAIN.map(t=>`<button type="button" data-jtrain="${t}" aria-pressed="${d.training.includes(t)}">${t}</button>`).join("")}</div>
-    <div class="row" style="margin-top:4px"><span class="grow"><span class="eyebrow">Water bottles</span><br><span class="muted" style="font-size:.8rem">Count the bottles you finished</span></span>
+    <div class="row" style="margin-top:4px"><span class="grow"><span class="eyebrow">Water bottles</span><br><span class="muted" style="font-size:.8rem">${ozOf(d)} oz of ${HYD.goal} oz · ${HYD.size} oz bottle</span></span>
      <button class="btn ghost sm" data-jwater="-1" aria-label="One less bottle">−</button>${sb(String(d.water).padStart(2,"0"),1)}<button class="btn ghost sm" data-jwater="1" aria-label="One more bottle">+</button></div>
    </div>
    <section><div class="sec-head"><h2>Meals & drinks</h2><span class="stamp">${sb(String(list.length).padStart(2,"0"))} logged</span></div>
@@ -2248,7 +2384,7 @@ function render(){
   if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();scheduleInstall();return}
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();scheduleInstall();checkPatches();
 }
@@ -2258,6 +2394,7 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
+  if(featClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
