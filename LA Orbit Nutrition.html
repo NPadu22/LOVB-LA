@@ -918,6 +918,7 @@ addT([["Share with staff","スタッフと共有","Compartilhar com a comissão"
 addT([["Post-lift / pre-practice snack","ウエイト後・練習前の補食","Lanche pós-musculação / pré-treino"],["Carbs plus a little protein. Keep it light: practice starts in 15 minutes.","炭水化物と少しのたんぱく質。練習まで15分なので軽めに。","Carboidrato e um pouco de proteína. Leve: o treino começa em 15 minutos."],["Post-practice lunch","練習後の昼食","Almoço pós-treino"],["Pre-sleep recovery snack","就寝前のリカバリー補食","Lanche de recuperação antes de dormir"]]);
 addT([["Rest days vary, so there are no set times. Eat these in order, spaced every 3–4 hours to suit your day.","休養日は人それぞれなので時間は決めていません。この順番で、3〜4時間おきに自分の1日に合わせて食べましょう。","Os dias de descanso variam, então não há horários fixos. Coma nesta ordem, a cada 3–4 horas, do jeito que encaixar no seu dia."],["Next","次","Próxima"]]);
 addR([[/^Lift · around (.+)$/,"ウエイト · $1ごろ","Musculação · por volta de $1"],[/^Practice · around (.+)$/,"練習 · $1ごろ","Treino · por volta de $1"]]);
+addT([["Eating style","食事スタイル","Estilo alimentar"],["No preference","特になし","Sem preferência"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -2145,6 +2146,7 @@ function vOnboard(){
     <div class="namerow"><label for="f-num">Jersey #<input id="f-num" inputmode="numeric" maxlength="2" value="${esc(p.num||"")}" placeholder="00"></label></div>
     <label for="f-area">Where do you live? (optional)<select id="f-area"><option value="">Choose your area</option>${AREAS.map(a=>`<option value="${a.k}" ${p.area===a.k?"selected":""}>${esc(a.n)}</option>`).join("")}<option value="other" ${p.area==="other"?"selected":""}>Somewhere else</option></select></label>
     <label for="f-role" id="role-wrap" ${p.position==="Staff"?"":"hidden"}>Your staff role<input id="f-role" value="${esc(p.role||"")}" placeholder="e.g. Athletic trainer, assistant coach, S&C"></label>
+    <div class="stack" style="gap:6px"><span class="eyebrow">Eating style</span><div class="choice" data-pick="diet">${[["none","No preference"],["veg","Vegetarian"]].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(p.diet||"none")===v}">${l}</button>`).join("")}</div></div>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
     <button class="btn block" type="submit">${p.editing?"Save changes":"Enter orbit"}</button>${p.editing?`<button type="button" class="btn ghost block" data-cancel="1">Cancel</button>`:""}
@@ -2342,11 +2344,13 @@ function dayTemplate(type,pt){
    o(T(18,15),"Recovery","recovery","Post-training"),o(T(19,30),"Dinner","main","Dinner","practice"),o(T(22),"Before bed","prebed","Snack")];
 }
 let PLANPREF=Object.assign({pt:"team",veg:false,days:{},sel:{},got:{}},store.get("planpref",{}));
+if(PLANPREF.veg&&profile&&!profile.diet){profile.diet="veg";store.set("profile",profile)}
 if(!PLANPREF.ptv2){PLANPREF.pt="team";PLANPREF.ptv2=1;store.set("planpref",PLANPREF)}
 let planDate=null, showGrocery=false;
 function savePlan(){store.set("planpref",PLANPREF)}
 function planType(iso){iso=iso||isoToday();return PLANPREF.days[iso]||(SCHEDULE.some(m=>m.d===iso)?"match":"practice")}
-function mealOptions(bank){const al=myAllergens();return (MEALBANK[bank]||[]).filter(x=>!x.a.some(a=>al.includes(a))&&(!PLANPREF.veg||x.v))}
+function isVeg(){return !!(profile&&profile.diet==="veg")}
+function mealOptions(bank){const al=myAllergens();return (MEALBANK[bank]||[]).filter(x=>!x.a.some(a=>al.includes(a))&&(!isVeg()||x.v))}
 /* Picks rotate by slot and change every two days, so dinners double as next-day leftovers and the grocery list stays short. Swap moves one slot on one day. */
 function pickFor(type,i,bank,iso){iso=iso||isoToday();const L=mealOptions(bank);if(!L.length)return null;
   const k=iso+":"+type+":"+PLANPREF.pt+":"+i, day=Math.round(new Date(iso+"T12:00:00")/864e5);
@@ -2423,7 +2427,6 @@ function planHTML(){
   const dayName=isToday?"Today":new Date(iso+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"long"});
   const head=`${weekStrip(iso)}<div class="card stack"><span class="eyebrow">${esc(dayName)} is a…</span><div class="choice mini" data-planday="1">${DAYTYPES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${type===k}">${l}</button>`).join("")}</div>
     ${type==="practice"?`<span class="eyebrow" style="margin-top:4px">Practice time</span><div class="choice mini" data-planpt="1">${PRACTICE_TIMES.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${PLANPREF.pt===k}">${l}</button>`).join("")}</div>`:""}
-    <div class="choice mini" data-planveg="1"><button type="button" data-v="1" aria-pressed="${!!PLANPREF.veg}">Vegetarian</button></div>
     ${myAllergens().length?`<p class="stamp">Hiding options with ${esc(myAllergens().join(", "))}.${profile.other?` Check every option against ${esc(profile.other)} yourself.`:""}</p>`:profile.other?`<p class="stamp">Check every option against ${esc(profile.other)} yourself.</p>`:""}</div>`;
   const grocery=`<button class="btn block ${showGrocery?"ghost":""}" data-grocery="1">${showGrocery?"Hide grocery list":"Build my grocery list for the week"}</button>${showGrocery?groceryHTML():""}
    <button class="btn ghost block" data-prep="1">${showPrep?"Hide prep plan":"Show my prep plan (batch-cook)"}</button>${showPrep?prepHTML():""}`;
@@ -2454,7 +2457,6 @@ function planClick(b){
   if(ds.planpick){planDate=ds.planpick;render();return true}
   if(b.closest("[data-planday]")){PLANPREF.days[iso]=ds.v;savePlan();render();return true}
   if(b.closest("[data-planpt]")){PLANPREF.pt=ds.v;savePlan();render();return true}
-  if(b.closest("[data-planveg]")){PLANPREF.veg=!PLANPREF.veg;savePlan();render();return true}
   if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
   if(ds.grocery){showGrocery=!showGrocery;render();if(showGrocery)setTimeout(()=>{const g=document.getElementById("grocery");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.mpgot){const L=MPGOT[mpStore]||[];MPGOT[mpStore]=L.includes(ds.mpgot)?L.filter(x=>x!==ds.mpgot):[...L,ds.mpgot];store.set("mealprep",MPGOT);b.setAttribute("aria-pressed",MPGOT[mpStore].includes(ds.mpgot));return true}
@@ -2483,7 +2485,7 @@ function mpQty(s){let m=s.match(/^(\d+)\s+(\d+)\/(\d+)\s+(.*)$/);if(m)return [+m
 function mpFmt(q){const w=Math.floor(q+1e-9),f=Math.round((q-w)*4)/4,fr={0.25:"1/4",0.5:"1/2",0.75:"3/4"}[f]||"";if(f===1)return String(w+1);return w&&fr?w+" "+fr:w?String(w):fr||String(Math.round(q*100)/100)}
 function mpStoreObj(){if(MPB.store==="mix")return {k:"mix",n:"Mix stores",r:MEALPREP.flatMap(x=>x.r.map(r=>({...r,st:x.n})))};const S=MEALPREP.find(x=>x.k===MPB.store)||MEALPREP[0];return {...S,r:S.r.map(r=>({...r,st:S.n}))}}
 function mpPlan(){const S=mpStoreObj(),al=myAllergens();
-  if(MPB.one==null||!S.r[MPB.one]){const ok=S.r.findIndex(r=>!r.a.some(a=>al.includes(a)));MPB.one=ok<0?0:ok}
+  if(MPB.one==null||!S.r[MPB.one]){const fits=r=>!r.a.some(a=>al.includes(a));let ok=isVeg()?S.r.findIndex(r=>fits(r)&&/vegetarian/i.test(r.n)):-1;if(ok<0)ok=S.r.findIndex(fits);MPB.one=ok<0?0:ok}
   const sel=[MPB.one],need=MPB.days*MPB.mpd;if(!sel.length)return {S,sel,need,batches:[],days:[],spare:0,list:[]};
   const per=MPB.size==="rest"?5:4,B=Math.ceil(need/per),batches=sel.map(()=>0);for(let i=0;i<B;i++)batches[i%sel.length]++;
   const left=batches.map(b=>b*per),t=isoToday(),days=[];let prev=-1;
@@ -2593,6 +2595,7 @@ function vMe(){
    </section>
    <div class="card stack">
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
+    <div class="row"><span class="grow muted">Eating style</span><b style="text-align:right">${isVeg()?"Vegetarian":"No preference"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
    ${patchesHTML()}
@@ -2873,7 +2876,7 @@ document.addEventListener("submit",e=>{
     if(!first||!last){toast("Add your first and last name");return}
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
     const pos=$("#f-pos").value,sex=$("#f-sex").value;if(!sex){toast("Choose female or male");return}
-    profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
+    profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],diet:draft.diet||"none",other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
     store.set("profile",profile);store.set("roster_pending",true);rosterSync();draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
