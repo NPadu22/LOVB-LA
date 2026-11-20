@@ -564,7 +564,9 @@ const CONFIG = {
   teamSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=1",  // Home announcements (Google Sheet, "Team" tab)
   programsSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=3",  // Emma's prehab & rehab programs (Google Sheet, "Programs" tab)
   liftsSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=4",  // strength & conditioning (Google Sheet, "Lifts" tab)
-  scName: "",                                  // strength coach name, e.g. "Coach Sam"
+  scName: "",
+  nutritionSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=6",  // dietitian notes for everyone, a position or one athlete (Google Sheet, "Nutrition" tab)
+  rosterURL: "",                               // Apps Script web app URL (ends in /exec) that adds sign-ups to the Roster tab                                  // strength coach name, e.g. "Coach Sam"
   appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
@@ -860,6 +862,7 @@ addT([["Strength","筋力","Força"],["The weight room","ウエイトルーム",
 ["Estimated 1RM comes from your best set each day (sets of 12 reps or fewer). It's a trend line, not a max test.","推定1RMは各日のベストセット(12回以下)から算出。最大挙上テストではなく、傾向を見るためのものです。","O 1RM estimado vem da sua melhor série de cada dia (séries de até 12 repetições). É uma linha de tendência, não um teste de máximo."],
 ["Your strength coach's program will appear here: four lifts and one conditioning session a week, set for your position.","ストレングスコーチのプログラムがここに表示されます:週4回のウエイトと1回のコンディショニング、ポジション別。","O programa da sua preparadora física aparecerá aqui: quatro treinos de força e um de condicionamento por semana, por posição."]]);
 addR([[/^Lift (\d)$/,"ウエイト$1","Força $1"],[/^Finish (.+)$/,"$1を終了","Concluir $1"],[/^(\d+)\/(\d+) lifts · (\d+)\/(\d+) conditioning$/,"ウエイト $1/$2 · コンディショニング $3/$4","Força $1/$2 · condicionamento $3/$4"],[/^Last time: (.+) · (.+)$/,"前回:$1 · $2","Última vez: $1 · $2"],[/^rest (.+)$/,"休息 $1","descanso $1"],[/^(\d+) sessions? · best (.+)$/,"$1回 · ベスト $2","$1 sessão(ões) · melhor $2"],[/^(.+) logged$/,"$1を記録しました","$1 registrado"]]);
+addT([["Your name, position, number and language are shared with team staff so they can send you your programs and nutrition. Everything else stays on this phone.","名前、ポジション、背番号、言語はプログラムや栄養情報を届けるためにチームスタッフと共有されます。それ以外はこのスマホにのみ保存されます。","Seu nome, posição, número e idioma são compartilhados com a comissão técnica para enviarem seus programas e orientações de nutrição. O resto fica neste celular."],["From your dietitian","管理栄養士から","Da sua nutricionista"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -870,7 +873,7 @@ function translateDOM(root){if(LANG==="en"||!root)return;const w=document.create
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
  root.querySelectorAll("[placeholder],[aria-label],[title]").forEach(e=>["placeholder","aria-label","title"].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}}))}
 function langPicker(label){return `<div class="stack" style="gap:6px"><span class="eyebrow">${label||"Language"}</span><div class="choice mini" data-notr="1">${LANGS.map(([k,l])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" lang="${k}">${l}</button>`).join("")}</div>${LANG==="en"?"":`<p class="stamp">Lessons, recipes, city guides and staff posts stay in English for now.</p>`}</div>`}
-function setLang(k){LANG=k;store.set("lang",k);document.documentElement.lang=k==="pt"?"pt-BR":k;tabsBuilt=false;render()}
+function setLang(k){LANG=k;store.set("lang",k);if(profile){store.set("roster_pending",true);rosterSync()}document.documentElement.lang=k==="pt"?"pt-BR":k;tabsBuilt=false;render()}
 
 function myAllergens(){return profile?profile.allergies||[]:[]}
 function shakeName(){return "protein shake"}
@@ -1918,7 +1921,7 @@ function vFeedback(){return `<div class="view"><div><h1 style="margin-top:4px">A
 /* ===== Announcements from Google Sheets (published to the web as CSV).
    Columns (header row, any order, case-insensitive): Date | Tag | Headline | Details | Hide after | Show
    Last good copy is kept on the phone; if a sheet can't be reached the app shows that copy, then the built-in list. ===== */
-let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null),prog:store.get("sheet_prog",null),lift:store.get("sheet_lift",null)};
+let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null),prog:store.get("sheet_prog",null),lift:store.get("sheet_lift",null),nut:store.get("sheet_nut",null)};
 function parseCSV(text){const rows=[];let row=[],f="",q=false;
   for(let i=0;i<text.length;i++){const c=text[i];
     if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
@@ -1928,15 +1931,15 @@ function sheetDate(v){v=(v||"").trim();if(!v)return "";let m=v.match(/^(\d{4})-(
   m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);if(m){const y=m[3].length===2?"20"+m[3]:m[3];return `${y}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`}
   const d=new Date(v);return isNaN(d)?"":d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function sheetRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
-  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iD=col("date"),iT=col("tag"),iH=col("headline"),iX=col("details"),iE=col("hide"),iS=col("show");
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iD=col("date"),iT=col("tag"),iH=col("headline"),iX=col("details"),iE=col("hide"),iS=col("show"),iF=H.findIndex(h=>h==="for");
   if(iH<0)return null;const today=isoToday();
-  return R.slice(1).map(r=>({when:sheetDate(r[iD]),tag:(r[iT]||"").trim(),t:(r[iH]||"").trim(),d:(r[iX]||"").trim(),hide:sheetDate(r[iE]),show:(r[iS]||"yes").trim().toLowerCase()}))
+  return R.slice(1).map(r=>({when:sheetDate(r[iD]),tag:(r[iT]||"").trim(),t:(r[iH]||"").trim(),d:(r[iX]||"").trim(),who:iF<0?"":(r[iF]||"").trim(),hide:sheetDate(r[iE]),show:(r[iS]||"yes").trim().toLowerCase()}))
    .filter(a=>a.t&&a.show!=="no"&&!(a.hide&&a.hide<today)&&!(a.when&&a.when>today)).sort((a,b)=>(b.when||"").localeCompare(a.when||""))}
 async function loadSheet(kind,url){if(!url)return;try{const r=await fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return;
   const rows=(kind==="prog"?progRows:kind==="lift"?liftRows:sheetRows)(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
   const changed=JSON.stringify((SHEET[kind]||{}).rows)!==JSON.stringify(rows);SHEET[kind]=val;store.set("sheet_"+kind,val);if(changed&&profile&&!draft.editing)render()}catch(e){}}
 function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":fmtDate(t.slice(0,10))}
-function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV);loadSheet("lift",CONFIG.liftsSheetCSV)}
+function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV);loadSheet("lift",CONFIG.liftsSheetCSV);loadSheet("nut",CONFIG.nutritionSheetCSV)}
 /* Programs tab: one row per exercise; rows sharing a Program name form one program, in row order */
 function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
   const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iDy=col("day"),iPh=col("phase"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
@@ -1980,9 +1983,17 @@ function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(every
   const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
 function atPrograms(){return allPrograms().filter(progFor)}
+function nutNotes(){return (CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[]).filter(a=>progFor({who:a.who}))}
+function nutHTML(){const L=nutNotes();if(!L.length)return "";
+  return `<section><div class="sec-head"><h2>From your dietitian</h2></div><div class="card" style="padding-block:2px">${L.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Nutrition")}</span>${progTokens(a.who).length&&progTokens(a.who).every(progIsCode)?`<span class="chip violet">${tr("Just for you")}</span>`:""}<span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div></section>`}
+/* Roster: name, position, number, language and code go to the sheet's Roster tab so staff know who is set up */
+function rosterSync(){if(!CONFIG.rosterURL||!profile||!store.get("roster_pending",false))return;
+  let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
+  const body=JSON.stringify({id,code:myCode(),first:profile.first,last:profile.last,position:profile.position,num:profile.num||"",lang:LANG});
+  fetch(CONFIG.rosterURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).then(()=>store.set("roster_pending",false)).catch(()=>{})}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadSheets()});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadSheets();rosterSync()}});
 
 /* ===== Volleyball story layer (Joe Rohde-style: one world, earned artifacts, hidden discoveries) ===== */
 /* Tournament pins: club volleyball's pin-trading tradition. Earned by real habits; each carries a one-line backstory. Keys stay stable so earned pins persist. */
@@ -2067,7 +2078,7 @@ function vOnboard(){
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
     <button class="btn block" type="submit">${p.editing?"Save changes":"Enter orbit"}</button>${p.editing?`<button type="button" class="btn ghost block" data-cancel="1">Cancel</button>`:""}
-    <p class="muted" style="font-size:.78rem">Saved on this phone only. Staff don't see it unless you send it in a message.</p>
+    <p class="muted" style="font-size:.78rem">Your name, position, number and language are shared with team staff so they can send you your programs and nutrition. Everything else stays on this phone.</p>
    </form></div>`;
 }
 function vStop(){
@@ -2365,7 +2376,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><p class="eyebrow module">The training table</p><h1 style="margin-top:4px">Fuel</h1></div>
+  return `<div class="view"><div><p class="eyebrow module">The training table</p><h1 style="margin-top:4px">Fuel</h1></div>${nutHTML()}
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
@@ -2681,7 +2692,7 @@ document.addEventListener("submit",e=>{
     profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
-    store.set("profile",profile);draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
+    store.set("profile",profile);store.set("roster_pending",true);rosterSync();draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
   if(f.id==="rem-form"){remSync();const r=remDraft;
     if(!r.title.trim()){toast("Name the reminder");return}
     if(!r.date||!r.time){toast("Pick a date and time");return}
@@ -2703,6 +2714,8 @@ document.addEventListener("input",e=>{const t=e.target;
 
 render();
 loadSheets();
+if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
+rosterSync();
 
 </script>
 </body></html>
