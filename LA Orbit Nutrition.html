@@ -212,6 +212,22 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .cday.pred.sel{box-shadow:inset 0 0 0 2px #E5484D,0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
 .ckey{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 .ckey.f-medium{background:#E5484D}.ckey.f-spot{background:color-mix(in srgb,#E5484D 30%,var(--surface-2))}.ckey.pred{box-shadow:inset 0 0 0 2px #E5484D}
+.lifts{padding-block:4px}
+.lift{display:flex;flex-direction:column;gap:7px;padding:12px 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+.lift:last-child{border-bottom:0}
+.lift-top{display:flex;gap:12px;align-items:flex-start}
+.lord{flex:none;min-width:30px;height:24px;padding:0 6px;border-radius:7px;display:grid;place-items:center;font:700 .72rem var(--mono);background:var(--surface-2);color:var(--accent)}
+.lift-log{display:flex;gap:8px;align-items:center}
+.lift-log label{flex:1;min-width:0}.lift-log label:nth-of-type(2){flex:0 0 64px}
+.lift-log input{padding:9px 10px;font-size:16px;text-align:center}
+.lprog{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lchg{font:700 .8rem var(--mono);color:#1F9D63;background:color-mix(in srgb,#1F9D63 14%,transparent);padding:4px 8px;border-radius:999px}
+.lchg.neg{color:#E5484D;background:color-mix(in srgb,#E5484D 14%,transparent)}
+.lspark{width:100%;height:56px;display:block}
+.ltab{width:100%;border-collapse:collapse;font-size:.82rem}.ltab th{text-align:left;font:700 .66rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fg-muted,inherit);opacity:.7;padding:6px 4px}.ltab td{padding:6px 4px;border-top:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+.sc-sess{padding:0}
+.sc-sess button{border-color:color-mix(in srgb,var(--fg) 22%,transparent);color:var(--fg)}
+.sc-sess button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent,#fff)}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -547,6 +563,8 @@ const CONFIG = {
   atSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=0",   // Emma's announcements (Google Sheet, "Emma" tab)
   teamSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=1",  // Home announcements (Google Sheet, "Team" tab)
   programsSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=3",  // Emma's prehab & rehab programs (Google Sheet, "Programs" tab)
+  liftsSheetCSV: "https://docs.google.com/spreadsheets/d/1Zxg_so_GrpIlHbdDBgMzdMI7osfhtVyD32Uk2T-V978/gviz/tq?tqx=out:csv&headers=1&gid=4",  // strength & conditioning (Google Sheet, "Lifts" tab)
+  scName: "",                                  // strength coach name, e.g. "Coach Sam"
   appLink: "https://claude.ai/artifact/V4P7urrpu8qdDna3TErQ66",
   feedbackEmail: "Nick@lbcnutrition.com"                            // app feedback goes here (opens the user's mail app)
 };
@@ -836,6 +854,12 @@ addR([[/^at (LOVB )?(.+)$/,"$2戦(アウェー)","contra $2 (fora)"],[/^vs (LOVB
 addT([["Language preference","使用言語","Preferência de idioma"],["Sex","性別","Sexo"],["Female","女性","Feminino"],["Male","男性","Masculino"],["Choose female or male","性別を選択してください","Escolha feminino ou masculino"],
 ["Starting point: men need about 125 oz (3.7 L) of water a day from food and drinks, about 100 oz of it from drinks, before exercise. Add your sweat losses on training days. Your sweat test gives your real number.","目安:男性は運動を除いて1日約125 oz(3.7 L)の水分が必要で、そのうち約100 ozは飲み物から。練習日は汗で失う分を足しましょう。正確な量は発汗テストでわかります。","Ponto de partida: homens precisam de cerca de 125 oz (3,7 L) de água por dia vindos de alimentos e bebidas, cerca de 100 oz de bebidas, sem contar o exercício. Some as perdas de suor nos dias de treino. Seu teste de suor dá o número real."]]);
 addT([["Saved on this phone only. Staff don't see it unless you send it in a message.","このスマホにのみ保存されます。あなたが送らない限りスタッフには見えません。","Salvo só neste celular. A comissão não vê, a menos que você envie em uma mensagem."]]);
+addT([["Strength","筋力","Força"],["The weight room","ウエイトルーム","Sala de musculação"],["This week","今週","Esta semana"],["Your progress","あなたの進歩","Sua evolução"],["Log set","セットを記録","Registrar série"],["Set logged","セットを記録しました","Série registrada"],["Add weight and reps","重量と回数を入力してください","Informe peso e repetições"],["Weight","重量","Peso"],["Reps","回数","Repetições"],["Done today ✓","今日完了 ✓","Feito hoje ✓"],["Session logged ✓","セッション記録済み ✓","Sessão registrada ✓"],["Conditioning","コンディショニング","Condicionamento"],
+["How hard was it? (session RPE)","きつさは?(セッションRPE)","Quão difícil foi? (PSE da sessão)"],["Minutes","分","Minutos"],["1 rest · 5 hard · 10 maximal. Your coaches use RPE × minutes to track load.","1 休息 · 5 きつい · 10 限界。コーチはRPE×時間で負荷を管理します。","1 repouso · 5 difícil · 10 máximo. A comissão usa PSE × minutos para acompanhar a carga."],
+["Log a set on any tracked lift and your progress chart starts here.","記録対象の種目でセットを記録すると、ここに進歩のグラフが表示されます。","Registre uma série em qualquer exercício acompanhado e seu gráfico de evolução começa aqui."],
+["Estimated 1RM uses the Epley formula from your best set each day (sets of 12 reps or fewer). It's a trend line, not a max test.","推定1RMは各日のベストセット(12回以下)からEpley式で算出。最大挙上テストではなく、傾向を見るためのものです。","O 1RM estimado usa a fórmula de Epley com sua melhor série de cada dia (séries de até 12 repetições). É uma linha de tendência, não um teste de máximo."],
+["Your strength coach's program will appear here: four lifts and one conditioning session a week, set for your position.","ストレングスコーチのプログラムがここに表示されます:週4回のウエイトと1回のコンディショニング、ポジション別。","O programa da sua preparadora física aparecerá aqui: quatro treinos de força e um de condicionamento por semana, por posição."]]);
+addR([[/^Lift (\d)$/,"ウエイト$1","Força $1"],[/^Finish (.+)$/,"$1を終了","Concluir $1"],[/^(\d+)\/(\d+) lifts · (\d+)\/(\d+) conditioning$/,"ウエイト $1/$2 · コンディショニング $3/$4","Força $1/$2 · condicionamento $3/$4"],[/^Last time: (.+) · (.+)$/,"前回:$1 · $2","Última vez: $1 · $2"],[/^rest (.+)$/,"休息 $1","descanso $1"],[/^(\d+) sessions? · best (.+)$/,"$1回 · ベスト $2","$1 sessão(ões) · melhor $2"],[/^(.+) logged$/,"$1を記録しました","$1 registrado"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -892,8 +916,8 @@ const I={
  at:s24('<path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z"/>'),
  learn:s24('<path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.5 3 5 3s5-1.5 5-3V9"/><path d="M21 7v6"/>')
 };
-I.ready=I.moon;
-const TABS=[["home","Home"],["fuel","Fuel"],["at","Training"],["learn","Learn"],["me","Me"]];
+I.ready=I.moon;I.sc=I.train;
+const TABS=[["home","Home"],["fuel","Fuel"],["at","Training"],["sc","Strength"],["learn","Learn"],["me","Me"]];
 let tabsBuilt=false;
 function renderTabs(){
   const cur=TABS.some(([k])=>k===tab)?tab:"home", box=$("#tabs");
@@ -1178,6 +1202,79 @@ function featClick(b){const ds=b.dataset;
  if(ds.cdate){cycDate=ds.cdate;render();return true}
  if(ds.cstep){const t=isoToday(),cur=cycDate&&cycDate<=t?cycDate:t,n=jShift(cur,+ds.cstep);cycDate=n>t?t:n;render();return true}
  if(ds.cclear){if(confirm("Delete all cycle data on this phone? This can't be undone.")){Object.keys(J.days).forEach(k=>{if(J.days[k].cyc){delete J.days[k].cyc}});store.set("journal",J);cycDate=null;render();toast("Cycle data deleted")}return true}
+ return false}
+
+/* ===== Weight room: strength & conditioning from the sheet's Lifts tab; athletes log sets and track progress ===== */
+function liftRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n)),g=(r,i)=>i<0?"":(r[i]||"").trim();
+  const iS=col("session"),iF=col("for"),iB=col("block"),iO=col("order"),iE=col("exercise"),iSe=col("sets"),iR=col("reps"),iI=col("intensity"),iRe=col("rest"),iC=col("cue"),iV=col("video"),iT=col("track"),iSh=col("show");
+  if(iS<0||iE<0)return null;
+  return R.slice(1).map(r=>{const v=g(r,iV),s=g(r,iS);return {s,who:g(r,iF),block:g(r,iB),o:g(r,iO),n:g(r,iE),sets:g(r,iSe),reps:g(r,iR),int:g(r,iI),rest:g(r,iRe),cue:g(r,iC),video:/^https:\/\//i.test(v)?v:"",track:g(r,iT)?g(r,iT).toLowerCase()==="yes":!/condition/i.test(s),show:g(r,iSh).toLowerCase()}}).filter(x=>x.s&&x.n&&x.show!=="no")}
+const isCond=s=>/condition/i.test(s);
+function scRows(){return (CONFIG.liftsSheetCSV&&SHEET.lift?SHEET.lift.rows:[]).filter(x=>progFor({who:x.who}))}
+function scSessions(){const R=scRows(),S=[];R.forEach(x=>{if(!S.includes(x.s))S.push(x.s)});return S}
+const liftKey=n=>n.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+let LIFTLOG=store.get("liftlog",{}),SCDONE=store.get("scdone",{}),SCUNIT=store.get("scunit","lb"),scSel=null,scOpen=null,scRPE=null;
+function e1rm(w,r){w=+w;r=+r;if(!w||!r)return null;if(r===1)return w;if(r>12)return null;return w*(1+r/30)}
+function weekStart(iso){const d=new Date(iso+"T12:00:00");return jShift(iso,-((d.getDay()+6)%7))}
+function weekDone(){const ws=weekStart(isoToday()),out=[];Object.keys(SCDONE).forEach(d=>{if(d>=ws&&d<=isoToday())out.push(...SCDONE[d])});return out}
+function sessionsOn(iso){return SCDONE[iso]||[]}
+function convW(x){const w=+x.w,u=x.u||"lb";return u===SCUNIT?w:SCUNIT==="kg"?w*0.45359237:w/0.45359237}
+function liftHistory(k){const L=(LIFTLOG[k]||[]).map(x=>({...x,w:convW(x)})),by={};L.forEach(x=>{(by[x.d]=by[x.d]||[]).push(x)});
+  return Object.keys(by).sort().map(d=>{const sets=by[d],best=Math.max(...sets.map(x=>e1rm(x.w,x.r)||0)),top=sets.reduce((a,x)=>(+x.w>+a.w?x:a),sets[0]);return {d,sets,best:best||null,top}})}
+function spark(vals){const V=vals.filter(v=>v!=null);if(V.length<2)return "";const min=Math.min(...V),max=Math.max(...V),W=260,H=56,n=vals.length;
+  const pts=vals.map((v,i)=>v==null?null:[(i/(n-1))*(W-8)+4,H-6-((v-min)/((max-min)||1))*(H-12)]).filter(Boolean);
+  return `<svg class="lspark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="var(--accent)"/>`).join("")}</svg>`}
+const fmtW=w=>(+w%1?(+w).toFixed(1):String(+w));
+function exCard(x,i){const k=liftKey(x.n),t=isoToday(),today=(LIFTLOG[k]||[]).filter(e=>e.d===t).map(e=>({...e,w:convW(e)})),H=liftHistory(k).filter(h=>h.d<t),last=H[H.length-1];
+  const firstRep=(x.reps.match(/\d+/)||[""])[0];
+  return `<div class="lift" id="lift-${i}"><div class="lift-top"><span class="lord">${esc(x.o||"·")}</span><div class="stack" style="gap:2px;min-width:0;flex:1"><b>${esc(x.n)}</b>
+    <span class="stamp">${esc([x.sets&&x.reps?`${x.sets} × ${x.reps}`:x.sets||x.reps,x.int,x.rest?`rest ${x.rest}`:""].filter(Boolean).join(" · "))}</span></div></div>
+    ${x.cue?`<p class="muted" style="font-size:.86rem">${esc(x.cue)}</p>`:""}
+    ${x.video?`<a class="linkbtn" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}
+    ${x.track?`${last?`<p class="stamp">Last time: ${fmtW(last.top.w)} ${SCUNIT} × ${last.top.r} · ${fmtDate(last.d)}</p>`:""}
+     ${today.length?`<div class="row" style="flex-wrap:wrap;gap:6px">${today.map(e=>`<button type="button" class="chip" data-liftdel="${k}|${e.id}" aria-label="Remove set ${fmtW(e.w)} by ${e.r}">${fmtW(e.w)} × ${e.r} ×</button>`).join("")}</div>`:""}
+     <div class="lift-log"><label><span class="sr">Weight</span><input inputmode="decimal" id="lw-${i}" placeholder="${last?fmtW(last.top.w):SCUNIT}" aria-label="Weight in ${SCUNIT}"></label><span class="stamp">${SCUNIT} ×</span><label><span class="sr">Reps</span><input inputmode="numeric" id="lr-${i}" value="${firstRep}" aria-label="Reps"></label><button class="btn sm" data-liftlog="${i}" data-k="${k}">Log set</button></div>`:""}
+  </div>`}
+function vSC(){const S=scSessions(),t=isoToday(),wd=weekDone(),R=scRows();
+  const lifts=S.filter(s=>!isCond(s)),conds=S.filter(isCond);
+  if(!S.includes(scSel))scSel=S.find(s=>!wd.includes(s))||S[0]||null;
+  const rows=R.filter(x=>x.s===scSel),block=(rows.find(x=>x.block)||{}).block||"",doneToday=sessionsOn(t).includes(scSel);
+  const tracked=[...new Set(R.filter(x=>x.track).map(x=>x.n))],withHist=Object.keys(LIFTLOG).filter(k=>LIFTLOG[k].length);
+  const names={};R.forEach(x=>names[liftKey(x.n)]=x.n);Object.keys(LIFTLOG).forEach(k=>{if(!names[k])names[k]=(LIFTLOG[k][0]||{}).n||k});
+  const prog=[...new Set([...tracked.map(liftKey),...withHist])].filter(k=>(LIFTLOG[k]||[]).length);
+  return `<div class="view"><div><p class="eyebrow"><span class="module">The weight room</span>${CONFIG.scName?` · ${esc(CONFIG.scName)}`:""}</p><h1 style="margin-top:4px">Strength</h1>${block?`<p class="stamp" style="margin-top:4px">${esc(block)}</p>`:""}</div>
+   ${S.length?`<div class="card stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span class="eyebrow">This week</span><span class="stamp">${lifts.filter(s=>wd.includes(s)).length}/${lifts.length} lifts · ${conds.filter(s=>wd.includes(s)).length}/${conds.length} conditioning</span></div>
+     <div class="pdays sc-sess" role="group" aria-label="Session">${S.map(s=>`<button type="button" data-scsel="${esc(s)}" aria-pressed="${s===scSel}">${esc(s)}${wd.includes(s)?'<span class="dot" aria-label="done this week"></span>':""}</button>`).join("")}</div></div>
+    <section><div class="sec-head"><h2>${esc(scSel)}</h2>${doneToday?`<span class="stamp">Done today ✓</span>`:""}</div>
+     <div class="card stack lifts">${rows.map((x,i)=>exCard(x,i)).join("")}</div>
+     ${isCond(scSel)?`<div class="card stack" style="margin-top:10px"><span class="eyebrow">How hard was it? (session RPE)</span>
+       <div class="choice mini" data-scrpe="1">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" data-v="${n}" aria-pressed="${scRPE===n}">${n}</button>`).join("")}</div>
+       <label for="sc-min">Minutes<input id="sc-min" inputmode="numeric" placeholder="e.g. 30"></label><p class="stamp">1 rest · 5 hard · 10 maximal. Your coaches use RPE × minutes to track load.</p></div>`:""}
+     <button class="btn block" style="margin-top:12px" data-scdone="${esc(scSel)}">${doneToday?"Session logged ✓":`Finish ${esc(scSel)}`}</button></section>
+    <section><div class="sec-head"><h2>Your progress</h2><div class="choice mini" data-scunit="1">${["lb","kg"].map(u=>`<button type="button" data-v="${u}" aria-pressed="${SCUNIT===u}">${u}</button>`).join("")}</div></div>
+     ${prog.length?`<div class="stack" style="gap:10px">${prog.map(k=>{const H=liftHistory(k),f=H[0],l=H[H.length-1],bests=H.map(h=>h.best),firstB=bests.find(v=>v!=null),lastB=[...bests].reverse().find(v=>v!=null),ch=firstB&&lastB&&H.length>1?Math.round((lastB-firstB)/firstB*100):null,open=scOpen===k;
+        return `<div class="card stack" style="gap:8px"><button class="lprog" data-scopen="${k}" aria-expanded="${open}"><span class="stack" style="gap:2px;text-align:left"><b>${esc(names[k])}</b><span class="stamp">${H.length} session${H.length>1?"s":""} · best ${fmtW(Math.max(...H.map(h=>+h.top.w)))} ${SCUNIT}${lastB?` · est. 1RM ${Math.round(lastB)} ${SCUNIT}`:""}</span></span>${ch!=null?`<span class="lchg ${ch<0?"neg":""}">${ch>0?"+":""}${ch}%</span>`:""}</button>
+         ${spark(bests)}
+         ${open?`<table class="ltab"><tr><th>Date</th><th>Top set</th><th>Sets</th><th>Est. 1RM</th></tr>${[...H].reverse().map(h=>`<tr><td>${fmtDate(h.d)}</td><td>${fmtW(h.top.w)} × ${h.top.r}</td><td>${h.sets.length}</td><td>${h.best?Math.round(h.best):"–"}</td></tr>`).join("")}</table>`:""}</div>`}).join("")}</div>
+       <p class="stamp" style="margin-top:8px">Estimated 1RM uses the Epley formula from your best set each day (sets of 12 reps or fewer). It's a trend line, not a max test.</p>`
+      :`<div class="card muted">Log a set on any tracked lift and your progress chart starts here.</div>`}</section>`
+   :`<div class="card stack"><p class="muted">Your strength coach's program will appear here: four lifts and one conditioning session a week, set for your position.</p></div>`}
+   <p class="src">Epley, 1985 (1RM estimation); Foster et al., J Strength Cond Res 2001 (session RPE); Suchomel et al., Sports Med 2016 (strength and athletic performance)</p></div>`}
+function scClick(b){const ds=b.dataset;
+ if(ds.scsel!==undefined){scSel=ds.scsel;scRPE=null;render();scrollTo({top:0});return true}
+ if(ds.liftlog!==undefined){const i=ds.liftlog,w=parseFloat(($("#lw-"+i).value||"").replace(",",".")),r=parseInt($("#lr-"+i).value,10);
+   if(!(w>=0)||!r||isNaN(w)){toast("Add weight and reps");return true}
+   const k=ds.k,row=scRows().filter(x=>x.s===scSel)[+i];(LIFTLOG[k]=LIFTLOG[k]||[]).push({id:Date.now().toString(36),d:isoToday(),w,r,n:row?row.n:k,u:SCUNIT});
+   if(store.set("liftlog",LIFTLOG)){render();const el=document.getElementById("lift-"+i);if(el)el.scrollIntoView({block:"center"});toast("Set logged")}return true}
+ if(ds.liftdel){const [k,id]=ds.liftdel.split("|");LIFTLOG[k]=(LIFTLOG[k]||[]).filter(x=>x.id!==id);store.set("liftlog",LIFTLOG);render();return true}
+ const rp=b.closest("[data-scrpe]");if(rp){scRPE=+ds.v;rp.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.v===scRPE)));return true}
+ if(ds.scdone!==undefined){const t=isoToday(),s=ds.scdone,L=SCDONE[t]||[];if(L.includes(s)){SCDONE[t]=L.filter(x=>x!==s)}else{SCDONE[t]=[...L,s];
+   if(isCond(s)){const m=parseInt(($("#sc-min")||{}).value,10);const d=jGet(t);d.cond={rpe:scRPE,min:m||null,load:scRPE&&m?scRPE*m:null};jPut(t,d)}
+   const d=jGet(t);d.training=d.training||[];if(!d.training.includes("Lift")&&!isCond(s)){d.training.push("Lift");jPut(t,d)}}
+   store.set("scdone",SCDONE);const fin=(SCDONE[t]||[]).includes(s);if(fin){scSel=null;scRPE=null}render();if(fin){scrollTo({top:0});logStamp(s+" logged")}return true}
+ const su=b.closest("[data-scunit]");if(su){SCUNIT=ds.v;store.set("scunit",SCUNIT);render();return true}
+ if(ds.scopen){scOpen=scOpen===ds.scopen?null:ds.scopen;render();return true}
  return false}
 
 function habits(){const H=[{k:"ready",n:"Check-in",go:"ready"},{k:"fuel",n:"Fuel log",go:"journal"},{k:"water",n:"Hydrate",go:"hydrate"},{k:"recover",n:"Recover",go:"recover"},{k:"sleep",n:"Sleep 7h+",tap:1}];return H}
@@ -1822,7 +1919,7 @@ function vFeedback(){return `<div class="view"><div><h1 style="margin-top:4px">A
 /* ===== Announcements from Google Sheets (published to the web as CSV).
    Columns (header row, any order, case-insensitive): Date | Tag | Headline | Details | Hide after | Show
    Last good copy is kept on the phone; if a sheet can't be reached the app shows that copy, then the built-in list. ===== */
-let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null),prog:store.get("sheet_prog",null)};
+let SHEET={at:store.get("sheet_at",null),team:store.get("sheet_team",null),prog:store.get("sheet_prog",null),lift:store.get("sheet_lift",null)};
 function parseCSV(text){const rows=[];let row=[],f="",q=false;
   for(let i=0;i<text.length;i++){const c=text[i];
     if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
@@ -1837,10 +1934,10 @@ function sheetRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=
   return R.slice(1).map(r=>({when:sheetDate(r[iD]),tag:(r[iT]||"").trim(),t:(r[iH]||"").trim(),d:(r[iX]||"").trim(),hide:sheetDate(r[iE]),show:(r[iS]||"yes").trim().toLowerCase()}))
    .filter(a=>a.t&&a.show!=="no"&&!(a.hide&&a.hide<today)&&!(a.when&&a.when>today)).sort((a,b)=>(b.when||"").localeCompare(a.when||""))}
 async function loadSheet(kind,url){if(!url)return;try{const r=await fetch(url+(url.includes("?")?"&":"?")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return;
-  const rows=(kind==="prog"?progRows:sheetRows)(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
+  const rows=(kind==="prog"?progRows:kind==="lift"?liftRows:sheetRows)(await r.text());if(!rows)return;const val={rows,fetched:new Date().toISOString()};
   const changed=JSON.stringify((SHEET[kind]||{}).rows)!==JSON.stringify(rows);SHEET[kind]=val;store.set("sheet_"+kind,val);if(changed&&profile&&!draft.editing)render()}catch(e){}}
 function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":fmtDate(t.slice(0,10))}
-function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV)}
+function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV);loadSheet("lift",CONFIG.liftsSheetCSV)}
 /* Programs tab: one row per exercise; rows sharing a Program name form one program, in row order */
 function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
   const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iDy=col("day"),iPh=col("phase"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
@@ -2501,7 +2598,7 @@ function _render(){
   if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();scheduleInstall();return}
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
-  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
+  app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,sc:vSC,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();scheduleInstall();checkPatches();
 }
@@ -2513,6 +2610,7 @@ document.addEventListener("click",e=>{
   if(jClick(b))return;
   if(atClick(b))return;
   if(featClick(b))return;
+  if(scClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
