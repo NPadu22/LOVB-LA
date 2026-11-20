@@ -228,6 +228,11 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .sc-sess{padding:0}
 .sc-sess button{border-color:color-mix(in srgb,var(--fg) 22%,transparent);color:var(--fg)}
 .sc-sess button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent,#fff)}
+.mpn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--on-accent,#fff);font:800 .78rem var(--display,inherit);margin-right:8px;vertical-align:3px}
+.mpmeal{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:12px;align-items:flex-start;width:100%}
+.mpmeal[aria-pressed="false"]{opacity:.72}
+.mpchk{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--accent);display:grid;place-items:center;font-weight:800;color:var(--on-accent,#fff)}
+.mpmeal[aria-pressed="true"] .mpchk{background:var(--accent)}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -884,6 +889,10 @@ addT([["Strength","筋力","Força"],["The weight room","ウエイトルーム",
 ["Your strength coach's program will appear here: four lifts and one conditioning session a week, set for your position.","ストレングスコーチのプログラムがここに表示されます:週4回のウエイトと1回のコンディショニング、ポジション別。","O programa da sua preparadora física aparecerá aqui: quatro treinos de força e um de condicionamento por semana, por posição."]]);
 addR([[/^Lift (\d)$/,"ウエイト$1","Força $1"],[/^Finish (.+)$/,"$1を終了","Concluir $1"],[/^(\d+)\/(\d+) lifts · (\d+)\/(\d+) conditioning$/,"ウエイト $1/$2 · コンディショニング $3/$4","Força $1/$2 · condicionamento $3/$4"],[/^Last time: (.+) · (.+)$/,"前回:$1 · $2","Última vez: $1 · $2"],[/^rest (.+)$/,"休息 $1","descanso $1"],[/^(\d+) sessions? · best (.+)$/,"$1回 · ベスト $2","$1 sessão(ões) · melhor $2"],[/^(.+) logged$/,"$1を記録しました","$1 registrado"]]);
 addT([["Your name, position, number and language are shared with team staff so they can send you your programs and nutrition. Everything else stays on this phone.","名前、ポジション、背番号、言語はプログラムや栄養情報を届けるためにチームスタッフと共有されます。それ以外はこのスマホにのみ保存されます。","Seu nome, posição, número e idioma são compartilhados com a comissão técnica para enviarem seus programas e orientações de nutrição. O resto fica neste celular."],["From your dietitian","管理栄養士から","Da sua nutricionista"]]);
+addT([["Meal prep","作り置き","Marmitas"],["Pick your store, your meals and how many days. The app builds your plan and one grocery list.","お店、メニュー、日数を選ぶと、プランと買い物リストを作成します。","Escolha o mercado, as refeições e quantos dias. O app monta seu plano e uma lista de compras."],["Store","お店","Mercado"],["Meals","メニュー","Refeições"],["How many days?","何日分?","Quantos dias?"],["Meals a day","1日の食事数","Refeições por dia"],["Lunch + dinner","昼食+夕食","Almoço + jantar"],["Your plan","あなたのプラン","Seu plano"],["From the fridge","冷蔵庫から","Da geladeira"],["From the freezer","冷凍庫から","Do freezer"],["Move to the fridge the night before.","前日の夜に冷蔵庫へ移す。","Passe para a geladeira na noite anterior."],["Grocery list","買い物リスト","Lista de compras"],["Copy list and plan","リストとプランをコピー","Copiar lista e plano"],["Clear ticks","チェックを外す","Limpar marcações"],["Brands vary: check labels for your allergens.","ブランドにより異なります。アレルゲン表示を確認してください。","As marcas variam: confira os rótulos para seus alergênicos."],["Cook it","調理する","Prepare"],["Choose at least one meal to build your plan.","メニューを1つ以上選ぶとプランが作成されます。","Escolha pelo menos uma refeição para montar seu plano."],
+["Cooked food keeps 3–4 days in the fridge, so portions for day 4 on go straight into the freezer after cooling.","調理済みの食品の冷蔵保存は3〜4日。4日目以降の分は冷ましてからすぐ冷凍しましょう。","Comida pronta dura 3–4 dias na geladeira; as porções do dia 4 em diante vão direto para o freezer depois de esfriar."],
+["Macros are approximate per portion, not label-verified. Cool food within 2 hours, refrigerate and eat within 3–4 days, or freeze. Keep cold toppings (avocado, tzatziki, hummus, feta) separate until you eat.","栄養素は1食あたりの概算です。調理後2時間以内に冷まして冷蔵し、3〜4日以内に食べるか冷凍を。冷たいトッピング(アボカド、ザジキ、フムス、フェタ)は食べる直前まで別に。","Os macros são aproximados por porção, não verificados no rótulo. Esfrie em até 2 horas, guarde na geladeira e coma em 3–4 dias, ou congele. Deixe coberturas frias (abacate, tzatziki, homus, feta) separadas até comer."],["Meal prep list copied","リストをコピーしました","Lista copiada"]]);
+addR([[/^(\d) days$/,"$1日","$1 dias"],[/^(\d+) portions$/,"$1食分","$1 porções"],[/^(\d)-day batch cook$/,"$1日分の作り置き","Marmitas para $1 dias"],[/^Contains (.+)$/,"$1を含む","Contém $1"],[/^Lunch: (.+)$/,"昼食:$1","Almoço: $1"],[/^Dinner: (.+)$/,"夕食:$1","Jantar: $1"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -2360,7 +2369,7 @@ function planClick(b){
   if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
   if(ds.grocery){showGrocery=!showGrocery;render();if(showGrocery)setTimeout(()=>{const g=document.getElementById("grocery");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.mpgot){const L=MPGOT[mpStore]||[];MPGOT[mpStore]=L.includes(ds.mpgot)?L.filter(x=>x!==ds.mpgot):[...L,ds.mpgot];store.set("mealprep",MPGOT);b.setAttribute("aria-pressed",MPGOT[mpStore].includes(ds.mpgot));return true}
-  if(ds.mpreset){MPGOT[mpStore]=[];store.set("mealprep",MPGOT);render();return true}
+  if(ds.mpreset){MPB.got=[];mpbSave();render();return true}
   if(ds.copymp){const txt=document.getElementById("mp-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Meal prep list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
   if(ds.groc){const wk=weekDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
   if(ds.prep){showPrep=!showPrep;render();if(showPrep)setTimeout(()=>{const g=document.getElementById("prep");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
@@ -2375,24 +2384,61 @@ function planClick(b){
 }
 
 function planHead(title,sub){return `<div class="p-head"><span class="p-title">${title}</span>${sub?`<span class="p-sub">${sub}</span>`:""}</div>`}
-function mealPrepHTML(){
-  const S=MEALPREP.find(x=>x.k===mpStore)||MEALPREP[0], al=myAllergens(), got=MPGOT[S.k]||[];
-  const text=["Dinner meal prep · "+S.n+" · 4 portions per recipe",...S.r.flatMap(r=>["",r.n.toUpperCase(),...r.g.map(x=>"- "+x)])].join("\n");
-  return `<p class="muted">Cook once, eat four times. Each store has three dinners that make four portions, sized for training days.</p>
-   <div class="seg" data-segset="mpstore">${MEALPREP.map(x=>`<button data-v="${x.k}" aria-pressed="${S.k===x.k}">${esc(x.n)}</button>`).join("")}</div>
-   ${S.r.map((r,i)=>{const hit=r.a.filter(a=>al.includes(a));
-    return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="nums">${r.m[0].toLocaleString()} kcal</span></div>
-     <div class="row" style="flex-wrap:wrap;gap:6px"><span class="chip accent">${r.m[1]}g carbs</span><span class="chip violet">${r.m[2]}g protein</span><span class="chip">${r.m[3]}g fat</span></div>
-     ${hit.length?`<p class="chip warn" style="align-self:flex-start">Contains ${esc(hit.join(", "))}, which is on your allergy list</p>`:""}
-     <span class="eyebrow">Grocery checklist · 4 portions</span>
-     <div class="choice mini">${r.g.map((x,j)=>{const id=i+":"+j;return `<button type="button" data-mpgot="${id}" aria-pressed="${got.includes(id)}">${esc(x)}</button>`}).join("")}</div>
-     <p style="font-size:.9rem"><b>Prep:</b> ${esc(r.p)}</p>
-     ${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}
-     ${r.a.length?`<p class="stamp">Usually contains: ${esc(r.a.join(", "))}. Brands vary, so check labels.</p>`:""}</div>`}).join("")}
-   <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
-   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copymp="1">Copy ${esc(S.n)} list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
-   <p class="stamp">Macros are approximate per portion, not label-verified. Refrigerate cooked meals and eat within 3–4 days, or freeze promptly. Keep cold toppings (avocado, tzatziki, hummus, feta) separate until you eat.</p>`;
-}
+/* Batch-cook builder: athlete picks a store, meals, days and meals a day; the app builds a day-by-day plan and one scaled grocery list. Each recipe batch makes 4 portions. */
+let MPB=store.get("mpb",{store:"costco",sel:null,days:5,mpd:1,got:[]});
+function mpbSave(){store.set("mpb",MPB)}
+const MPWORDS={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,twelve:12};
+function mpQty(s){let m=s.match(/^(\d+)\s+(\d+)\/(\d+)\s+(.*)$/);if(m)return [+m[1]+m[2]/m[3],m[4]];
+  m=s.match(/^(\d+)\/(\d+)\s+(.*)$/);if(m)return [m[1]/m[2],m[3]];m=s.match(/^(\d+(?:\.\d+)?)\s+(.*)$/);if(m)return [+m[1],m[2]];
+  m=s.match(/^([A-Za-z]+)\s+(.*)$/);if(m&&MPWORDS[m[1].toLowerCase()])return [MPWORDS[m[1].toLowerCase()],m[2]];return [null,s]}
+function mpFmt(q){const w=Math.floor(q+1e-9),f=Math.round((q-w)*4)/4,fr={0.25:"1/4",0.5:"1/2",0.75:"3/4"}[f]||"";if(f===1)return String(w+1);return w&&fr?w+" "+fr:w?String(w):fr||String(Math.round(q*100)/100)}
+function mpPlan(){const S=MEALPREP.find(x=>x.k===MPB.store)||MEALPREP[0],al=myAllergens();
+  if(!MPB.sel)MPB.sel=S.r.map((r,i)=>i).filter(i=>!S.r[i].a.some(a=>al.includes(a)));
+  const sel=MPB.sel.filter(i=>S.r[i]),need=MPB.days*MPB.mpd;if(!sel.length)return {S,sel,need,batches:[],days:[],spare:0,list:[]};
+  const B=Math.ceil(need/4),batches=sel.map(()=>0);for(let i=0;i<B;i++)batches[i%sel.length]++;
+  const left=batches.map(b=>b*4),t=isoToday(),days=[];let prev=-1;
+  for(let d=0;d<MPB.days;d++){const meals=[];for(let m=0;m<MPB.mpd;m++){
+      const avoid=new Set([prev,...meals.map(x=>sel.indexOf(x))]);let best=-1;
+      sel.forEach((_,j)=>{if(left[j]>0&&!avoid.has(j)&&(best<0||left[j]>left[best]))best=j});
+      if(best<0)sel.forEach((_,j)=>{if(left[j]>0&&(best<0||left[j]>left[best]))best=j});
+      left[best]--;meals.push(sel[best]);prev=best}
+    days.push({iso:jShift(t,d),meals,freeze:d>=3})}
+  const agg={},order=[];sel.forEach((ri,j)=>{if(!batches[j])return;S.r[ri].g.forEach(line=>{const [q,rest]=mpQty(line),key=rest.toLowerCase();
+    if(!agg[key]){agg[key]={rest,q:0,plain:q==null};order.push(key)}if(q!=null)agg[key].q+=q*batches[j];else agg[key].plain=true})});
+  const list=order.map(k=>{const a=agg[k];return a.q?`${mpFmt(a.q)}${/^\d/.test(a.rest)?" ×":""} ${a.rest}`:a.rest});
+  return {S,sel,need,batches,days,spare:B*4-need,list}}
+function mealPrepHTML(){const P=mpPlan(),S=P.S,al=myAllergens(),got=MPB.got||[];
+  const name=i=>S.r[i].n,kc=P.days.length?Math.round(P.days[0].meals.reduce((a,i)=>a+S.r[i].m[0],0)):0;
+  const text=[`Batch cook · ${S.n} · ${MPB.days} days · ${MPB.mpd===2?"lunch + dinner":"dinner"}`,"","GROCERY LIST",...P.list.map(x=>"- "+x),"","PLAN",...P.days.map(d=>`${fmtDate(d.iso)}: ${d.meals.map(name).join(" + ")}${d.freeze?" (from freezer)":""}`)].join("\n");
+  return `<p class="muted">Pick your store, your meals and how many days. The app builds your plan and one grocery list.</p>
+   <section><h2>Store</h2><div class="seg" data-segset="mpstore">${MEALPREP.map(x=>`<button data-v="${x.k}" aria-pressed="${S.k===x.k}">${esc(x.n)}</button>`).join("")}</div></section>
+   <section><h2>Meals</h2><div class="stack" style="gap:10px">${S.r.map((r,i)=>{const hit=r.a.filter(a=>al.includes(a)),on=P.sel.includes(i);
+     return `<button class="card mpmeal" data-mpsel="${i}" aria-pressed="${on}"><span class="mpchk" aria-hidden="true">${on?"✓":""}</span><span class="stack" style="gap:4px;text-align:left;min-width:0"><b>${esc(r.n)}</b><span class="stamp">${r.m[0].toLocaleString()} kcal · ${r.m[1]}g carbs · ${r.m[2]}g protein · ${r.m[3]}g fat</span>${hit.length?`<span class="chip warn" style="align-self:flex-start">Contains ${esc(hit.join(", "))}</span>`:""}</span></button>`}).join("")}</div></section>
+   <section><h2>How many days?</h2><div class="card stack">
+    <div class="choice mini" data-mpdays="1">${[3,4,5,6,7].map(n=>`<button type="button" data-v="${n}" aria-pressed="${MPB.days===n}">${n} days</button>`).join("")}</div>
+    <span class="eyebrow" style="margin-top:4px">Meals a day</span>
+    <div class="choice mini" data-mpmeals="1"><button type="button" data-v="1" aria-pressed="${MPB.mpd===1}">Dinner</button><button type="button" data-v="2" aria-pressed="${MPB.mpd===2}">Lunch + dinner</button></div></div></section>
+   ${P.sel.length?`<section><div class="sec-head"><h2>Your plan</h2><span class="stamp">${P.need} portions</span></div>
+     <div class="card stack" style="gap:6px"><p style="font-size:.92rem">Cook ${P.sel.map((i,j)=>P.batches[j]?`<b>${esc(name(i))}</b> ×${P.batches[j]}`:"").filter(Boolean).join(", ")}. Each batch makes 4 portions.${P.spare?` That's ${P.spare} spare portion${P.spare>1?"s":""}: freeze them or share.`:""}</p></div>
+     <div class="plan" style="margin-top:10px">${planHead(`${MPB.days}-day batch cook`,esc(S.n.toUpperCase()))}
+      ${P.days.map(d=>`<div class="step"><span class="when">${esc(dow(d.iso))}<br>${+d.iso.slice(8)}</span><span class="eyebrow">${d.freeze?"From the freezer":"From the fridge"}</span>${d.meals.map((i,m)=>`<b>${MPB.mpd===2?(m?"Dinner: ":"Lunch: "):""}${esc(name(i))}</b>`).join("")}${d.freeze?`<p>Move to the fridge the night before.</p>`:""}</div>`).join("")}
+     </div>
+     ${MPB.days>3?`<p class="stamp" style="margin-top:8px">Cooked food keeps 3–4 days in the fridge, so portions for day 4 on go straight into the freezer after cooling.</p>`:""}</section>
+    <section id="mp-groc"><div class="sec-head"><h2>Grocery list</h2><span class="stamp">${got.filter(x=>P.list.includes(x)).length}/${P.list.length}</span></div>
+     <div class="card stack"><div class="choice mini">${P.list.map(x=>`<button type="button" data-mpbgot="${esc(x)}" aria-pressed="${got.includes(x)}">${esc(x)}</button>`).join("")}</div>
+      <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copymp="1">Copy list and plan</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
+      <p class="stamp">Brands vary: check labels for your allergens.</p></div></section>
+    <section><h2>Cook it</h2><div class="stack" style="gap:10px">${P.sel.map((i,j)=>{const r=S.r[i],b=P.batches[j];if(!b)return "";return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="chip accent">×${b} · ${b*4} portions</span></div><p style="font-size:.9rem">${esc(r.p)}</p>${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}</div>`}).join("")}</div></section>`
+   :`<div class="card muted">Choose at least one meal to build your plan.</div>`}
+   <p class="stamp">Macros are approximate per portion, not label-verified. Cool food within 2 hours, refrigerate and eat within 3–4 days, or freeze. Keep cold toppings (avocado, tzatziki, hummus, feta) separate until you eat.</p>`}
+function mpClick(b){const ds=b.dataset;
+  if(ds.mpsel!==undefined){const i=+ds.mpsel,P=mpPlan();MPB.sel=P.sel.includes(i)?P.sel.filter(x=>x!==i):[...P.sel,i].sort();mpbSave();render();return true}
+  const dd=b.closest("[data-mpdays]");if(dd){MPB.days=+ds.v;mpbSave();render();return true}
+  const mm=b.closest("[data-mpmeals]");if(mm){MPB.mpd=+ds.v;mpbSave();render();return true}
+  if(ds.mpbgot!==undefined){const L=MPB.got||[];MPB.got=L.includes(ds.mpbgot)?L.filter(x=>x!==ds.mpbgot):[...L,ds.mpbgot];mpbSave();render();return true}
+  return false}
+
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
   const segs=[["plan","Meal plan"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"],["mealprep","Meal prep"]];
@@ -2662,6 +2708,7 @@ document.addEventListener("click",e=>{
   if(jClick(b))return;
   if(atClick(b))return;
   if(featClick(b))return;
+  if(mpClick(b))return;
   if(scClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
@@ -2684,7 +2731,7 @@ document.addEventListener("click",e=>{
   const rq=b.closest("[data-rq]");
   if(rq){const k=rq.dataset.rq,v=k==="sleepH"?ds.v:+ds.v;rDraft[k]=rDraft[k]===v?undefined:v;rq.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(k==="sleepH"?x.dataset.v:+x.dataset.v)===String(rDraft[k])));return}
   const segset=b.closest("[data-segset]");
-  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;if(k==="mpstore")mpStore=v;render();return}
+  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;if(k==="mpstore"){if(MPB.store!==v){MPB.store=v;MPB.sel=null;mpbSave()}}render();return}
   if(ds.edadd){ED.announcements.push({t:"",d:"",tag:"Nutrition",when:isoToday()});render();return}
   if(ds.edrm!==undefined){ED.announcements.splice(+ds.edrm,1);render();return}
   if(ds.eddiscard){ED=clone(DATA);render();toast("Changes discarded");return}
