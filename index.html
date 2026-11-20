@@ -251,6 +251,9 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .mpmeal[aria-pressed="false"]{opacity:.72}
 .mpchk{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--accent);display:grid;place-items:center;font-weight:800;color:var(--on-accent,#fff)}
 .mpmeal[aria-pressed="true"] .mpchk{background:var(--accent)}
+.wsum{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wsum-c{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.wsum-c b{font:800 1.3rem/1.1 var(--display,inherit)}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -951,6 +954,12 @@ addR([[/^(.+)'s program will appear here: four lifts and one conditioning sessio
 addR([[/^(\d+) of (\d+)$/,"$1 / $2","$1 de $2"]]);addT([["Previous meal","前のメニュー","Refeição anterior"],["Next meal","次のメニュー","Próxima refeição"]]);
 addT([["Hydration: how much to drink","水分補給:どれだけ飲む?","Hidratação: quanto beber"],["Hydration: how much to drink ›","水分補給:どれだけ飲む? ›","Hidratação: quanto beber ›"]]);
 addT([["PR","自己ベスト","RECORDE"]]);addR([[/^New PR: (.+)$/,"自己ベスト更新:$1","Novo recorde: $1"],[/^PR · (.+)$/,"自己ベスト · $1","Recorde · $1"]]);
+addT([["Last week","先週","Semana passada"],["Hide","閉じる","Ocultar"],["Stars","星","Estrelas"],["Water","水分","Água"],["daily average","1日平均","média diária"],["Match-day check","試合日のチェック","Checklist do dia de jogo"],
+["Lighter portions:","軽めの量:","Porções mais leves:"],["about 25% less starch than a training day; fill the space with vegetables and fruit, and keep protein the same.","練習日より主食を約25%減らし、その分を野菜や果物に。たんぱく質はそのまま。","cerca de 25% menos carboidrato que num dia de treino; complete com legumes e frutas e mantenha a proteína."],
+["Gut:","胃腸:","Estômago:"],["only foods you've eaten before a practice. Nothing new on match day: no new restaurant dishes, bars, gels or supplements.","練習前に食べたことのあるものだけ。試合日に新しいものは試さない:初めての料理、バー、ジェル、サプリはNG。","só alimentos que você já comeu antes de um treino. Nada novo no dia de jogo: nada de prato, barra, gel ou suplemento novo."],
+["Caffeine (optional):","カフェイン(任意):","Cafeína (opcional):"]]);
+addR([[/^(\d+)\/7 check-ins$/,"チェックイン $1/7","$1/7 check-ins"],[/^(\d+) moons lit$/,"月 $1個","$1 luas acesas"],[/^(\d+) lifts?$/,"ウエイト$1回","$1 treino(s)"],[/^(\d+) conditioning(.*)$/,"コンディショニング$1回$2","$1 condicionamento$2"],[/^Week of (.+)\. Stays on this phone\.$/,"$1の週。このスマホにのみ保存。","Semana de $1. Fica neste celular."],[/^Top recovery habit:$/,"いちばん多かったリカバリー:","Hábito de recuperação mais frequente:"],[/^ \((\d+) days?\)\.$/," ($1日)。"," ($1 dia(s))."],[/^([▲▼]) ([\d.]+) vs week before$/,"$1 $2(前週比)","$1 $2 vs semana anterior"]]);
+addT([["only a dose you've already tried in practice, about 60 minutes before first serve. Many athletes do well on a small dose (about 1–3 mg per kg, roughly one coffee). It's a night match, so caffeine this late can cost you sleep and recovery: keep it small or skip it. Ask your dietitian before you use it.", "練習で試したことのある量だけを、ファーストサーブの約60分前に。少量(体重1 kgあたり約1〜3 mg、コーヒー約1杯)で十分な選手が多いです。ナイトマッチなので、この時間のカフェインは睡眠と回復を妨げることがあります。少量にするか控えましょう。使う前に管理栄養士に相談を。", "só uma dose que você já testou no treino, cerca de 60 minutos antes do primeiro saque. Muitas atletas vão bem com uma dose pequena (cerca de 1–3 mg por kg, mais ou menos um café). É jogo à noite: cafeína tão tarde pode atrapalhar o sono e a recuperação. Use pouco ou pule. Fale com sua nutricionista antes de usar."], ["only a dose you've already tried in practice, about 60 minutes before first serve. Many athletes do well on a small dose (about 1–3 mg per kg, roughly one coffee). Ask your dietitian before you use it.", "練習で試したことのある量だけを、ファーストサーブの約60分前に。少量(体重1 kgあたり約1〜3 mg、コーヒー約1杯)で十分な選手が多いです。使う前に管理栄養士に相談を。", "só uma dose que você já testou no treino, cerca de 60 minutos antes do primeiro saque. Muitas atletas vão bem com uma dose pequena (cerca de 1–3 mg por kg, mais ou menos um café). Fale com sua nutricionista antes de usar."]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1131,12 +1140,17 @@ function cityGuideHTML(city){
    <p class="stamp">Airport: ${esc(g.air)} · <a class="linkbtn" href="${g.url}" target="_blank" rel="noopener">Dining map ›</a></p></div>`;
 }
 function nextOf(home){const t=isoToday();return SCHEDULE.find(m=>m.d>=t&&m.home===home)||null}
+function matchCheckHTML(m){const night=!m||m.local>=17*60;
+  return `<div class="card stack" style="gap:8px"><span class="eyebrow">Match-day check</span>
+   <p style="font-size:.9rem"><b>Gut:</b> only foods you've eaten before a practice. Nothing new on match day: no new restaurant dishes, bars, gels or supplements.</p>
+   <p style="font-size:.9rem"><b>Caffeine (optional):</b> only a dose you've already tried in practice, about 60 minutes before first serve. Many athletes do well on a small dose (about 1–3 mg per kg, roughly one coffee).${night?" It's a night match, so caffeine this late can cost you sleep and recovery: keep it small or skip it.":""} Ask your dietitian before you use it.</p></div>`}
 function gamePlanHTML(kind){
   const m=nextOf(kind==="home"), start=m?m.local:19*60, tz=m?TZ[m.off]:"PT";
   const L=GAME[kind];
   return `<p class="muted" style="font-size:.9rem">${m?`Times are set for your next ${kind==="home"?"home":"road"} match: ${m.home?"vs":"at"} ${esc(m.opp)}, ${fmtDate(m.d)}, first serve ${matchLocal(m)}.`:"Times assume a 7 pm first serve."}</p>
    ${kind==="road"&&m&&CITY[m.city]?`<div class="card row" style="align-items:flex-start"><span class="chip violet">${esc(m.city.split(",")[0])}</span><p style="font-size:.88rem">${esc(CITY[m.city])}</p></div>`:""}
    ${kind==="road"&&m?cityGuideHTML(m.city):""}
+   ${matchCheckHTML(m)}
    <div class="plan">${planHead(kind==="home"?"Home game day":"Road game day",m?`${dow(m.d)} ${mmdd(m.d)}`:"")}
     ${L.map(x=>{const lbl=x.rel<=-1440?"DAY<br>BEFORE":x.rel>=780?"NEXT<br>DAY":clock(start+x.rel).replace(" ","<br>");const ex=x.shake?[`${shakeName()[0].toUpperCase()+shakeName().slice(1)} + banana`,...(x.ex||[])]:x.ex;
      return `<div class="step"><span class="when">${lbl}</span><span class="eyebrow">${x.t}${x.rel>-1440&&x.rel<780?" · "+tz:""}</span><b>${x.n}</b><p>${x.d}</p>${ex?`<ul>${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:""}${x.s?`<p class="src">Source: ${x.s}</p>`:""}</div>`}).join("")}
@@ -1811,6 +1825,23 @@ function vLearn(){
 
 
 /* ===== Team priorities on Home: match-night recovery and road-trip packing ===== */
+/* Weekly summary: last Monday–Sunday, shown Monday to Wednesday until dismissed */
+function weekSummaryCard(){const t=isoToday(),dow0=(new Date(t+"T12:00:00").getDay()+6)%7;if(dow0>2)return "";
+  const ws=jShift(mondayOf(t),-7);if(store.get("wsdismiss","")===ws)return "";
+  const days=[...Array(7)].map((_,i)=>jShift(ws,i)),prev=[...Array(7)].map((_,i)=>jShift(ws,i-7));
+  const avg=L=>{const v=L.map(d=>rScore(jGet(d).ready)).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  const rA=avg(days),rP=avg(prev),checks=days.filter(d=>rScore(jGet(d).ready)!=null).length;
+  const moons=days.reduce((a,d)=>a+habits().filter(h=>habitDone(h.k,d)).length,0),stars=days.filter(starLit).length;
+  const wd=[];days.forEach(d=>wd.push(...(SCDONE[d]||[])));const lifts=wd.filter(x=>!isCond(x)).length,cond=wd.filter(isCond).length;
+  const oz=days.map(d=>ozOf(jGet(d))).filter(x=>x>0),ozAvg=oz.length?Math.round(oz.reduce((a,b)=>a+b,0)/oz.length):0;
+  const cnt={};days.forEach(d=>(jGet(d).recov||[]).forEach(k=>cnt[k]=(cnt[k]||0)+1));const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  const prs=Object.keys(LIFTLOG).reduce((a,k)=>a+(LIFTLOG[k]||[]).filter(e=>e.d>=ws&&e.d<=days[6]&&isPR(k,e.id)).length,0);
+  if(!checks&&!moons&&!wd.length)return "";
+  const cell=(l,v,sub)=>`<div class="wsum-c"><span class="eyebrow">${l}</span><b>${v}</b>${sub?`<span class="stamp">${sub}</span>`:""}</div>`;
+  return `<section><div class="sec-head"><h2>Last week</h2><button class="linkbtn" data-wsdismiss="${ws}">Hide</button></div><div class="card stack">
+   <div class="wsum">${cell("Readiness",rA==null?"–":rA.toFixed(1),rA!=null&&rP!=null?`${rA>=rP?"▲":"▼"} ${Math.abs(rA-rP).toFixed(1)} vs week before`:`${checks}/7 check-ins`)}${cell("Stars",`${stars}/7`,`${moons} moons lit`)}${cell("Strength",`${lifts} lift${lifts===1?"":"s"}`,`${cond} conditioning${prs?` · ${prs} PR${prs>1?"s":""}`:""}`)}${cell("Water",ozAvg?ozAvg+" oz":"–","daily average")}</div>
+   ${top?`<p style="font-size:.9rem">Top recovery habit: <b>${esc((RECOV.find(r=>r[0]===top[0])||[,top[0]])[1])}</b> (${top[1]} day${top[1]>1?"s":""}).</p>`:""}
+   <p class="stamp">Week of ${fmtDate(ws)}. Stays on this phone.</p></div></section>`}
 function matchDayCard(){
   const m=SCHEDULE.find(x=>x.d===isoToday()); if(!m)return "";
   const end=m.local+120, tz=TZ[m.off], done=habitDone("recover",isoToday());
@@ -2239,7 +2270,7 @@ function vHome(){
    </header>
    ${(()=>{const m=todayMatch();return m?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))} · First serve ${esc(matchLocal(m))}</span></div><button class="btn sm" data-go="fuel" data-seg="match">Plan</button></div>`:""})()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
-   ${planHomeCard()}${matchDayCard()}${roadTripCard()}
+   ${weekSummaryCard()}${planHomeCard()}${matchDayCard()}${roadTripCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
    ${feat?`<section><div class="sec-head"><h2>Announcements</h2><span class="stamp">Updated ${fmtDate(DATA.updated)}</span></div>
@@ -2472,7 +2503,7 @@ function planHTML(){
   const aw=awayInfo()[iso];
   const awayCard=aw?`<div class="card row" style="align-items:flex-start"><span class="chip violet">${aw.kind==="travel"?"Travel day":"Road match"}</span><div class="stack" style="gap:6px"><p style="font-size:.9rem">${aw.kind==="travel"?`Flying to ${esc(aw.m.city)} for ${esc(aw.m.opp)}. Eat before the airport, pack 2–3 snacks and switch to local meal times when you land.`:`At ${esc(aw.m.opp)} in ${esc(aw.m.city)}. Follow the road game-day plan and your city food guide.`}</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost sm" data-go="fuel" data-seg="${aw.kind==="travel"?"travel":"road"}">${aw.kind==="travel"?"Travel guide":"Road game plan"}</button></div></div></div>`:"";
   if(type==="match"){const m=SCHEDULE.find(x=>x.d===iso)||nextMatch();return head+``+gamePlanHTML(m&&!m.home?"road":"home")+grocery}
-  return head+awayCard+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}${type==="rest"?`<div class="step"><p>Rest days vary, so there are no set times. Eat these in order, spaced every 3–4 hours to suit your day.</p></div>`:""}
+  return head+awayCard+`<div class="plan">${planHead({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type],isToday?"TODAY":`${dow(iso)} ${mmdd(iso)}`)}${type==="rest"?`<div class="step"><p>Rest days vary, so there are no set times. Eat these in order, spaced every 3–4 hours to suit your day.</p><p><b>Lighter portions:</b> about 25% less starch than a training day; fill the space with vegetables and fruit, and keep protein the same.</p></div>`:""}
    ${items.map((x,i)=>{
      if(x.bank==="during")return `<div class="step"><span class="when">${type==="rest"?"":clock(x.t).replace(" ","<br>")}</span><span class="eyebrow">${esc(x.n)}</span><p>${BANKNOTE.during}</p></div>`;
      const pick=pickFor(type,i,x.bank,iso),done=pick&&isToday&&loggedOn(iso,pick.n),n=mealOptions(x.bank).length;
@@ -2845,6 +2876,7 @@ document.addEventListener("click",e=>{
   if(jClick(b))return;
   if(atClick(b))return;
   if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
+  if(ds.wsdismiss){store.set("wsdismiss",ds.wsdismiss);render();return}
   if(featClick(b))return;
   if(mpClick(b))return;
   if(scClick(b))return;
