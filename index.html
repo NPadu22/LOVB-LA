@@ -2221,7 +2221,12 @@ const ING={
  pb:["Peanut butter","Pantry & snacks"],honey:["Honey","Pantry & snacks"],salsa:["Salsa","Pantry & snacks"],beans:["Black beans (canned)","Pantry & snacks"],lentils:["Lentils","Pantry & snacks"],
  tomato:["Marinara or crushed tomatoes","Pantry & snacks"],soysauce:["Low-sodium soy sauce","Pantry & snacks"],curry:["Curry paste or powder","Pantry & snacks"],spice:["Taco or fajita seasoning","Pantry & snacks"],
  hummus:["Hummus","Pantry & snacks"],trailmix:["Trail mix","Pantry & snacks"],figbar:["Fig bars","Pantry & snacks"],applesauce:["Applesauce pouches","Pantry & snacks"],
- sportsdrink:["Sports drink","Pantry & snacks"],chews:["Energy chews","Pantry & snacks"],plantprotein:["Plant protein powder (third-party tested)","Pantry & snacks"],oil:["Olive oil","Pantry & snacks"]
+ sportsdrink:["Sports drink","Pantry & snacks"],chews:["Energy chews","Pantry & snacks"],plantprotein:["Plant protein powder (third-party tested)","Pantry & snacks"],oil:["Olive oil","Pantry & snacks"],
+ chia:["Chia seeds","Pantry & snacks"],waffles:["Frozen whole-grain waffles","Grains & starches"],jam:["Jam","Pantry & snacks"],turkeysausage:["Turkey sausage patties","Protein"],englishmuffin:["English muffins","Grains & starches"],
+ pancakemix:["Protein pancake mix","Grains & starches"],syrup:["Maple syrup","Pantry & snacks"],nori:["Nori (seaweed)","Pantry & snacks"],miso:["Instant miso soup","Pantry & snacks"],tapioca:["Tapioca flour (goma de tapioca)","Grains & starches"],
+ driedfruit:["Dates or raisins","Pantry & snacks"],granolabar:["Granola bars you've tested","Pantry & snacks"],graham:["Graham crackers","Grains & starches"],whey:["Whey protein (third-party tested)","Pantry & snacks"],pineapple:["Pineapple","Produce"],
+ acai:["Frozen açaí packs","Produce"],teriyaki:["Teriyaki sauce","Pantry & snacks"],breadcrumbs:["Breadcrumbs","Grains & starches"],pesto:["Basil pesto","Pantry & snacks"],cod:["Cod or white fish fillets","Protein"],
+ sweetpotato:["Sweet potatoes","Produce"],chickpeas:["Chickpeas (canned)","Pantry & snacks"],buns:["Whole-wheat buns","Grains & starches"],jerky:["Beef jerky","Protein"],popcorn:["Popcorn","Pantry & snacks"],paodequeijo:["Frozen pão de queijo","Grains & starches"],tomatofresh:["Tomatoes","Produce"]
 };
 const ING_SECTIONS=["Produce","Protein","Grains & starches","Dairy & alternatives","Pantry & snacks"];
 /* Options: n name, a allergens (ALLERGENS names), v vegetarian, g ingredients, r how to make it */
@@ -2233,12 +2238,26 @@ const MEALBANK={
   {n:"Greek yogurt with granola and berries",a:["Dairy","Wheat/Gluten"],v:1,g:["yogurt","granola","berries","honey"],r:"Layer a cup of Greek yogurt with granola and berries; drizzle honey. Add toast or a banana on bigger days."},
   {n:"Rice bowl with eggs, avocado and fruit",a:["Egg"],v:1,g:["rice","eggs","avocado","fruit"],r:"Warm a cup of microwave rice, top with 2 fried or boiled eggs and sliced avocado. Fruit on the side."},
   {n:"Smoothie: banana, berries, oats, soy milk and plant protein",a:["Soy"],v:1,g:["banana","berries","oats","soymilk","plantprotein"],r:"Blend a banana, a handful of frozen berries, ¼ cup oats, a cup of soy milk and a scoop of tested plant protein."},
-  {n:"Bagel with turkey, cheese and an orange",a:["Wheat/Gluten","Dairy"],g:["bagels","deliturkey","cheese","orange"],r:"Toast a bagel, add sliced turkey and cheese. An orange on the side."}],
+  {n:"Bagel with turkey, cheese and an orange",a:["Wheat/Gluten","Dairy"],g:["bagels","deliturkey","cheese","orange"],r:"Toast a bagel, add sliced turkey and cheese. An orange on the side."},
+  {n:"Overnight oats with milk, chia and berries",a:["Dairy"],v:1,g:["oats","milk","chia","berries","honey"],r:"The night before: stir ½ cup oats, ¾ cup milk, a spoon of chia and honey in a jar. Top with berries in the morning."},
+  {n:"Whole-grain waffles with scrambled eggs and fruit",a:["Wheat/Gluten","Egg","Dairy"],v:1,g:["waffles","eggs","syrup","fruit"],r:"Toast two waffles, scramble 2 eggs, add a little syrup and fruit."},
+  {n:"Avocado toast with eggs and fruit",a:["Wheat/Gluten","Egg"],v:1,g:["bread","avocado","eggs","fruit"],r:"Mash avocado on two slices of toast, top with 2 fried or boiled eggs. Fruit on the side."},
+  {n:"Cottage cheese, fruit and toast with jam",a:["Dairy","Wheat/Gluten"],v:1,g:["cottage","fruit","bread","jam"],r:"A cup of cottage cheese with fruit, plus two slices of toast with jam."},
+  {n:"Breakfast sandwich: egg, cheese and turkey sausage on an English muffin",a:["Egg","Dairy","Wheat/Gluten"],g:["eggs","cheese","turkeysausage","englishmuffin","fruit"],r:"Cook a turkey sausage patty and an egg, stack on a toasted English muffin with cheese. Make four and freeze."},
+  {n:"Protein pancakes with berries and maple syrup",a:["Wheat/Gluten","Egg","Dairy"],v:1,g:["pancakemix","eggs","berries","syrup"],r:"Make pancakes from a protein mix (or add an egg to regular mix). Top with berries and a drizzle of syrup."},
+  {n:"Onigiri, miso soup and a boiled egg",a:["Soy","Egg","Fish"],g:["rice","nori","miso","eggs","fruit"],r:"Shape warm rice into 2–3 balls, wrap with nori. Instant miso soup and a boiled egg on the side. Many miso soups use fish stock: check the label."},
+  {n:"Tapioca crepe with egg and cheese",a:["Egg","Dairy"],v:1,g:["tapioca","eggs","cheese","fruit"],r:"Spread tapioca flour in a hot dry pan until it sets into a crepe, about 2 minutes. Fill with scrambled egg and cheese. Gluten-free."}],
  pre:[
   {n:"Banana",a:[],v:1,g:["banana"],r:"Grab and go."},{n:"Applesauce pouch",a:[],v:1,g:["applesauce"],r:"Keep two in your bag."},
   {n:"Rice cakes with honey",a:[],v:1,g:["ricecakes","honey"],r:"Two rice cakes with a drizzle of honey."},
   {n:"Pretzels",a:["Wheat/Gluten"],v:1,g:["pretzels"],r:"A handful, plus water."},{n:"Fig bar you've tested",a:["Wheat/Gluten"],v:1,g:["figbar"],r:"One or two bars."},
-  {n:"Sports drink and a few chews",a:[],v:1,g:["sportsdrink","chews"],r:"Sip the drink through warm-up; chews if you're hungry."}],
+  {n:"Sports drink and a few chews",a:[],v:1,g:["sportsdrink","chews"],r:"Sip the drink through warm-up; chews if you're hungry."},
+  {n:"Toast with jam",a:["Wheat/Gluten"],v:1,g:["bread","jam"],r:"One or two slices of white or light toast with jam."},
+  {n:"Dates or raisins",a:[],v:1,g:["driedfruit"],r:"A small handful: fast carbs that travel well."},
+  {n:"Granola bar you've tested",a:["Wheat/Gluten"],v:1,g:["granolabar"],r:"Pick a lower-fiber bar you know sits well. Check labels for nuts."},
+  {n:"Half a bagel with honey",a:["Wheat/Gluten"],v:1,g:["bagels","honey"],r:"Toast half a bagel and drizzle with honey."},
+  {n:"Graham crackers",a:["Wheat/Gluten"],v:1,g:["graham"],r:"Two to four sheets with water."},
+  {n:"Plain onigiri (rice ball)",a:[],v:1,g:["rice","nori"],r:"A rice ball wrapped in nori: easy carbs, easy on the stomach."}],
  recovery:[
   {n:"Chocolate milk and a banana",a:["Dairy"],v:1,g:["chocmilk","banana"],r:"About 16 oz of chocolate milk and a banana. Keep it cold in your bag."},
   {n:"Chicken and rice bowl from last night's leftovers",a:[],g:["chicken","rice","veg"],r:"Pack it the night before. Reheat or eat cold."},
@@ -2246,7 +2265,13 @@ const MEALBANK={
   {n:"Greek yogurt, granola and fruit",a:["Dairy","Wheat/Gluten"],v:1,g:["yogurt","granola","fruit"],r:"A cup of yogurt, a handful of granola, fruit on top."},
   {n:"Tofu rice bowl with vegetables",a:["Soy"],v:1,g:["tofu","rice","veg","soysauce"],r:"Microwave rice and frozen vegetables; add cubed baked tofu and a splash of soy sauce."},
   {n:"Plant-protein smoothie with fruit and oats",a:["Soy"],v:1,g:["plantprotein","soymilk","banana","oats"],r:"Blend a scoop of tested plant protein, soy milk, a banana and oats."},
-  {n:"Tuna pouch, crackers and an apple",a:["Fish","Wheat/Gluten"],g:["tuna","crackers","apple"],r:"Shelf-stable, so it lives in your bag."}],
+  {n:"Tuna pouch, crackers and an apple",a:["Fish","Wheat/Gluten"],g:["tuna","crackers","apple"],r:"Shelf-stable, so it lives in your bag."},
+  {n:"Whey protein shake and a banana",a:["Dairy"],v:1,g:["whey","banana"],r:"One scoop of tested whey in water or milk, plus a banana."},
+  {n:"Cottage cheese with pineapple and a granola bar",a:["Dairy","Wheat/Gluten"],v:1,g:["cottage","pineapple","granolabar"],r:"A cup of cottage cheese topped with pineapple; a granola bar on the side."},
+  {n:"Turkey and cheese wrap with pretzels",a:["Wheat/Gluten","Dairy"],g:["tortflour","deliturkey","cheese","pretzels"],r:"Roll turkey and cheese in a tortilla; pretzels on the side. Packs well."},
+  {n:"Bagel with peanut butter and a glass of milk",a:["Wheat/Gluten","Peanut","Dairy"],v:1,g:["bagels","pb","milk"],r:"A toasted bagel with 2 tablespoons of peanut butter and a big glass of milk."},
+  {n:"Rice and beans with a fried egg",a:["Egg"],v:1,g:["rice","beans","eggs","salsa"],r:"Warm rice and beans, top with a fried egg and salsa."},
+  {n:"Açaí bowl with Greek yogurt, banana and granola",a:["Dairy","Wheat/Gluten"],v:1,g:["acai","yogurt","banana","granola"],r:"Blend an açaí pack with a banana; top with Greek yogurt and granola. The yogurt adds the protein."}],
  main:[
   {n:"Chicken burrito bowl: rice, black beans, salsa and vegetables",a:[],g:["chicken","rice","beans","salsa","veg","spice"],r:"Season chicken with taco spice and pan-cook 12 minutes. Serve over rice with warmed beans, sautéed vegetables and salsa."},
   {n:"Salmon, rice and roasted vegetables",a:["Fish"],g:["salmon","rice","broccoli","oil","lime"],r:"Roast salmon and broccoli on one tray at 400°F for 12–15 minutes with oil and salt. Serve with rice and a squeeze of lime."},
@@ -2257,19 +2282,39 @@ const MEALBANK={
   {n:"Sheet-pan chicken fajitas with tortillas and black beans",a:["Wheat/Gluten"],g:["chicken","peppers","onion","spice","tortflour","beans"],r:"Toss sliced chicken, peppers and onion with fajita spice and oil; roast at 425°F for 20 minutes. Serve in warm tortillas with beans."},
   {n:"Shrimp tacos on corn tortillas with rice and slaw",a:["Shellfish"],g:["shrimp","tortcorn","rice","slaw","lime"],r:"Season shrimp and pan-cook 3 minutes. Serve on warm corn tortillas with slaw and lime; rice on the side."},
   {n:"Bean and cheese quesadillas with rice and fruit",a:["Dairy","Wheat/Gluten"],v:1,g:["tortflour","beans","cheese","rice","fruit","salsa"],r:"Fill tortillas with beans and cheese, crisp in a pan 2 minutes per side. Rice, salsa and fruit on the side."},
-  {n:"Steak or chicken, baked potato and green beans",a:[],g:["steak","potatoes","greenbeans","oil"],r:"Microwave a potato 6–8 minutes, pan-sear steak or chicken, steam green beans."}],
+  {n:"Steak or chicken, baked potato and green beans",a:[],g:["steak","potatoes","greenbeans","oil"],r:"Microwave a potato 6–8 minutes, pan-sear steak or chicken, steam green beans."},
+  {n:"Teriyaki chicken, rice and broccoli",a:["Soy","Wheat/Gluten"],g:["chicken","rice","broccoli","teriyaki"],r:"Pan-cook sliced chicken 8–10 minutes, add teriyaki sauce for the last minute. Serve with rice and steamed broccoli."},
+  {n:"Turkey meatballs with spaghetti and marinara",a:["Wheat/Gluten","Egg"],g:["turkeyground","eggs","breadcrumbs","pasta","tomato"],r:"Mix turkey, an egg and breadcrumbs, roll into balls and bake at 400°F for 18 minutes. Simmer in marinara and serve over spaghetti."},
+  {n:"Chicken pesto pasta with spinach",a:["Wheat/Gluten","Dairy","Tree nut"],g:["chicken","pasta","pesto","spinach"],r:"Cook pasta and diced chicken; toss with pesto and a handful of spinach until it wilts."},
+  {n:"Baked cod, roasted potatoes and green beans",a:["Fish"],g:["cod","potatoes","greenbeans","oil","lime"],r:"Roast cubed potatoes at 425°F for 25 minutes, add cod and green beans for the last 12 minutes. Finish with lemon or lime."},
+  {n:"Beef and broccoli stir-fry over rice",a:["Soy","Wheat/Gluten"],g:["steak","broccoli","rice","soysauce","oil"],r:"Sear thin-sliced steak 2 minutes, add broccoli and a splash of water for 3 minutes, finish with soy sauce. Serve over rice."},
+  {n:"Chicken shawarma bowl with rice, cucumber and hummus",a:["Sesame"],g:["chicken","rice","cucumber","tomatofresh","hummus","spice"],r:"Season chicken with shawarma spice (or cumin and paprika) and roast 20 minutes. Serve over rice with cucumber, tomato and hummus."},
+  {n:"Black bean and sweet potato tacos",a:[],v:1,g:["beans","sweetpotato","tortcorn","salsa","avocado"],r:"Roast cubed sweet potato at 425°F for 25 minutes. Fill warm corn tortillas with sweet potato, beans, salsa and avocado. Add Greek yogurt on top for more protein."},
+  {n:"Salmon rice bowl with edamame and cucumber",a:["Fish","Soy"],g:["salmon","rice","edamame","cucumber","soysauce"],r:"Bake salmon at 400°F for 12–15 minutes and flake over rice with edamame and cucumber; drizzle soy sauce."},
+  {n:"Arroz com feijão with grilled chicken and salad",a:[],g:["chicken","rice","beans","onion","greens"],r:"Rice and seasoned beans (sauté onion and garlic, add beans and simmer 10 minutes) with grilled chicken and a simple salad."},
+  {n:"Oyakodon: chicken and egg over rice",a:["Egg","Soy","Wheat/Gluten"],g:["chicken","eggs","onion","rice","soysauce"],r:"Simmer sliced onion and chicken in soy sauce, a little sugar and water for 8 minutes. Pour in beaten eggs, cover 1 minute and serve over rice."},
+  {n:"Pasta with chickpeas, spinach and Parmesan",a:["Wheat/Gluten","Dairy"],v:1,g:["pasta","chickpeas","spinach","cheese","oil"],r:"Sauté chickpeas in olive oil with garlic, add spinach and cooked pasta, finish with Parmesan."},
+  {n:"Turkey burgers, sweet potato fries and salad",a:["Wheat/Gluten"],g:["turkeyground","buns","sweetpotato","greens"],r:"Grill or pan-cook turkey patties 5 minutes per side. Bake sweet potato wedges at 425°F for 25 minutes. Salad on the side."}],
  snack:[
   {n:"Hummus, pita and veggies",a:["Wheat/Gluten","Sesame"],v:1,g:["hummus","pita","cucumber"],r:"A few spoons of hummus with pita and cut vegetables."},
   {n:"Apple and peanut butter",a:["Peanut"],v:1,g:["apple","pb"],r:"Slice an apple, dip in 2 tablespoons of peanut butter."},
   {n:"String cheese, crackers and grapes",a:["Dairy","Wheat/Gluten"],v:1,g:["stringcheese","crackers","grapes"],r:"Easy to pack."},
   {n:"Edamame and rice cakes",a:["Soy"],v:1,g:["edamame","ricecakes"],r:"Microwave a cup of frozen edamame 3 minutes; salt lightly."},
   {n:"Trail mix and a banana",a:["Peanut","Tree nut"],v:1,g:["trailmix","banana"],r:"A small handful of trail mix and a banana."},
-  {n:"Turkey and rice crackers with fruit",a:[],g:["deliturkey","ricecrackers","fruit"],r:"Roll turkey slices, pair with rice crackers and fruit."}],
+  {n:"Turkey and rice crackers with fruit",a:[],g:["deliturkey","ricecrackers","fruit"],r:"Roll turkey slices, pair with rice crackers and fruit."},
+  {n:"Greek yogurt cup and fruit",a:["Dairy"],v:1,g:["yogurt","fruit"],r:"A single-serve Greek yogurt and a piece of fruit."},
+  {n:"Beef jerky and an orange",a:["Soy","Wheat/Gluten"],g:["jerky","orange"],r:"One serving of jerky and an orange. Many jerkies contain soy sauce."},
+  {n:"Popcorn and string cheese",a:["Dairy"],v:1,g:["popcorn","stringcheese"],r:"A bag of light popcorn and a string cheese."},
+  {n:"Pão de queijo and fruit",a:["Dairy","Egg"],v:1,g:["paodequeijo","fruit"],r:"Bake 4–6 frozen cheese breads for 20 minutes; fruit on the side. Gluten-free."}],
  prebed:[
   {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1,g:["yogurt","berries"],r:"About a cup, topped with berries."},
   {n:"Glass of milk and a banana",a:["Dairy"],v:1,g:["milk","banana"],r:"Simple and effective."},
   {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1,g:["soymilk","bread","pb"],r:"A glass of soy milk and a slice of toast with peanut butter."},
-  {n:"Plant-protein shake (pea)",a:[],v:1,g:["plantprotein"],r:"One scoop of tested pea protein in water or a milk you tolerate."}]
+  {n:"Plant-protein shake (pea)",a:[],v:1,g:["plantprotein"],r:"One scoop of tested pea protein in water or a milk you tolerate."},
+  {n:"Cottage cheese with pineapple",a:["Dairy"],v:1,g:["cottage","pineapple"],r:"About a cup of cottage cheese with pineapple."},
+  {n:"Turkey and cheese on rice cakes",a:["Dairy"],g:["deliturkey","cheese","ricecakes"],r:"Two rice cakes topped with turkey and a slice of cheese."},
+  {n:"A cup of edamame",a:["Soy"],v:1,g:["edamame"],r:"Microwave frozen edamame 3 minutes; salt lightly."},
+  {n:"Hard-boiled eggs and toast",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","bread"],r:"Two hard-boiled eggs and a slice of toast."}]
 };
 const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
  main:"",snack:"Bridges the gap.",prebed:"Protein for overnight repair.",during:"Water every break. Sports drink if long or hot."};
@@ -2477,7 +2522,7 @@ function mpClick(b){const ds=b.dataset;
 
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["plan","Meal plan"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"],["mealprep","Meal prep"]];
+  const segs=[["plan","Meal plan"],["mealprep","Meal prep"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
   let body="";
   if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="mealprep"){body=mealPrepHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
