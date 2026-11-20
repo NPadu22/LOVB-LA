@@ -928,6 +928,10 @@ addT([["Meal prep","作り置き","Marmitas"],["Pick your store, one meal and ho
 addR([[/^(\d) days$/,"$1日","$1 dias"],[/^(\d+) portions$/,"$1食分","$1 porções"],[/^(\d)-day batch cook$/,"$1日分の作り置き","Marmitas para $1 dias"],[/^Contains (.+)$/,"$1を含む","Contém $1"],[/^Lunch: (.+)$/,"昼食:$1","Almoço: $1"],[/^Dinner: (.+)$/,"夕食:$1","Jantar: $1"]]);
 addT([["Mix stores","複数のお店","Vários mercados"]]);addR([[/^Buy at (.+)$/,"購入先:$1","Comprar em: $1"]]);
 addT([["Copy grocery list","買い物リストをコピー","Copiar lista de compras"],["Cooked food keeps 3–4 days in the fridge, so freeze the portions you'll eat on day 4 and later, and move each one to the fridge the night before.","調理済みの食品の冷蔵保存は3〜4日。4日目以降に食べる分は冷凍し、前日の夜に冷蔵庫へ移しましょう。","Comida pronta dura 3–4 dias na geladeira: congele as porções do dia 4 em diante e passe cada uma para a geladeira na noite anterior."]]);
+addT([["Team 9–1","チーム 9〜13時","Time 9–13h"],["Snack between lift and practice","ウエイトと練習の間の補食","Lanche entre musculação e treino"],["Recovery lunch","リカバリーランチ","Almoço de recuperação"],["Afternoon snack","午後の補食","Lanche da tarde"]]);
+addR([[/^Lift · (.+)$/,"ウエイト · $1","Musculação · $1"],[/^Practice · (.+)$/,"練習 · $1","Treino · $1"]]);
+addT([["Portion size","1食の量","Tamanho da porção"],["Training days","練習日","Dias de treino"],["Rest days (lighter)","休養日(軽め)","Dias de descanso (mais leve)"],["Rest-day portions are about 20% smaller: each batch splits into 5 instead of 4.","休養日の量は約20%少なめ:1回分を4ではなく5つに分けます。","As porções de descanso são cerca de 20% menores: cada receita rende 5 em vez de 4."],["Per rest-day portion (1/5 of a batch)","休養日1食分(1回分の1/5)","Por porção de descanso (1/5 da receita)"],["Per portion (1/4 of a batch)","1食分(1回分の1/4)","Por porção (1/4 da receita)"]]);
+addT([["Share with staff","スタッフと共有","Compartilhar com a comissão"],["Off unless you turn it on. You can turn it off any time.","オンにしない限りオフ。いつでもオフにできます。","Desligado até você ligar. Dá para desligar a qualquer momento."],["Daily readiness","毎日のコンディション","Prontidão diária"],["Sleep hours and quality, soreness, energy, mood, stress and your readiness score. Not your notes.","睡眠時間と質、筋肉痛、エネルギー、気分、ストレス、コンディションスコア。メモは含みません。","Horas e qualidade do sono, dor muscular, energia, humor, estresse e sua pontuação de prontidão. Suas notas não."],["Lifts and conditioning","ウエイトとコンディショニング","Força e condicionamento"],["Each set you log (exercise, weight, reps) and conditioning RPE and minutes, for your strength coach.","記録した各セット(種目、重量、回数)とコンディショニングのRPEと時間。ストレングスコーチ向け。","Cada série registrada (exercício, peso, repetições) e PSE e minutos do condicionamento, para sua preparadora física."],["On","オン","Ligado"],["Off","オフ","Desligado"],["Sharing on","共有オン","Compartilhamento ligado"],["Sharing off","共有オフ","Compartilhamento desligado"],["Goes to a private staff sheet seen only by team staff with access. Never shared: cycle, meals, recovery, journal or notes. Turning it off stops new entries; ask staff to delete past ones.","アクセス権のあるスタッフだけが見られる非公開シートに送られます。月経周期、食事、リカバリー、日誌、メモは共有されません。オフにすると新しい記録は止まります。過去の記録の削除はスタッフに依頼してください。","Vai para uma planilha privada que só a comissão com acesso vê. Nunca compartilhado: ciclo, refeições, recuperação, diário ou notas. Desligar para novos envios; peça à comissão para apagar os antigos."]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1333,11 +1337,11 @@ function scClick(b){const ds=b.dataset;
  if(ds.liftlog!==undefined){const i=ds.liftlog,w=parseFloat(($("#lw-"+i).value||"").replace(",",".")),r=parseInt($("#lr-"+i).value,10);
    if(!(w>=0)||!r||isNaN(w)){toast("Add weight and reps");return true}
    const k=ds.k,row=scRows().filter(x=>x.s===scSel)[+i];(LIFTLOG[k]=LIFTLOG[k]||[]).push({id:Date.now().toString(36),d:isoToday(),w,r,n:row?row.n:k,u:SCUNIT});
-   if(store.set("liftlog",LIFTLOG)){render();const el=document.getElementById("lift-"+i);if(el)el.scrollIntoView({block:"center"});toast("Set logged")}return true}
- if(ds.liftdel){const [k,id]=ds.liftdel.split("|");LIFTLOG[k]=(LIFTLOG[k]||[]).filter(x=>x.id!==id);store.set("liftlog",LIFTLOG);render();return true}
+   if(store.set("liftlog",LIFTLOG)){if(SHARE.lift){const e=LIFTLOG[k][LIFTLOG[k].length-1];staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})}render();const el=document.getElementById("lift-"+i);if(el)el.scrollIntoView({block:"center"});toast("Set logged")}return true}
+ if(ds.liftdel){const [k,id]=ds.liftdel.split("|");if(SHARE.lift)staffSend({t:"liftdel",setId:id});LIFTLOG[k]=(LIFTLOG[k]||[]).filter(x=>x.id!==id);store.set("liftlog",LIFTLOG);render();return true}
  const rp=b.closest("[data-scrpe]");if(rp){scRPE=+ds.v;rp.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.v===scRPE)));return true}
- if(ds.scdone!==undefined){const t=isoToday(),s=ds.scdone,L=SCDONE[t]||[];if(L.includes(s)){SCDONE[t]=L.filter(x=>x!==s)}else{SCDONE[t]=[...L,s];
-   if(isCond(s)){const m=parseInt(($("#sc-min")||{}).value,10);const d=jGet(t);d.cond={rpe:scRPE,min:m||null,load:scRPE&&m?scRPE*m:null};jPut(t,d)}
+ if(ds.scdone!==undefined){const t=isoToday(),s=ds.scdone,L=SCDONE[t]||[];if(L.includes(s)){SCDONE[t]=L.filter(x=>x!==s);if(SHARE.lift&&isCond(s))staffSend({t:"conddel",date:t,session:s})}else{SCDONE[t]=[...L,s];
+   if(isCond(s)){const m=parseInt(($("#sc-min")||{}).value,10);const d=jGet(t);d.cond={rpe:scRPE,min:m||null,load:scRPE&&m?scRPE*m:null};jPut(t,d);if(SHARE.lift)staffSend({t:"cond",date:t,session:s,rpe:scRPE||"",min:m||"",load:scRPE&&m?scRPE*m:""})}
    const d=jGet(t);d.training=d.training||[];if(!d.training.includes("Lift")&&!isCond(s)){d.training.push("Lift");jPut(t,d)}}
    store.set("scdone",SCDONE);const fin=(SCDONE[t]||[]).includes(s);if(fin){scSel=null;scRPE=null}render();if(fin){scrollTo({top:0});logStamp(s+" logged")}return true}
  const su=b.closest("[data-scunit]");if(su){SCUNIT=ds.v;store.set("scunit",SCUNIT);render();return true}
@@ -2056,9 +2060,24 @@ function rosterSync(){if(!CONFIG.rosterURL||!profile||!store.get("roster_pending
   let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
   const body=JSON.stringify({id,code:myCode(),first:profile.first,last:profile.last,position:profile.position,num:profile.num||"",lang:LANG});
   fetch(CONFIG.rosterURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).then(()=>store.set("roster_pending",false)).catch(()=>{})}
+/* Opt-in staff sharing: readiness and/or lifts go to a PRIVATE staff sheet via the same Apps Script. Off by default. */
+let SHARE=store.get("share",{ready:false,lift:false});
+function staffSend(o){if(!profile)return;let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
+  const Q=store.get("staffq",[]);Q.push({...o,id,code:myCode(),name:profile.first+" "+profile.last,position:profile.position||""});store.set("staffq",Q.slice(-300));staffFlush()}
+let staffBusy=false;
+async function staffFlush(){if(staffBusy||!CONFIG.rosterURL)return;staffBusy=true;try{let Q=store.get("staffq",[]);
+  while(Q.length){const o=Q[0];try{await fetch(CONFIG.rosterURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)})}catch(e){break}
+    Q=store.get("staffq",[]);Q.shift();store.set("staffq",Q)}}finally{staffBusy=false}}
+function shareReady(iso){if(!SHARE.ready)return;const r=jGet(iso).ready;if(!r)return;const sc=rScore(r);
+  staffSend({t:"ready",date:iso,score:sc==null?"":Math.round(sc*10)/10,sleepH:r.sleepH||"",sleepQ:r.sleepQ,sore:r.sore,energy:r.energy,mood:r.mood,stress:r.stress})}
+function shareHTML(){return `<section><h2>Share with staff</h2><div class="card stack">
+  <p style="font-size:.9rem">Off unless you turn it on. You can turn it off any time.</p>
+  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Daily readiness</b><span class="muted" style="font-size:.84rem">Sleep hours and quality, soreness, energy, mood, stress and your readiness score. Not your notes.</span></span><button type="button" class="btn sm ${SHARE.ready?"":"ghost"}" data-share="ready" aria-pressed="${SHARE.ready}">${SHARE.ready?"On":"Off"}</button></div>
+  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Lifts and conditioning</b><span class="muted" style="font-size:.84rem">Each set you log (exercise, weight, reps) and conditioning RPE and minutes, for your strength coach.</span></span><button type="button" class="btn sm ${SHARE.lift?"":"ghost"}" data-share="lift" aria-pressed="${SHARE.lift}">${SHARE.lift?"On":"Off"}</button></div>
+  <p class="stamp">Goes to a private staff sheet seen only by team staff with access. Never shared: cycle, meals, recovery, journal or notes. Turning it off stops new entries; ask staff to delete past ones.</p></div></section>`}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadSheets();rosterSync()}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadSheets();rosterSync();staffFlush()}});
 
 /* ===== Volleyball story layer (Joe Rohde-style: one world, earned artifacts, hidden discoveries) ===== */
 /* Tournament pins: club volleyball's pin-trading tradition. Earned by real habits; each carries a one-line backstory. Keys stay stable so earned pins persist. */
@@ -2320,13 +2339,15 @@ const MEALBANK={
 const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
  main:"",snack:"Bridges the gap.",prebed:"Protein for overnight repair.",during:"Water every break. Sports drink if long or hot."};
 const PLATE={easy:"Easy plate",practice:"Practice plate",match:"Big-day plate"};
-const PRACTICE_TIMES=[["am","Morning"],["mid","Midday"],["pm","Afternoon"]];
+const PRACTICE_TIMES=[["team","Team 9–1"],["am","Morning"],["mid","Midday"],["pm","Afternoon"]];
 const DAYTYPES=[["rest","Rest / light"],["practice","Practice"],["double","Two-a-day"],["match","Match day"]];
 function dayTemplate(type,pt){
   const T=(h,m)=>h*60+(m||0), o=(t,n,bank,occ,plate,extra)=>({t,n,bank,occ,plate,...(extra||{})});
   if(type==="rest")return [o(T(8,30),"Breakfast","breakfast","Breakfast","easy"),o(T(12,30),"Lunch","main","Lunch","easy"),o(T(15,30),"Snack","snack","Snack"),o(T(18,30),"Dinner","main","Dinner","easy"),o(T(21,30),"Before bed (optional)","prebed","Snack")];
   if(type==="double")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Session 1 · 9–11 am","during",null),o(T(11,15),"Recovery","recovery","Post-training"),
    o(T(12,30),"Lunch","main","Lunch","match"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Session 2 · 3:30–5:30 pm","during",null),o(T(17,45),"Recovery","recovery","Post-training"),o(T(19),"Dinner","main","Dinner","match"),o(T(21,30),"Before bed","prebed","Snack")];
+  if(pt==="team")return [o(T(7,30),"Breakfast","breakfast","Breakfast","practice"),o(T(9),"Lift · 9–10 am","during",null),o(T(10),"Snack between lift and practice","pre","Pre-training"),o(T(10,15),"Practice · 10:15 am–1 pm","during",null),
+   o(T(13,15),"Recovery lunch","main","Post-training","practice"),o(T(16),"Afternoon snack","snack","Snack"),o(T(19),"Dinner","main","Dinner","practice"),o(T(21,30),"Before bed","prebed","Snack")];
   if(pt==="am")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Practice · 9–11:30 am","during",null),o(T(11,45),"Recovery","recovery","Post-training"),
    o(T(13),"Lunch","main","Lunch","practice"),o(T(16),"Snack","snack","Snack"),o(T(19),"Dinner","main","Dinner","practice"),o(T(21,30),"Before bed","prebed","Snack")];
   if(pt==="mid")return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(11),"Pre-practice","pre","Pre-training"),o(T(12),"Practice · 12–2:30 pm","during",null),o(T(14,45),"Recovery lunch","main","Post-training","practice"),
@@ -2334,7 +2355,8 @@ function dayTemplate(type,pt){
   return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(12),"Lunch","main","Lunch","practice"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Practice · 3:30–6 pm","during",null),
    o(T(18,15),"Recovery","recovery","Post-training"),o(T(19,30),"Dinner","main","Dinner","practice"),o(T(22),"Before bed","prebed","Snack")];
 }
-let PLANPREF=Object.assign({pt:"pm",veg:false,days:{},sel:{},got:{}},store.get("planpref",{}));
+let PLANPREF=Object.assign({pt:"team",veg:false,days:{},sel:{},got:{}},store.get("planpref",{}));
+if(!PLANPREF.ptv2){PLANPREF.pt="team";PLANPREF.ptv2=1;store.set("planpref",PLANPREF)}
 let planDate=null, showGrocery=false;
 function savePlan(){store.set("planpref",PLANPREF)}
 function planType(iso){iso=iso||isoToday();return PLANPREF.days[iso]||(SCHEDULE.some(m=>m.d===iso)?"match":"practice")}
@@ -2476,8 +2498,8 @@ function mpStoreObj(){if(MPB.store==="mix")return {k:"mix",n:"Mix stores",r:MEAL
 function mpPlan(){const S=mpStoreObj(),al=myAllergens();
   if(MPB.one==null||!S.r[MPB.one]){const ok=S.r.findIndex(r=>!r.a.some(a=>al.includes(a)));MPB.one=ok<0?0:ok}
   const sel=[MPB.one],need=MPB.days*MPB.mpd;if(!sel.length)return {S,sel,need,batches:[],days:[],spare:0,list:[]};
-  const B=Math.ceil(need/4),batches=sel.map(()=>0);for(let i=0;i<B;i++)batches[i%sel.length]++;
-  const left=batches.map(b=>b*4),t=isoToday(),days=[];let prev=-1;
+  const per=MPB.size==="rest"?5:4,B=Math.ceil(need/per),batches=sel.map(()=>0);for(let i=0;i<B;i++)batches[i%sel.length]++;
+  const left=batches.map(b=>b*per),t=isoToday(),days=[];let prev=-1;
   for(let d=0;d<MPB.days;d++){const meals=[];for(let m=0;m<MPB.mpd;m++){
       const avoid=new Set([prev,...meals.map(x=>sel.indexOf(x))]);let best=-1;
       sel.forEach((_,j)=>{if(left[j]>0&&!avoid.has(j)&&(best<0||left[j]>left[best]))best=j});
@@ -2489,33 +2511,37 @@ function mpPlan(){const S=mpStoreObj(),al=myAllergens();
   const plur=(q,r)=>q>1?r.replace(/^(cup|pint|jar|bag|can|clove|bunch|head|block|package|box|bottle)\b/i,"$1s").replace(/^(rotisserie chicken|onion|red onion|lemon|lime|cucumber|carrot|avocado|bell pepper|egg|whole-grain roll|pita bread|naan bread)(?=$| \()/i,"$1s"):r;
   order.forEach(k=>{const a=agg[k];if(a.q>=4&&a.q%4===0&&/^tbsp /.test(a.rest)){a.q=a.q/16;a.rest=a.rest.replace(/^tbsp/,"cup")}});
   const list=order.map(k=>{const a=agg[k];return a.q?`${mpFmt(a.q)}${/^\d/.test(a.rest)?" ×":""} ${plur(a.q,a.rest)}`:a.rest});
-  return {S,sel,need,batches,days,spare:B*4-need,list}}
+  return {S,sel,need,batches,days,spare:B*per-need,list,per}}
 function mealPrepHTML(){const P=mpPlan(),S=P.S,al=myAllergens(),got=MPB.got||[];
   const name=i=>S.r[i].n,kc=P.days.length?Math.round(P.days[0].meals.reduce((a,i)=>a+S.r[i].m[0],0)):0;
   const text=[`Batch cook · ${S.r[P.sel[0]]?S.r[P.sel[0]].st:S.n} · ${MPB.days} days · ${MPB.mpd===2?"lunch + dinner":"dinner"}`,"","GROCERY LIST",...P.list.map(x=>"- "+x)].join("\n");
   return `<p class="muted">Pick your store, one meal and how many days. The app builds your plan and grocery list.</p>
    <section><h2>Store</h2><div class="seg" data-segset="mpstore">${MEALPREP.map(x=>`<button data-v="${x.k}" aria-pressed="${S.k===x.k}">${esc(x.n)}</button>`).join("")}<button data-v="mix" aria-pressed="${S.k==="mix"}">Mix stores</button></div></section>
    <section><h2>Meal</h2>${S.k==="mix"?MEALPREP.map(st=>`<span class="eyebrow" style="display:block;margin:10px 0 6px">${esc(st.n)}</span><div class="choice mini" data-mpone="1">${S.r.map((r,i)=>r.st===st.n?`<button type="button" data-v="${i}" aria-pressed="${MPB.one===i}">${esc(r.n)}</button>`:"").join("")}</div>`).join(""):`<div class="choice mini" data-mpone="1">${S.r.map((r,i)=>`<button type="button" data-v="${i}" aria-pressed="${MPB.one===i}">${esc(r.n)}</button>`).join("")}</div>`}
-    ${(r=>{const hit=r.a.filter(a=>al.includes(a));return `<div class="card stack" style="margin-top:10px;gap:6px"><b>${esc(r.n)}</b>${S.k==="mix"?`<span class="stamp">Buy at ${esc(r.st)}</span>`:""}<div class="row" style="flex-wrap:wrap;gap:6px"><span class="chip">${r.m[0].toLocaleString()} kcal</span><span class="chip accent">${r.m[1]}g carbs</span><span class="chip violet">${r.m[2]}g protein</span><span class="chip">${r.m[3]}g fat</span></div><span class="stamp">Per portion</span>${hit.length?`<p class="chip warn" style="align-self:flex-start">Contains ${esc(hit.join(", "))}, which is on your allergy list</p>`:""}</div>`})(S.r[P.sel[0]])}</section>
+    ${(r=>{const k=MPB.size==="rest"?0.8:1,hit=r.a.filter(a=>al.includes(a));return `<div class="card stack" style="margin-top:10px;gap:6px"><b>${esc(r.n)}</b>${S.k==="mix"?`<span class="stamp">Buy at ${esc(r.st)}</span>`:""}<div class="row" style="flex-wrap:wrap;gap:6px"><span class="chip">${Math.round(r.m[0]*k/5)*5} kcal</span><span class="chip accent">${Math.round(r.m[1]*k)}g carbs</span><span class="chip violet">${Math.round(r.m[2]*k)}g protein</span><span class="chip">${Math.round(r.m[3]*k)}g fat</span></div><span class="stamp">${MPB.size==="rest"?"Per rest-day portion (1/5 of a batch)":"Per portion (1/4 of a batch)"}</span>${hit.length?`<p class="chip warn" style="align-self:flex-start">Contains ${esc(hit.join(", "))}, which is on your allergy list</p>`:""}</div>`})(S.r[P.sel[0]])}</section>
    <section><h2>How many days?</h2><div class="card stack">
     <div class="choice mini" data-mpdays="1">${[3,4,5,6,7].map(n=>`<button type="button" data-v="${n}" aria-pressed="${MPB.days===n}">${n} days</button>`).join("")}</div>
     <span class="eyebrow" style="margin-top:4px">Meals a day</span>
-    <div class="choice mini" data-mpmeals="1"><button type="button" data-v="1" aria-pressed="${MPB.mpd===1}">Dinner</button><button type="button" data-v="2" aria-pressed="${MPB.mpd===2}">Lunch + dinner</button></div></div></section>
+    <div class="choice mini" data-mpmeals="1"><button type="button" data-v="1" aria-pressed="${MPB.mpd===1}">Dinner</button><button type="button" data-v="2" aria-pressed="${MPB.mpd===2}">Lunch + dinner</button></div>
+    <span class="eyebrow" style="margin-top:4px">Portion size</span>
+    <div class="choice mini" data-mpsize="1"><button type="button" data-v="train" aria-pressed="${MPB.size!=="rest"}">Training days</button><button type="button" data-v="rest" aria-pressed="${MPB.size==="rest"}">Rest days (lighter)</button></div>
+    <p class="stamp">Rest-day portions are about 20% smaller: each batch splits into 5 instead of 4.</p></div></section>
    ${P.sel.length?`<section><div class="sec-head"><h2>Your plan</h2><span class="stamp">${P.need} portions</span></div>
-     <div class="card stack" style="gap:6px"><p style="font-size:.92rem">Cook ${P.sel.map((i,j)=>P.batches[j]?`<b>${esc(name(i))}</b> ×${P.batches[j]}`:"").filter(Boolean).join(", ")}. Each batch makes 4 portions.${P.spare?` That's ${P.spare} spare portion${P.spare>1?"s":""}: freeze them or share.`:""}</p></div>
+     <div class="card stack" style="gap:6px"><p style="font-size:.92rem">Cook ${P.sel.map((i,j)=>P.batches[j]?`<b>${esc(name(i))}</b> ×${P.batches[j]}`:"").filter(Boolean).join(", ")}. Each batch makes ${P.per} portions.${P.spare?` That's ${P.spare} spare portion${P.spare>1?"s":""}: freeze them or share.`:""}</p></div>
      ${MPB.days>3?`<p class="stamp" style="margin-top:8px">Cooked food keeps 3–4 days in the fridge, so freeze the portions you'll eat on day 4 and later, and move each one to the fridge the night before.</p>`:""}</section>
     <section id="mp-groc"><div class="sec-head"><h2>Grocery list</h2><span class="stamp">${got.filter(x=>P.list.includes(x)).length}/${P.list.length}</span></div>
      <div class="card stack"><div class="choice mini">${P.list.map(x=>`<button type="button" data-mpbgot="${esc(x)}" aria-pressed="${got.includes(x)}">${esc(x)}</button>`).join("")}</div>
       <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
       <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copymp="1">Copy grocery list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
       <p class="stamp">Brands vary: check labels for your allergens.</p></div></section>
-    <section><h2>Cook it</h2><div class="stack" style="gap:10px">${P.sel.map((i,j)=>{const r=S.r[i],b=P.batches[j];if(!b)return "";return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="chip accent">×${b} · ${b*4} portions</span></div><p style="font-size:.9rem">${esc(r.p)}</p>${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}</div>`}).join("")}</div></section>`
+    <section><h2>Cook it</h2><div class="stack" style="gap:10px">${P.sel.map((i,j)=>{const r=S.r[i],b=P.batches[j];if(!b)return "";return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="chip accent">×${b} · ${b*P.per} portions${P.per===5?" (split into 5)":""}</span></div><p style="font-size:.9rem">${esc(r.p)}</p>${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}</div>`}).join("")}</div></section>`
    :`<div class="card muted">Choose at least one meal to build your plan.</div>`}
    <p class="stamp">Macros are approximate per portion, not label-verified. Cool food within 2 hours, refrigerate and eat within 3–4 days, or freeze. Keep cold toppings (avocado, tzatziki, hummus, feta) separate until you eat.</p>`}
 function mpClick(b){const ds=b.dataset;
   const mo=b.closest("[data-mpone]");if(mo){MPB.one=+ds.v;mpbSave();render();return true}
   const dd=b.closest("[data-mpdays]");if(dd){MPB.days=+ds.v;mpbSave();render();return true}
   const mm=b.closest("[data-mpmeals]");if(mm){MPB.mpd=+ds.v;mpbSave();render();return true}
+  const ms=b.closest("[data-mpsize]");if(ms){MPB.size=ds.v;mpbSave();render();return true}
   if(ds.mpbgot!==undefined){const L=MPB.got||[];MPB.got=L.includes(ds.mpbgot)?L.filter(x=>x!==ds.mpbgot):[...L,ds.mpbgot];mpbSave();render();return true}
   return false}
 
@@ -2590,6 +2616,7 @@ function vMe(){
     <div class="bgs">${BACKGROUNDS.map(x=>`<button class="bgopt" data-bg="${x.k}" aria-pressed="${(prefs.bg||"stars")===x.k}" aria-label="${x.n}: ${x.d}"><i style="background-image:${bgURL(x.k,isDarkNow())}"></i><b>${x.n}</b></button>`).join("")}</div></section>
    <section><h2>Game-day theme</h2>
     <div class="choice" data-pref="gameday"><button type="button" data-v="1" aria-pressed="${prefs.gameday!==false}">Auto on match days</button><button type="button" data-v="0" aria-pressed="${prefs.gameday===false}">Off</button></div></section>
+   ${profile.position==="Staff"?"":shareHTML()}
    <section><h2>Language</h2><div class="card">${langPicker()}</div></section>
    <section><h2>Text size</h2>
     <div class="choice" data-pref="large"><button type="button" data-v="0" aria-pressed="${!prefs.large}">Standard text</button><button type="button" data-v="1" aria-pressed="${!!prefs.large}">Larger text</button></div></section>
@@ -2787,6 +2814,7 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
+  if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
   if(featClick(b))return;
   if(mpClick(b))return;
   if(scClick(b))return;
@@ -2852,7 +2880,7 @@ document.addEventListener("submit",e=>{
   if(f.id==="ready-form"){
     if(!rDraft.sleepH||RQ.some(q=>rDraft[q.k]==null)){toast("Answer all six, it's 15 seconds");return}
     const t=isoToday(),d=jGet(t),was=starLit(t);d.ready={...rDraft,note:$("#r-note").value.trim()};
-    if(jPut(t,d)){render();scrollTo({top:0});logStamp(!was&&starLit(t)?"Check-in saved. Tonight's star is lit":"Check-in saved"+starHint(t))}return}
+    if(jPut(t,d)){shareReady(t);render();scrollTo({top:0});logStamp(!was&&starLit(t)?"Check-in saved. Tonight's star is lit":"Check-in saved"+starHint(t))}return}
   if(f.id==="onb"){
     const first=$("#f-first").value.trim(),last=$("#f-last").value.trim(),name=(first+" "+last).trim();
     if(!first||!last){toast("Add your first and last name");return}
@@ -2884,7 +2912,7 @@ document.addEventListener("input",e=>{const t=e.target;
 render();
 loadSheets();
 if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
-rosterSync();
+rosterSync();staffFlush();
 
 </script>
 </body></html>
