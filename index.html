@@ -668,6 +668,26 @@ const DINNERS={
  ]
 };
 
+/* Dinner meal prep: 3 recipes per store, 4 portions each. Macros per portion are approximate (not label-verified).
+   a = allergen tags (ALLERGENS names) for the usual product; brands vary, so the app always says to check labels. */
+const MEALPREP=[
+ {k:"costco",n:"Costco",r:[
+  {n:"Teriyaki Chicken Rice Bowls",m:[860,119,61,15],a:["Soy","Wheat/Gluten","Sesame"],g:["2 lb chicken breast","3 cups dry jasmine rice","1 lb broccoli","3/4 cup teriyaki sauce","1 tbsp sesame oil"],p:"Cook chicken and rice; steam broccoli. Toss chicken with teriyaki sauce and portion."},
+  {n:"Chicken Pesto Pasta",m:[910,91,62,33],a:["Wheat/Gluten","Dairy","Tree nut"],g:["1 1/2 lb chicken breast","1 lb dry penne pasta","3/4 cup basil pesto","1 pint cherry tomatoes","4 cups spinach","1/2 cup Parmesan"],p:"Cook pasta and chicken. Toss with pesto, tomatoes, spinach and Parmesan."},
+  {n:"Beef & Sweet Potato Power Bowls",m:[1080,125,56,39],a:[],g:["2 lb lean ground beef","2 1/2 lb sweet potatoes","2 cups dry brown rice","1 lb green beans","2 tbsp olive oil","Garlic and preferred seasoning"],p:"Roast sweet potatoes and green beans; brown beef and serve over cooked rice."}]},
+ {k:"tj",n:"Trader Joe's",r:[
+  {n:"Mediterranean Chicken Shawarma Bowls",m:[940,103,55,34],a:["Wheat/Gluten","Sesame","Dairy"],g:["2 lb shawarma-marinated chicken thighs","2 cups dry basmati rice","1 cucumber","1 pint cherry tomatoes","1/2 cup hummus","4 pita breads","Tzatziki sauce"],p:"Roast chicken, cook rice, and portion with chopped vegetables. Pack hummus and tzatziki separately."},
+  {n:"Korean Beef Bulgogi Bowls",m:[990,120,53,33],a:["Soy","Wheat/Gluten","Sesame"],g:["2 lb lean ground beef","2 1/2 cups dry jasmine rice","2 cups shelled edamame","2 carrots","1/2 cup bulgogi sauce","Sesame seeds"],p:"Brown beef with bulgogi sauce; portion with cooked rice, edamame and shredded carrots."},
+  {n:"Mandarin Orange Chicken & Fried Rice",m:[850,105,39,30],a:["Wheat/Gluten","Soy","Egg"],g:["2 bags frozen Mandarin Orange Chicken","2 bags frozen vegetable fried rice","1 bag shelled edamame","1 bag broccoli florets","Sesame seeds (optional)"],p:"Cook frozen items according to package directions and divide into four containers.",tip:"Lowest protein of the twelve. On heavy training days, add a Greek yogurt or a glass of milk."}]},
+ {k:"wf",n:"Whole Foods",r:[
+  {n:"Maple Dijon Salmon with Sweet Potatoes",m:[960,112,51,34],a:["Fish","Wheat/Gluten"],g:["Four 6-7 oz salmon fillets","3 lb sweet potatoes","1 lb asparagus","2 tbsp maple syrup","2 tbsp Dijon mustard","2 tbsp olive oil","4 whole-grain rolls"],p:"Roast sweet potatoes and asparagus; brush salmon with maple-Dijon glaze and bake until cooked."},
+  {n:"Chicken Tikka Masala with Rice & Naan",m:[930,116,61,25],a:["Dairy","Wheat/Gluten"],g:["2 lb chicken breast","2 cups dry basmati rice","1 jar tikka masala simmer sauce","1 lb cauliflower","4 naan breads","1/2 cup plain Greek yogurt"],p:"Simmer chicken in sauce; cook rice and roast cauliflower. Serve with naan and yogurt."},
+  {n:"Mediterranean Salmon & Couscous Bowls",m:[990,93,56,44],a:["Fish","Wheat/Gluten","Dairy"],g:["Four 6-7 oz salmon fillets","2 cups dry pearl couscous","1 can chickpeas","1 cucumber","1 pint cherry tomatoes","1/2 cup feta","1/4 cup olive oil and lemon juice"],p:"Bake salmon; cook couscous. Combine with chickpeas, vegetables, feta and dressing."}]},
+ {k:"sprouts",n:"Sprouts",r:[
+  {n:"Turkey Taco Burrito Bowls",m:[1080,107,65,44],a:["Dairy"],g:["2 lb 93% lean ground turkey","2 cups dry rice","2 cans black beans","1 cup corn","1 cup shredded cheese","Salsa","2 avocados","Taco seasoning"],p:"Brown turkey with seasoning; portion with rice, beans, corn and cheese. Add avocado when serving."},
+  {n:"Honey Garlic Chicken & Roasted Potatoes",m:[850,99,51,28],a:["Soy","Wheat/Gluten"],g:["2 lb boneless chicken thighs","3 lb baby potatoes","1 lb carrots","1/4 cup honey","1/4 cup low-sodium soy sauce","3 garlic cloves","2 tbsp olive oil"],p:"Roast potatoes and carrots. Bake chicken with honey-garlic sauce and portion."},
+  {n:"Turkey Meatballs with Marinara & Pasta",m:[880,97,61,27],a:["Wheat/Gluten","Egg","Dairy"],g:["2 lb lean ground turkey","1 lb dry pasta","1 jar marinara","1 egg","1/2 cup breadcrumbs","1/2 cup Parmesan","1 lb zucchini"],p:"Mix turkey, egg and breadcrumbs; form and bake meatballs. Cook pasta, sauté zucchini, add marinara."}]}
+];
 const FAQ=[
  {q:"How much protein do I actually need?",a:["Most athletes do well at about 1.6 g per kg body weight per day. Above about 2.2 g/kg there is little added benefit for muscle gain in research to date.","Spread it over 4–5 eating occasions of roughly 0.3 g/kg each (about 20–40 g), including one after training."],s:"Morton et al., Br J Sports Med 2018 (meta-analysis); ISSN Position Stand: Protein and Exercise, 2017"},
  {q:"Plant or whey: does it matter?",a:["Whey is fast-digesting and rich in leucine. Plant blends (pea plus rice, soy) can produce similar training outcomes when the dose is a little higher or the blend is designed for leucine.","Pick the one you'll tolerate and use."],s:"Messina et al., Int J Sport Nutr Exerc Metab 2018 (soy vs animal protein meta-analysis)"},
@@ -707,6 +727,7 @@ const FAQ=[
 
 /* ===== State ===== */
 const store={get(k,f){try{const v=localStorage.getItem("orb_"+k);return v?JSON.parse(v):f}catch(e){return f}},set(k,v){try{localStorage.setItem("orb_"+k,JSON.stringify(v));return true}catch(e){return false}}};
+let mpStore="costco", MPGOT=store.get("mealprep",{});
 let profile=store.get("profile",null);
 let prefs=store.get("prefs",{accent:"#FF5E1A",theme:"system",large:false});
 if(!prefs.scheme)prefs.scheme=prefs.theme==="dark"?"space":prefs.theme==="light"?"starlight":"auto";
@@ -2355,6 +2376,9 @@ function planClick(b){
   if(b.closest("[data-planveg]")){PLANPREF.veg=!PLANPREF.veg;savePlan();render();return true}
   if(ds.planswap){PLANPREF.sel[ds.planswap]=(PLANPREF.sel[ds.planswap]||0)+1;savePlan();render();return true}
   if(ds.grocery){showGrocery=!showGrocery;render();if(showGrocery)setTimeout(()=>{const g=document.getElementById("grocery");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
+  if(ds.mpgot){const L=MPGOT[mpStore]||[];MPGOT[mpStore]=L.includes(ds.mpgot)?L.filter(x=>x!==ds.mpgot):[...L,ds.mpgot];store.set("mealprep",MPGOT);b.setAttribute("aria-pressed",MPGOT[mpStore].includes(ds.mpgot));return true}
+  if(ds.mpreset){MPGOT[mpStore]=[];store.set("mealprep",MPGOT);render();return true}
+  if(ds.copymp){const txt=document.getElementById("mp-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Meal prep list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
   if(ds.groc){const wk=weekDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
   if(ds.prep){showPrep=!showPrep;render();if(showPrep)setTimeout(()=>{const g=document.getElementById("prep");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.grocreset){PLANPREF.got={};savePlan();render();return true}
@@ -2368,11 +2392,29 @@ function planClick(b){
 }
 
 function planHead(title,sub){return `<div class="p-head"><span class="p-title">${title}</span>${sub?`<span class="p-sub">${sub}</span>`:""}</div>`}
+function mealPrepHTML(){
+  const S=MEALPREP.find(x=>x.k===mpStore)||MEALPREP[0], al=myAllergens(), got=MPGOT[S.k]||[];
+  const text=["Dinner meal prep · "+S.n+" · 4 portions per recipe",...S.r.flatMap(r=>["",r.n.toUpperCase(),...r.g.map(x=>"- "+x)])].join("\n");
+  return `<p class="muted">Cook once, eat four times. Each store has three dinners that make four portions, sized for training days.</p>
+   <div class="seg" data-segset="mpstore">${MEALPREP.map(x=>`<button data-v="${x.k}" aria-pressed="${S.k===x.k}">${esc(x.n)}</button>`).join("")}</div>
+   ${S.r.map((r,i)=>{const hit=r.a.filter(a=>al.includes(a));
+    return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="nums">${r.m[0].toLocaleString()} kcal</span></div>
+     <div class="row" style="flex-wrap:wrap;gap:6px"><span class="chip accent">${r.m[1]}g carbs</span><span class="chip violet">${r.m[2]}g protein</span><span class="chip">${r.m[3]}g fat</span></div>
+     ${hit.length?`<p class="chip warn" style="align-self:flex-start">Contains ${esc(hit.join(", "))}, which is on your allergy list</p>`:""}
+     <span class="eyebrow">Grocery checklist · 4 portions</span>
+     <div class="choice mini">${r.g.map((x,j)=>{const id=i+":"+j;return `<button type="button" data-mpgot="${id}" aria-pressed="${got.includes(id)}">${esc(x)}</button>`}).join("")}</div>
+     <p style="font-size:.9rem"><b>Prep:</b> ${esc(r.p)}</p>
+     ${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}
+     ${r.a.length?`<p class="stamp">Usually contains: ${esc(r.a.join(", "))}. Brands vary, so check labels.</p>`:""}</div>`}).join("")}
+   <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
+   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copymp="1">Copy ${esc(S.n)} list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
+   <p class="stamp">Macros are approximate per portion, not label-verified. Refrigerate cooked meals and eat within 3–4 days, or freeze promptly. Keep cold toppings (avocado, tzatziki, hummus, feta) separate until you eat.</p>`;
+}
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["plan","Meal plan"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
+  const segs=[["plan","Meal plan"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"],["mealprep","Meal prep"]];
   let body="";
-  if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
+  if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="mealprep"){body=mealPrepHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
   }else if(fuelSeg==="travel"){
     const away=SCHEDULE.filter(x=>!x.home&&x.d>=isoToday()).slice(0,3);
@@ -2659,7 +2701,7 @@ document.addEventListener("click",e=>{
   const rq=b.closest("[data-rq]");
   if(rq){const k=rq.dataset.rq,v=k==="sleepH"?ds.v:+ds.v;rDraft[k]=rDraft[k]===v?undefined:v;rq.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(k==="sleepH"?x.dataset.v:+x.dataset.v)===String(rDraft[k])));return}
   const segset=b.closest("[data-segset]");
-  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;render();return}
+  if(segset){const k=segset.dataset.segset,v=ds.v;if(k==="fuel")fuelSeg=v;if(k==="season")seasonSeg=v;if(k==="city")travelCity=v;if(k==="mpstore")mpStore=v;render();return}
   if(ds.edadd){ED.announcements.push({t:"",d:"",tag:"Nutrition",when:isoToday()});render();return}
   if(ds.edrm!==undefined){ED.announcements.splice(+ds.edrm,1);render();return}
   if(ds.eddiscard){ED=clone(DATA);render();toast("Changes discarded");return}
