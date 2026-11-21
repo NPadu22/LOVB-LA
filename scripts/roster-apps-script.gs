@@ -15,7 +15,7 @@ const ROSTER_TAB = 'Roster';
 const STAFF_SHEET_ID = 'PASTE_PRIVATE_SHEET_ID_HERE';
 
 const STAFF_TABS = {
-  Readiness: ['Date', 'Code', 'Name', 'Position', 'Readiness (1-5)', 'Sleep (h)', 'Sleep quality', 'Soreness', 'Energy', 'Mood', 'Stress', 'Updated', 'Key'],
+  Recovery: ['Date', 'Code', 'Name', 'Position', 'Readiness (1-5)', 'Sleep (h)', 'Sleep quality', 'Soreness', 'Energy', 'Mood', 'Stress', 'Updated', 'Key'],
   Lifts: ['Date', 'Code', 'Name', 'Position', 'Exercise', 'Weight', 'Unit', 'Reps', 'Est. 1RM', 'Logged', 'Set ID'],
   Conditioning: ['Date', 'Code', 'Name', 'Position', 'Session', 'RPE (1-10)', 'Minutes', 'Load (RPE x min)', 'Logged', 'Key']
 };
@@ -36,7 +36,7 @@ function doPost(e) {
     const now = new Date();
     if (t === 'ready') {
       const row = [date].concat(who, [num(d.score), clean(d.sleepH, 3), num(d.sleepQ), num(d.sore), num(d.energy), num(d.mood), num(d.stress), now, id + '|' + date]);
-      upsert(tab(ss, 'Readiness'), row, 12);
+      upsert(tab(ss, 'Recovery'), row, 12);
     } else if (t === 'lift') {
       const row = [date].concat(who, [clean(d.ex, 60), num(d.w), clean(d.u, 3), num(d.r), num(d.e1rm), now, clean(d.setId, 40)]);
       upsert(tab(ss, 'Lifts'), row, 10);
