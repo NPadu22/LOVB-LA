@@ -8,7 +8,7 @@
  * Readiness, lifts and conditioning that an athlete CHOOSES to share go to a separate PRIVATE sheet:
  *   1. Create a new Google Sheet (e.g. "Orbit staff data"). Keep General access = Restricted.
  *      Share it only with the staff who should see it.
- *   2. Copy its ID from the URL (the long part between /d/ and /edit) into STAFF_SHEET_ID below.
+ *   2. Paste its ID (the long part between /d/ and /edit) or its full link into STAFF_SHEET_ID below.
  * Tabs and headers in the private sheet are created automatically.
  */
 const ROSTER_TAB = 'Roster';
@@ -30,7 +30,7 @@ function doPost(e) {
     const t = clean(d.t, 10) || 'roster';
     if (t === 'roster') return roster(d, id);
     if (STAFF_SHEET_ID.indexOf('PASTE_') === 0) return reply({ ok: false, error: 'staff sheet not set' });
-    const ss = SpreadsheetApp.openById(STAFF_SHEET_ID);
+    const ss = SpreadsheetApp.openById(staffSheetId());
     const who = [clean(d.code, 8).toUpperCase(), clean(d.name, 80), clean(d.position, 30)];
     const date = clean(d.date, 10);
     const now = new Date();
@@ -72,6 +72,9 @@ function roster(d, id) {
   sh.appendRow(row.concat([now, now, id]));
   return reply({ ok: true });
 }
+
+// Accepts either the bare ID or a full Google Sheets link.
+function staffSheetId() { const m = String(STAFF_SHEET_ID).match(/\/d\/([a-zA-Z0-9_-]+)/); return m ? m[1] : String(STAFF_SHEET_ID).trim(); }
 
 // Plain text only, short, and never a formula.
 function clean(v, n) { return String(v == null ? '' : v).replace(/[\r\n\t]/g, ' ').trim().slice(0, n).replace(/^[=+\-@]/, "'$&"); }
