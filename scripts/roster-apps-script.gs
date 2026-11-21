@@ -5,19 +5,21 @@
  * Then Deploy > Manage deployments > pencil > Version: New version > Deploy (the /exec URL stays the same).
  *
  * Roster rows go to the "Roster" tab of this (public) sheet: name, position, jersey, language only.
- * Readiness, lifts and conditioning that an athlete CHOOSES to share go to a separate PRIVATE sheet:
+ * Recovery check-ins, lifts, conditioning, meals and hydration that an athlete CHOOSES to share go to a separate PRIVATE sheet:
  *   1. Create a new Google Sheet (e.g. "Orbit staff data"). Keep General access = Restricted.
  *      Share it only with the staff who should see it.
  *   2. Paste its ID (the long part between /d/ and /edit) or its full link into STAFF_SHEET_ID below.
  * Tabs and headers in the private sheet are created automatically.
  */
 const ROSTER_TAB = 'Roster';
-const STAFF_SHEET_ID = 'PASTE_PRIVATE_SHEET_ID_HERE';
+const STAFF_SHEET_ID = '1eZzZkWnJMdCpatUZaKav8WhW60TUWZkr-Lv_S7AZ85I';
 
 const STAFF_TABS = {
   Recovery: ['Date', 'Code', 'Name', 'Position', 'Recovery (1-5)', 'Sleep (h)', 'Sleep quality', 'Soreness', 'Energy', 'Mood', 'Stress', 'Updated', 'Key'],
   Lifts: ['Date', 'Code', 'Name', 'Position', 'Exercise', 'Weight', 'Unit', 'Reps', 'Est. 1RM', 'Logged', 'Set ID'],
-  Conditioning: ['Date', 'Code', 'Name', 'Position', 'Session', 'RPE (1-10)', 'Minutes', 'Load (RPE x min)', 'Logged', 'Key']
+  Conditioning: ['Date', 'Code', 'Name', 'Position', 'Session', 'RPE (1-10)', 'Minutes', 'Load (RPE x min)', 'Logged', 'Key'],
+  Nutrition: ['Date', 'Code', 'Name', 'Position', 'Meal', 'Time', 'What they ate', 'From meal plan', 'Logged', 'Entry ID'],
+  Hydration: ['Date', 'Code', 'Name', 'Position', 'Bottles', 'Bottle (oz)', 'Total (oz)', 'Goal (oz)', 'Updated', 'Key']
 };
 
 function doPost(e) {
@@ -48,6 +50,14 @@ function doPost(e) {
       upsert(tab(ss, 'Conditioning'), row, 9);
     } else if (t === 'conddel') {
       remove(tab(ss, 'Conditioning'), id + '|' + date + '|' + clean(d.session, 30), 9);
+    } else if (t === 'meal') {
+      const row = [date].concat(who, [clean(d.occ, 20), clean(d.time, 5), clean(d.what, 120), clean(d.plan, 3), now, clean(d.entryId, 40)]);
+      upsert(tab(ss, 'Nutrition'), row, 9);
+    } else if (t === 'mealdel') {
+      remove(tab(ss, 'Nutrition'), clean(d.entryId, 40), 9);
+    } else if (t === 'water') {
+      const row = [date].concat(who, [num(d.bottles), num(d.size), num(d.oz), num(d.goal), now, id + '|' + date]);
+      upsert(tab(ss, 'Hydration'), row, 9);
     }
     return reply({ ok: true });
   } finally {
@@ -97,3 +107,8 @@ function remove(sh, key, keyCol) {
   for (let i = vals.length - 1; i >= 1; i--) if (String(vals[i][keyCol]) === String(key)) sh.deleteRow(i + 1);
 }
 function reply(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+function testStaffSheet() {
+  const ss = SpreadsheetApp.openById(staffSheetId());
+  tab(ss, 'Recovery').appendRow(['TEST', 'TEST', 'Delete me', 'Staff']);
+}
