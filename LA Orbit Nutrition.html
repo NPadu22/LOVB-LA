@@ -2048,12 +2048,13 @@ function syncAgo(t){const m=Math.round((Date.now()-new Date(t))/60000);return m<
 function loadSheets(){loadSheet("at",CONFIG.atSheetCSV);loadSheet("team",CONFIG.teamSheetCSV);loadSheet("prog",CONFIG.programsSheetCSV);loadSheet("lift",CONFIG.liftsSheetCSV);loadSheet("nut",CONFIG.nutritionSheetCSV)}
 /* Programs tab: one row per exercise; rows sharing a Program name form one program, in row order */
 function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R[0].map(h=>h.trim().toLowerCase());
-  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iDy=col("day"),iPh=col("phase"),iE=col("exercise"),iD=col("dose"),iC=col("cue"),iV=col("video"),iS=col("show");
+  const col=n=>H.findIndex(h=>h===n||h.startsWith(n));const iP=col("program"),iF=col("for"),iW=col("when"),iDy=col("day"),iPh=col("phase"),iE=col("exercise"),iD=col("dose"),iSe=col("sets"),iRp=col("reps"),iC=col("cue"),iV=col("video"),iS=col("show");
   if(iP<0||iE<0)return null;const out=[],by={};const g=(r,i)=>i<0?"":(r[i]||"").trim();
   for(const r of R.slice(1)){const name=g(r,iP),n=g(r,iE);if(!name||!n||g(r,iS).toLowerCase()==="no")continue;
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
     if(!by[id]){by[id]={id,name,who:g(r,iF),when:g(r,iW),note:"",ex:[]};out.push(by[id])}
-    const v=g(r,iV);by[id].ex.push({n,dose:g(r,iD),cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
+    const v=g(r,iV);const se=g(r,iSe),rp=g(r,iRp),dose=se&&rp?`${se} × ${rp}`:(se?`${se} sets`:rp)||g(r,iD);
+    by[id].ex.push({n,dose,cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
   return out}
 /* Phase: Pre-practice / Practice / Post-practice (anything else shown as typed). Day: "Day 1", "Mon", "Week 2 Day 3"... */
 function progPhase(v){const t=(v||"").trim().toLowerCase();if(!t)return "";if(/^pre/.test(t))return "Pre-practice";if(/^post/.test(t))return "Post-practice";if(/^(practice|during|in[- ]practice)/.test(t))return "Practice";return v.trim()}
