@@ -254,6 +254,34 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .wsum{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .wsum-c{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
 .wsum-c b{font:800 1.3rem/1.1 var(--display,inherit)}
+/* game day pop */
+.gd-board{position:relative;overflow:hidden;border-radius:var(--r);padding:0 18px 16px;background:radial-gradient(90% 70% at 50% 0%,rgb(255 94 26 / .28),transparent 70%),#07070A;border:1px solid rgb(255 94 26 / .45);box-shadow:0 0 0 1px rgb(255 94 26 / .15),0 18px 50px rgb(255 94 26 / .18);color:#fff}
+.gd-ribbon{display:flex;overflow:hidden;margin:0 -18px 14px;padding:7px 0;background:#000;border-bottom:1px solid rgb(255 94 26 / .5);font:700 .74rem/1 "Share Tech Mono",var(--mono),monospace;letter-spacing:.14em;color:#FF8A4C;text-shadow:0 0 6px rgb(255 94 26 / .8);white-space:nowrap;background-image:repeating-linear-gradient(90deg,transparent 0 2px,rgb(0 0 0 / .35) 2px 3px)}
+.gd-ribbon span{flex:none;padding-right:0;animation:gdMarquee 22s linear infinite}
+@keyframes gdMarquee{to{transform:translateX(-100%)}}
+.gd-teams{display:flex;align-items:baseline;justify-content:center;gap:10px;white-space:nowrap;font:900 1.15rem/1 var(--display,inherit);font-stretch:125%;letter-spacing:.02em;text-transform:uppercase}
+.gd-teams span{font:700 .8rem var(--mono);color:#FF8A4C;letter-spacing:.2em}
+.gd-status{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:12px;text-align:center}
+.gd-count{display:flex;flex-direction:column;align-items:center;gap:6px}
+.gd-digits{font:400 3.6rem/1 "Share Tech Mono",var(--mono),monospace;color:#FF5E1A;letter-spacing:.04em;text-shadow:0 0 18px rgb(255 94 26 / .65),0 0 2px #FFB38A;padding:6px 14px 2px;border-radius:12px;background:#000;box-shadow:inset 0 0 0 1px rgb(255 94 26 / .35)}
+.gd-digits i{font-style:normal;animation:gdBlink 1s steps(1) infinite}
+@keyframes gdBlink{50%{opacity:.25}}
+.gd-count span:last-child{font:700 .7rem var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#BDBDCB}
+.gd-next{font-size:.86rem;color:#E6E6EE;max-width:30ch}
+.gd-live{display:flex;align-items:center;gap:8px;font:900 1.6rem/1 var(--display,inherit);letter-spacing:.12em;color:#FF5E1A;text-shadow:0 0 14px rgb(255 94 26 / .7)}
+.gd-live i{width:12px;height:12px;border-radius:50%;background:#FF5E1A;box-shadow:0 0 12px #FF5E1A;animation:gdPulse 1.2s ease-in-out infinite}
+.gd-actions{display:flex;justify-content:center;margin-top:12px}
+.gd-check{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.gd-check .choice button{background:#15151C;color:#fff;border:1px solid #2E2E38}
+.gd-check .choice button[aria-pressed="true"]{background:#FF5E1A;color:#000;border-color:#FF5E1A;box-shadow:0 0 14px rgb(255 94 26 / .5)}
+@keyframes gdPulse{50%{opacity:.35;transform:scale(.8)}}
+[data-gameday] .hero::after{content:"";position:absolute;inset:-40% -60%;background:linear-gradient(105deg,transparent 42%,rgb(255 255 255 / .16) 48%,rgb(255 138 76 / .22) 50%,transparent 56%);animation:gdSweep 6s ease-in-out infinite;pointer-events:none}
+@keyframes gdSweep{0%{transform:translateX(-45%)}60%,100%{transform:translateX(45%)}}
+[data-gameday] .orbit .core{box-shadow:0 0 0 0 rgb(255 94 26 / .6);animation:gdRing 2.4s ease-out infinite}
+@keyframes gdRing{0%{box-shadow:0 0 0 0 rgb(255 94 26 / .55)}100%{box-shadow:0 0 0 22px rgb(255 94 26 / 0)}}
+[data-gameday] .btn:not(.ghost){box-shadow:0 0 18px rgb(255 94 26 / .45)}
+[data-gameday] nav.tabs{box-shadow:0 -6px 24px rgb(255 94 26 / .18)}
+@media (prefers-reduced-motion: reduce){.gd-digits i,.gd-ribbon span,.gd-live i,[data-gameday] .hero::after,[data-gameday] .orbit .core{animation:none!important}}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -962,6 +990,11 @@ addR([[/^(\d+)\/7 check-ins$/,"チェックイン $1/7","$1/7 check-ins"],[/^(\d
 addT([["only a dose you've already tried in practice, about 60 minutes before first serve. Many athletes do well on a small dose (about 1–3 mg per kg, roughly one coffee). It's a night match, so caffeine this late can cost you sleep and recovery: keep it small or skip it. Ask your dietitian before you use it.", "練習で試したことのある量だけを、ファーストサーブの約60分前に。少量(体重1 kgあたり約1〜3 mg、コーヒー約1杯)で十分な選手が多いです。ナイトマッチなので、この時間のカフェインは睡眠と回復を妨げることがあります。少量にするか控えましょう。使う前に管理栄養士に相談を。", "só uma dose que você já testou no treino, cerca de 60 minutos antes do primeiro saque. Muitas atletas vão bem com uma dose pequena (cerca de 1–3 mg por kg, mais ou menos um café). É jogo à noite: cafeína tão tarde pode atrapalhar o sono e a recuperação. Use pouco ou pule. Fale com sua nutricionista antes de usar."], ["only a dose you've already tried in practice, about 60 minutes before first serve. Many athletes do well on a small dose (about 1–3 mg per kg, roughly one coffee). Ask your dietitian before you use it.", "練習で試したことのある量だけを、ファーストサーブの約60分前に。少量(体重1 kgあたり約1〜3 mg、コーヒー約1杯)で十分な選手が多いです。使う前に管理栄養士に相談を。", "só uma dose que você já testou no treino, cerca de 60 minutos antes do primeiro saque. Muitas atletas vão bem com uma dose pequena (cerca de 1–3 mg por kg, mais ou menos um café). Fale com sua nutricionista antes de usar."]]);
 addT([["You're signed in as staff, so this is here for testing. Anything you share shows up in the staff sheet as Staff; delete test rows afterward.","スタッフとしてログインしているため、テスト用に表示されています。共有した内容はスタッフ用シートに「Staff」として記録されます。テスト後は削除してください。","Você entrou como comissão técnica, então isto aparece para teste. O que você compartilhar aparece na planilha como Staff; apague as linhas de teste depois."]]);
 addT([["Meals","食事","Refeições"],["What you log in your journal (meal, time, what you ate), for your dietitian. Not your notes or photos.","日誌に記録した内容(食事、時間、食べたもの)を管理栄養士に。メモや写真は含みません。","O que você registra no diário (refeição, horário, o que comeu), para sua nutricionista. Sem notas nem fotos."],["Your daily bottles and ounces against your goal.","1日のボトル本数と水分量(目標比)。","Suas garrafas e onças do dia em relação à meta."]]);
+addT([["Pre-game checklist","試合前チェックリスト","Checklist pré-jogo"],["Pre-match meal","試合前の食事","Refeição pré-jogo"],["Top-off snack","補給スナック","Lanche de reforço"],["Bottles full","ボトル満タン","Garrafas cheias"],["Recovery packed","リカバリー準備OK","Recuperação na bolsa"],["to first serve","ファーストサーブまで","até o primeiro saque"],["min left in your recovery window","リカバリーの時間 残り(分)","min restantes na janela de recuperação"],["LIVE","試合中","AO VIVO"],["Locked in. Go win.","準備完了。勝ちにいこう。","Tudo pronto. Vai lá e vence."],["READY","準備OK","PRONTA"],
+["Sip at every timeout and set break. A sports drink or chews in a long match.","タイムアウトやセット間ごとに水分を。長い試合はスポーツドリンクやチューも。","Beba em todo tempo e intervalo de set. Isotônico ou balas em jogo longo."],["20–40 g protein with carbs and fluid, in the locker room.","ロッカールームで炭水化物と水分と一緒に20〜40 gのたんぱく質を。","20–40 g de proteína com carboidrato e líquido, no vestiário."],["Late dinner, then sleep. Recovery is the next rep.","遅めの夕食をとって寝よう。リカバリーも練習のうち。","Jantar tarde e depois dormir. Recuperar é a próxima repetição."],["Great work.","お疲れさま。","Bom trabalho."],
+["Carb-forward and familiar, plus a big glass of fluid.","炭水化物中心の食べ慣れたものと、たっぷりの水分を。","Carboidrato e comida conhecida, mais um copo grande de líquido."],["Quick carbs, small volume. Keep sipping.","素早い炭水化物を少量。こまめに飲もう。","Carboidrato rápido, pouco volume. Continue bebendo."],["Sip at every break. You're fueled.","休憩ごとに少しずつ。準備は万全。","Beba em toda pausa. Você está abastecida."]]);
+addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"],[/^✓ (.+)$/,"✓ $1","✓ $1"]]);
+addT([["Warm-ups","ウォームアップ","Aquecimento"]]);addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1844,6 +1877,32 @@ function weekSummaryCard(){const t=isoToday(),dow0=(new Date(t+"T12:00:00").getD
    <div class="wsum">${cell("Readiness",rA==null?"–":rA.toFixed(1),rA!=null&&rP!=null?`${rA>=rP?"▲":"▼"} ${Math.abs(rA-rP).toFixed(1)} vs week before`:`${checks}/7 check-ins`)}${cell("Stars",`${stars}/7`,`${moons} moons lit`)}${cell("Strength",`${lifts} lift${lifts===1?"":"s"}`,`${cond} conditioning${prs?` · ${prs} PR${prs>1?"s":""}`:""}`)}${cell("Water",ozAvg?ozAvg+" oz":"–","daily average")}</div>
    ${top?`<p style="font-size:.9rem">Top recovery habit: <b>${esc((RECOV.find(r=>r[0]===top[0])||[,top[0]])[1])}</b> (${top[1]} day${top[1]>1?"s":""}).</p>`:""}
    <p class="stamp">Week of ${fmtDate(ws)}. Stays on this phone.</p></div></section>`}
+/* ===== Game day: arena ribbon, scoreboard countdown and pre-game checklist ===== */
+const GD_CHECK=[["meal","Pre-match meal"],["topoff","Top-off snack"],["bottles","Bottles full"],["recovery","Recovery packed"]];
+function gdNow(){const n=new Date();return n.getHours()*60+n.getMinutes()}
+function gdPhase(m){const d=m.local-gdNow();
+  if(d>210)return {k:"pre",label:"to first serve",next:["Pre-match meal",m.local-210,"Carb-forward and familiar, plus a big glass of fluid."]};
+  if(d>75)return {k:"pre",label:"to first serve",next:["Top-off snack",m.local-75,"Quick carbs, small volume. Keep sipping."]};
+  if(d>0)return {k:"warm",label:"to first serve",next:["Warm-ups",m.local-45,"Sip at every break. You're fueled."]};
+  if(d>-120)return {k:"live",label:"",next:null};
+  if(d>-180)return {k:"rec",label:"",left:180+d};
+  return {k:"done",label:"",next:null}}
+function gdBoard(){const m=todayMatch();if(!m)return "";const ph=gdPhase(m),d=Math.max(0,m.local-gdNow()),hh=String(Math.floor(d/60)).padStart(2,"0"),mm=String(d%60).padStart(2,"0");
+  const opp=esc(m.opp.replace("LOVB ","").toUpperCase()),rib=`MATCH DAY · ${m.home?"VS":"AT"} ${opp} · FIRST SERVE ${esc(matchLocal(m).toUpperCase())} · ${esc((m.venue||m.city).toUpperCase())} · LA ORBIT · `;
+  const got=(store.get("gdcheck",{})[isoToday()]||[]);
+  const status=ph.k==="live"?`<div class="gd-live"><i></i>LIVE</div><p class="gd-next">Sip at every timeout and set break. A sports drink or chews in a long match.</p>`
+   :ph.k==="rec"?`<div class="gd-count"><b class="gd-digits">${String(ph.left).padStart(2,"0")}</b><span>min left in your recovery window</span></div><p class="gd-next">20–40 g protein with carbs and fluid, in the locker room.</p>`
+   :ph.k==="done"?`<p class="gd-next" style="font-size:1rem"><b>Great work.</b> Late dinner, then sleep. Recovery is the next rep.</p>`
+   :`<div class="gd-count"><b class="gd-digits">${hh}<i>:</i>${mm}</b><span>${ph.label}</span></div>${ph.next?`<p class="gd-next"><b>Next: ${esc(tr(ph.next[0]))} · ${esc(clock(ph.next[1]))}</b><br>${esc(ph.next[2])}</p>`:""}`;
+  return `<section class="gd-board" aria-label="Match day">
+   <div class="gd-ribbon" aria-hidden="true"><span>${rib.repeat(3)}</span><span>${rib.repeat(3)}</span></div>
+   <div class="gd-teams"><b>LA ORBIT</b><span>${m.home?"vs":"at"}</span><b>${opp}</b></div>
+   <div class="gd-status" data-gdtick="1">${status}</div>
+   <div class="gd-actions"><button class="btn sm" data-go="fuel" data-seg="match">Game-day plan</button></div>
+   ${ph.k==="pre"||ph.k==="warm"?`<div class="gd-check"><span class="eyebrow">Pre-game checklist</span><div class="choice mini" data-gdcheck="1">${GD_CHECK.map(([k,l])=>`<button type="button" data-v="${k}" aria-pressed="${got.includes(k)}">${got.includes(k)?'<span aria-hidden="true">✓ </span>':""}${l}</button>`).join("")}</div></div>`:""}
+  </section>`}
+let gdTimer=null;
+function gdTick(){clearInterval(gdTimer);if(!todayMatch())return;gdTimer=setInterval(()=>{if(tab!=="home"||document.hidden)return;const el=document.querySelector("[data-gdtick]");if(!el)return;const b=document.createElement("div");b.innerHTML=gdBoard();const n=b.querySelector("[data-gdtick]");if(n&&n.innerHTML!==el.innerHTML){el.innerHTML=n.innerHTML;translateDOM(el)}},30000)}
 function matchDayCard(){
   const m=SCHEDULE.find(x=>x.d===isoToday()); if(!m)return "";
   const end=m.local+120, tz=TZ[m.off], done=habitDone("recover",isoToday());
@@ -2281,7 +2340,7 @@ function vHome(){
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>
    </header>
-   ${(()=>{const m=todayMatch();return m?`<div class="gdbar"><div class="stack" style="gap:4px"><b>Game day</b><span>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))} · First serve ${esc(matchLocal(m))}</span></div><button class="btn sm" data-go="fuel" data-seg="match">Plan</button></div>`:""})()}
+   ${gdBoard()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
    ${weekSummaryCard()}${planHomeCard()}${matchDayCard()}${roadTripCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
@@ -2879,7 +2938,7 @@ function _render(){
   if(tab==="edit"&&!canEdit)tab="me";
   app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,sc:vSC,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
-  renderTabs();scheduleInstall();checkPatches();
+  renderTabs();scheduleInstall();checkPatches();if(tab==="home")gdTick();
 }
 document.addEventListener("click",e=>{
   {const lb=e.target.closest("[data-lang]");if(lb){setLang(lb.dataset.lang);return}}
@@ -2889,6 +2948,7 @@ document.addEventListener("click",e=>{
   if(jClick(b))return;
   if(atClick(b))return;
   if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());if((ds.share==="food"||ds.share==="water")&&SHARE[ds.share])shareDay(isoToday());render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
+  {const gc=b.closest("[data-gdcheck]");if(gc){const t=isoToday(),A=store.get("gdcheck",{}),L=A[t]||[];A[t]=L.includes(ds.v)?L.filter(x=>x!==ds.v):[...L,ds.v];Object.keys(A).forEach(k=>{if(k<jShift(t,-14))delete A[k]});store.set("gdcheck",A);render();if(A[t].length===GD_CHECK.length&&!L.includes(ds.v))logStamp("Locked in. Go win.","READY");return}}
   if(ds.wsdismiss){store.set("wsdismiss",ds.wsdismiss);render();return}
   if(featClick(b))return;
   if(mpClick(b))return;
