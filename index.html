@@ -2138,7 +2138,7 @@ function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
     if(!by[id]){by[id]={id,name,who:g(r,iF),when:g(r,iW),note:"",ex:[]};out.push(by[id])}
     const v=g(r,iV);const se=g(r,iSe),rp=g(r,iRp),fd=(se||rp)?fmtDose(se,rp):fmtDose("",g(r,iD)),dose=fd.dose;
-    by[id].ex.push({n,dose,scheme:fd.scheme,cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
+    by[id].ex.push({n,who:g(r,iF),dose,scheme:fd.scheme,cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
   return out}
 /* Phase: Pre-practice / Practice / Post-practice (anything else shown as typed). Day: "Day 1", "Mon", "Week 2 Day 3"... */
 function progPhase(v){const t=(v||"").trim().toLowerCase();if(!t)return "";if(/^pre/.test(t))return "Pre-practice";if(/^post/.test(t))return "Post-practice";if(/^(practice|during|in[- ]practice)/.test(t))return "Practice";return v.trim()}
@@ -2176,7 +2176,7 @@ function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(every
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
   const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
-function atPrograms(){return allPrograms().filter(progFor)}
+function atPrograms(){return allPrograms().map(pg=>{const ex=pg.ex.filter(x=>progFor({who:x.who!=null?x.who:pg.who}));return ex.length?{...pg,ex,who:ex[0].who!=null?ex[0].who:pg.who}:null}).filter(Boolean)}
 function nutNotes(){return (CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[]).filter(a=>progFor({who:a.who}))}
 function nutHTML(){const L=nutNotes();if(!L.length)return "";
   return `<section><div class="sec-head"><h2>From your dietitian</h2></div><div class="card" style="padding-block:2px">${L.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Nutrition")}</span>${progTokens(a.who).length&&progTokens(a.who).every(progIsCode)?`<span class="chip violet">${tr("Just for you")}</span>`:""}<span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div></section>`}
