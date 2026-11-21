@@ -984,6 +984,7 @@ addT([["Pre-game checklist","試合前チェックリスト","Checklist pré-jog
 addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"],[/^✓ (.+)$/,"✓ $1","✓ $1"]]);
 addT([["Warm-ups","ウォームアップ","Aquecimento"]]);addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"]]);
 addT([["Anytime","いつでも","A qualquer hora"]]);addR([[/^Set (\d+)$/,"$1セット目","Série $1"],[/^(\d+) sets$/,"$1セット","$1 séries"]]);
+addT([["You're signed in as staff, so programs aren't shown here. Review and edit everyone's programs in the Google Sheet (Programs tab). Rows coded to your own initials still show, for testing.","スタッフとしてログインしているため、ここにはプログラムは表示されません。全員のプログラムはGoogleシート(Programsタブ)で確認・編集してください。自分のイニシャルのコードの行はテスト用に表示されます。","Você entrou como comissão técnica, então os programas não aparecem aqui. Veja e edite os programas de todas na Planilha Google (aba Programs). Linhas com o código das suas iniciais ainda aparecem, para teste."]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1984,7 +1985,7 @@ function vAT(){
   return `<div class="view"><div><p class="eyebrow"><span class="module">The tape table</span> · ${esc(CONFIG.atName)}</p><h1 style="margin-top:4px">Training room</h1></div>
    <section><h2>Your programs</h2>
     ${atPrograms().length?atPrograms().map(progCard).join("")
-     :`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}
+     :profile&&profile.position==="Staff"?`<div class="card stack"><p class="muted">You're signed in as staff, so programs aren't shown here. Review and edit everyone's programs in the Google Sheet (Programs tab). Rows coded to your own initials still show, for testing.</p></div>`:`<div class="card stack"><p class="muted">${esc(CONFIG.atFirst)}'s programs will appear here.</p></div>`}
     ${myCode()&&profile.position!=="Staff"?`<p class="muted" style="font-size:.84rem;margin-top:10px">Your program code: <b class="nums">${myCode()}</b>. ${esc(CONFIG.atFirst)} uses it to post a program just for you.</p>`:""}</section>
    <section><div class="sec-head"><h2>From ${esc(CONFIG.atFirst)}</h2>${CONFIG.atSheetCSV&&SHEET.at&&SHEET.at.fetched?`<span class="stamp">Synced ${syncAgo(SHEET.at.fetched)}</span>`:anns.length?`<span class="stamp">Updated ${fmtDate(DATA.updated)}</span>`:""}</div>
     ${anns.length?`<div class="card" style="padding-block:2px">${anns.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Training room")}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div>`:`<div class="card muted">No announcements from ${esc(CONFIG.atFirst)} yet.</div>`}</section>
@@ -2155,7 +2156,7 @@ function myCode(){if(!profile)return "";const L=x=>(x||"").normalize("NFD").repl
 const POS_WORDS={"Outside hitter":["outside","outsides","oh","pins","pin"],"Opposite":["opposite","opposites","opp","right side","rightside","pins","pin"],"Middle blocker":["middle","middles","mb","middle blocker","middle blockers"],"Setter":["setter","setters"],"Libero":["libero","liberos","defensive specialist","ds"]};
 function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.trim()).filter(Boolean)}
 function progIsCode(t){return !/^(everyone|all|team|all athletes|staff)$/.test(t)&&!Object.values(POS_WORDS).some(w=>w.includes(t))}
-function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
+function progFor(pg){const T=progTokens(pg.who);if(profile&&profile.position==="Staff"){const c=myCode().toLowerCase();return !!c&&T.includes(c)}if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
   const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
