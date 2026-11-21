@@ -15,7 +15,7 @@ const ROSTER_TAB = 'Roster';
 const STAFF_SHEET_ID = 'PASTE_PRIVATE_SHEET_ID_HERE';
 
 const STAFF_TABS = {
-  Recovery: ['Date', 'Code', 'Name', 'Position', 'Readiness (1-5)', 'Sleep (h)', 'Sleep quality', 'Soreness', 'Energy', 'Mood', 'Stress', 'Updated', 'Key'],
+  Recovery: ['Date', 'Code', 'Name', 'Position', 'Recovery (1-5)', 'Sleep (h)', 'Sleep quality', 'Soreness', 'Energy', 'Mood', 'Stress', 'Updated', 'Key'],
   Lifts: ['Date', 'Code', 'Name', 'Position', 'Exercise', 'Weight', 'Unit', 'Reps', 'Est. 1RM', 'Logged', 'Set ID'],
   Conditioning: ['Date', 'Code', 'Name', 'Position', 'Session', 'RPE (1-10)', 'Minutes', 'Load (RPE x min)', 'Logged', 'Key']
 };
