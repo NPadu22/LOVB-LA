@@ -282,6 +282,11 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 [data-gameday] .btn:not(.ghost){box-shadow:0 0 18px rgb(255 94 26 / .45)}
 [data-gameday] nav.tabs{box-shadow:0 -6px 24px rgb(255 94 26 / .18)}
 @media (prefers-reduced-motion: reduce){.gd-digits i,.gd-ribbon span,.gd-live i,[data-gameday] .hero::after,[data-gameday] .orbit .core{animation:none!important}}
+.scheme,.plan .scheme,.lift .scheme{grid-column:1/-1;display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;margin:2px 0;justify-self:start;width:auto}
+.plan .scheme span,.lift .scheme span{flex:0 0 auto;width:auto}
+.scheme span{display:inline-flex;flex-direction:column;align-items:center;min-width:46px;padding:4px 8px;border-radius:8px;background:rgb(255 94 26 / .1);border:1px solid rgb(255 94 26 / .3);font:700 .9rem var(--mono);color:#C2410C}
+.scheme i{font:600 .58rem var(--mono);font-style:normal;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.lift .scheme span{color:var(--accent-text,#FF8A4C);background:rgb(255 94 26 / .12)}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -995,6 +1000,7 @@ addT([["Pre-game checklist","試合前チェックリスト","Checklist pré-jog
 ["Carb-forward and familiar, plus a big glass of fluid.","炭水化物中心の食べ慣れたものと、たっぷりの水分を。","Carboidrato e comida conhecida, mais um copo grande de líquido."],["Quick carbs, small volume. Keep sipping.","素早い炭水化物を少量。こまめに飲もう。","Carboidrato rápido, pouco volume. Continue bebendo."],["Sip at every break. You're fueled.","休憩ごとに少しずつ。準備は万全。","Beba em toda pausa. Você está abastecida."]]);
 addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"],[/^✓ (.+)$/,"✓ $1","✓ $1"]]);
 addT([["Warm-ups","ウォームアップ","Aquecimento"]]);addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"]]);
+addT([["Anytime","いつでも","A qualquer hora"]]);addR([[/^Set (\d+)$/,"$1セット目","Série $1"],[/^(\d+) sets$/,"$1セット","$1 séries"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1374,7 +1380,7 @@ const fmtW=w=>(+w%1?(+w).toFixed(1):String(+w));
 function exCard(x,i){const k=liftKey(x.n),t=isoToday(),today=(LIFTLOG[k]||[]).filter(e=>e.d===t).map(e=>({...e,w:convW(e)})),H=liftHistory(k).filter(h=>h.d<t),last=H[H.length-1];
   const firstRep=(x.reps.match(/\d+/)||[""])[0];
   return `<div class="lift" id="lift-${i}"><div class="lift-top"><span class="lord">${esc(x.o||"·")}</span><div class="stack" style="gap:2px;min-width:0;flex:1"><b>${esc(x.n)}</b>
-    <span class="stamp">${esc([x.sets&&x.reps?`${x.sets} × ${x.reps}`:x.sets||x.reps,x.int,x.rest?`rest ${x.rest}`:""].filter(Boolean).join(" · "))}</span></div></div>
+    <span class="stamp">${esc([repScheme(x.reps)?fmtDose(x.sets,x.reps).dose:(x.sets&&x.reps?`${x.sets} × ${x.reps}`:x.sets||x.reps),x.int,x.rest?`rest ${x.rest}`:""].filter(Boolean).join(" · "))}</span></div></div>${schemeHTML(repScheme(x.reps))}
     ${x.cue?`<p class="muted" style="font-size:.86rem">${esc(x.cue)}</p>`:""}
     ${x.video?`<a class="linkbtn" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}
     ${x.track?`${last?`<p class="stamp">Last time: ${fmtW(last.top.w)} ${SCUNIT} × ${last.top.r} · ${fmtDate(last.d)}</p>`:""}
@@ -2131,12 +2137,16 @@ function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R
   for(const r of R.slice(1)){const name=g(r,iP),n=g(r,iE);if(!name||!n||g(r,iS).toLowerCase()==="no")continue;
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
     if(!by[id]){by[id]={id,name,who:g(r,iF),when:g(r,iW),note:"",ex:[]};out.push(by[id])}
-    const v=g(r,iV);const se=g(r,iSe),rp=g(r,iRp),dose=se&&rp?`${se} × ${rp}`:(se?`${se} sets`:rp)||g(r,iD);
-    by[id].ex.push({n,dose,cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
+    const v=g(r,iV);const se=g(r,iSe),rp=g(r,iRp),fd=(se||rp)?fmtDose(se,rp):fmtDose("",g(r,iD)),dose=fd.dose;
+    by[id].ex.push({n,dose,scheme:fd.scheme,cue:g(r,iC),day:g(r,iDy),phase:progPhase(g(r,iPh)),video:/^https:\/\//i.test(v)?v:""})}
   return out}
 /* Phase: Pre-practice / Practice / Post-practice (anything else shown as typed). Day: "Day 1", "Mon", "Week 2 Day 3"... */
 function progPhase(v){const t=(v||"").trim().toLowerCase();if(!t)return "";if(/^pre/.test(t))return "Pre-practice";if(/^post/.test(t))return "Post-practice";if(/^(practice|during|in[- ]practice)/.test(t))return "Practice";return v.trim()}
-const PHASE_ORDER={"Pre-practice":0,"Practice":1,"Post-practice":2};
+const PHASE_ORDER={"":-1,"Pre-practice":0,"Practice":1,"Post-practice":2};
+/* Rep schemes: "30/15/15/15" or "10, 8, 6" means different reps per set */
+function schemeHTML(L){return L?`<div class="scheme" aria-label="Reps per set: ${esc(L.join(", "))}">${L.map((r,j)=>`<span><i>Set ${j+1}</i>${esc(r)}</span>`).join("")}</div>`:""}
+function repScheme(rp){const L=String(rp||"").split(/\s*[\/,]\s*/).map(x=>x.trim()).filter(Boolean);return L.length>1?L:null}
+function fmtDose(se,rp){const L=repScheme(rp);if(L){const n=+se||L.length;return {dose:`${n} sets`,scheme:L}}return {dose:se&&rp?`${se} × ${rp}`:(se?`${se} sets`:rp)||"",scheme:null}}
 const WEEKDAYS=["sun","mon","tue","wed","thu","fri","sat"];
 let progDaySel={};
 function progDays(pg){const D=[];pg.ex.forEach(x=>{if(!D.includes(x.day))D.push(x.day)});return D}
@@ -2148,11 +2158,11 @@ function progCard(pg){const D=progDays(pg),cur=progCurDay(pg);
   const dayDone=d=>{const I=pg.ex.map((x,i)=>i).filter(i=>pg.ex[i].day===d);return I.length&&I.every(i=>progDone(pg.id,i))};
   const phases=[];idx.forEach(i=>{const ph=pg.ex[i].phase;if(!phases.includes(ph))phases.push(ph)});
   phases.sort((a,b)=>(a in PHASE_ORDER?PHASE_ORDER[a]:3)-(b in PHASE_ORDER?PHASE_ORDER[b]:3));
-  const exHTML=i=>{const x=pg.ex[i],on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`};
+  const exHTML=i=>{const x=pg.ex[i],on=progDone(pg.id,i);return `<div class="ex"><b>${esc(x.n)}</b><span class="dose">${esc(x.dose||"")}</span>${schemeHTML(x.scheme)}${x.cue?`<p>${esc(x.cue)}</p>`:""}${x.video?`<a class="linkbtn" style="grid-column:1/-1;justify-self:start" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}<button class="btn sm ${on?"":"ghost"}" style="grid-column:1/-1;justify-self:start" data-prog="${pg.id}:${i}" aria-pressed="${on}">${on?"Done today ✓":"Mark done"}</button></div>`};
   return `<div class="plan">${planHead(esc(pg.name),`${done}/${idx.length} TODAY`)}
     ${pg.who||pg.when?`<div class="step"><span class="eyebrow">${esc([progWho(pg),pg.when].filter(Boolean).join(" · "))}</span>${pg.note?`<p>${esc(pg.note)}</p>`:""}</div>`:""}
     ${D.length>1?`<div class="pdays" role="group" aria-label="Program day">${D.map(d=>`<button type="button" data-progday="${esc(pg.id)}" data-day="${esc(d)}" aria-pressed="${d===cur}">${esc(d||"Other")}${dayDone(d)?'<span class="dot" aria-label="done today"></span>':""}</button>`).join("")}</div>`:""}
-    ${phases.map(ph=>`${ph&&(phases.length>1||ph)?`<div class="pphase">${esc(ph)}</div>`:""}${idx.filter(i=>pg.ex[i].phase===ph).map(exHTML).join("")}`).join("")}</div>`}
+    ${phases.map(ph=>`${ph||phases.length>1?`<div class="pphase">${esc(ph||"Anytime")}</div>`:""}${idx.filter(i=>pg.ex[i].phase===ph).map(exHTML).join("")}`).join("")}</div>`}
 function allPrograms(){return CONFIG.programsSheetCSV&&SHEET.prog?SHEET.prog.rows:AT_PROGRAMS}
 /* "For" column: blank/Everyone, positions (Outside, Opposite, Middle, Setter, Libero, Pins), or a private athlete code. Several allowed: "Middle, Setter". */
 /* Each athlete's program code: first initial + first three letters of last name (Jordan Lee -> JLEE) */
@@ -2163,7 +2173,6 @@ const POS_WORDS={"Outside hitter":["outside","outsides","oh","pins","pin"],"Oppo
 function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.trim()).filter(Boolean)}
 function progIsCode(t){return !/^(everyone|all|team|all athletes|staff)$/.test(t)&&!Object.values(POS_WORDS).some(w=>w.includes(t))}
 function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
-  if(profile&&profile.position==="Staff")return true;
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
   const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
