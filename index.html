@@ -2176,7 +2176,8 @@ function progFor(pg){const T=progTokens(pg.who);if(!T.length||T.some(t=>/^(every
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
   const c=myCode().toLowerCase();return !!c&&T.includes(c)}
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
-function atPrograms(){return allPrograms().map(pg=>{const ex=pg.ex.filter(x=>progFor({who:x.who!=null?x.who:pg.who}));return ex.length?{...pg,ex,who:ex[0].who!=null?ex[0].who:pg.who}:null}).filter(Boolean)}
+/* Programs: a blank For means "not assigned yet" and is shown to no one; write Everyone for the whole team */
+function atPrograms(){return allPrograms().map(pg=>{const ex=pg.ex.filter(x=>{const w=(x.who!=null?x.who:pg.who||"").trim();return !!w&&progFor({who:w})});return ex.length?{...pg,ex,who:ex[0].who!=null?ex[0].who:pg.who}:null}).filter(Boolean)}
 function nutNotes(){return (CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[]).filter(a=>progFor({who:a.who}))}
 function nutHTML(){const L=nutNotes();if(!L.length)return "";
   return `<section><div class="sec-head"><h2>From your dietitian</h2></div><div class="card" style="padding-block:2px">${L.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Nutrition")}</span>${progTokens(a.who).length&&progTokens(a.who).every(progIsCode)?`<span class="chip violet">${tr("Just for you")}</span>`:""}<span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div></section>`}
