@@ -287,6 +287,9 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 .rcard{all:unset;cursor:pointer;box-sizing:border-box;background:var(--surface);border-radius:var(--r);padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;transition:background .2s}
 .rcard:hover{background:var(--surface-2)}
 .ring{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);font:700 .7rem var(--mono);color:var(--muted)}
+.ring.tring{width:52px;height:52px;font-size:.72rem;letter-spacing:-.02em}
+.ring .rt{display:flex;flex-direction:column;align-items:center;line-height:1.05}
+.ring .rt small{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
 .rcard[data-done="1"] .ring{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
 .rcard b{font:700 .95rem var(--display)}
 .rcard span{font-size:.8rem;color:var(--muted)}
@@ -2622,7 +2625,7 @@ function nextPlanItem(){const type=planType();if(type==="match")return null;cons
   for(let i=0;i<L.length;i++){if(L[i].bank==="during")continue;if(L[i].t>=mins-30){const p=pickFor(type,i,L[i].bank);if(p)return {x:L[i],p}}}return null}
 function planHomeCard(){if(todayMatch())return "";const nx=nextPlanItem(),type=planType();
   return `<section><div class="sec-head"><h2>Today's meal plan</h2><span class="stamp">${esc({rest:"Rest day",practice:"Practice day",double:"Two-a-day"}[type])}</span></div>
-   <button class="rcard" data-go="fuel" data-seg="plan" style="width:100%"><span class="ring">${nx?(nx.rest?"Next":esc(clock(nx.x.t).replace(" ",""))):"✓"}</span><span class="stack" style="gap:2px"><b>${nx?esc(nx.x.n):"That's the day"}</b><span>${nx?esc(nx.p.n):"Eat to appetite and hydrate. Plan tomorrow tonight."}</span></span><span class="linkbtn">Plan</span></button></section>`}
+   <button class="rcard" data-go="fuel" data-seg="plan" style="width:100%"><span class="ring tring">${nx?(nx.rest?"Next":(([h,ap])=>`<span class="rt">${esc(h)}${ap?`<small>${esc(ap)}</small>`:""}</span>`)(clock(nx.x.t).split(" "))):"✓"}</span><span class="stack" style="gap:2px"><b>${nx?esc(nx.x.n):"That's the day"}</b><span>${nx?esc(nx.p.n):"Eat to appetite and hydrate. Plan tomorrow tonight."}</span></span><span class="linkbtn">Plan</span></button></section>`}
 function planClick(b){
   const ds=b.dataset, iso=planDate&&weekDays().includes(planDate)?planDate:isoToday();
   if(ds.planpick){planDate=ds.planpick;render();return true}
