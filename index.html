@@ -111,6 +111,12 @@ details .ans{padding:0 0 16px;display:flex;flex-direction:column;gap:8px;font-si
 .sw[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:2px}
 .stopbox{background:color-mix(in srgb,var(--stop) 12%,var(--surface));border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
 .stopbox h3{color:var(--stop)}
+.privacy{display:grid;gap:12px;border:1px solid var(--line,rgba(127,127,127,.25));border-radius:var(--r);padding:14px}
+.privacy ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.86rem}
+.privacy .eyebrow{display:block;margin-bottom:4px}
+.privacy .warn{font-size:.8rem}
+label.consent{display:flex!important;flex-direction:row!important;gap:10px;align-items:flex-start;color:var(--ink,inherit);font-size:.9rem;font-weight:600}
+label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--accent,currentColor)}
 .stopbox ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
 .datebar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border-radius:var(--r);padding:8px}
 .datebar b{font:700 1rem var(--display)}
@@ -1010,6 +1016,7 @@ function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
  if(v==null)for(const sep of [" · ",": "]){if(k.includes(sep)){const parts=k.split(sep),tp=parts.map(p=>D[p]);if(tp.some(x=>x!=null)){v=parts.map((p,i)=>tp[i]!=null?tp[i]:p).join(sep===": "&&LANG==="ja"?":":sep);break}}}
  if(v==null)return s;return s.match(/^\s*/)[0]+v+s.match(/\s*$/)[0]}
+addT([["Shared automatically with team staff", "チームスタッフと自動で共有", "Compartilhado automaticamente com a comissão"], ["Your name, position, jersey number and language", "名前、ポジション、背番号、言語", "Seu nome, posição, número da camisa e idioma"], ["Daily check-ins: sleep, soreness, energy, mood and stress", "毎日のチェックイン:睡眠、筋肉痛、エネルギー、気分、ストレス", "Check-ins diários: sono, dor muscular, energia, humor e estresse"], ["Meals you log, water, lifts, completed exercises and conditioning", "記録した食事、水分、ウエイト、完了した種目、コンディショニング", "Refeições registradas, água, treinos de força, exercícios concluídos e condicionamento"], ["Only your dietitian, athletic trainer and strength coach can open the private team sheet.", "非公開のチームシートを開けるのは管理栄養士、アスレティックトレーナー、ストレングスコーチだけです。", "Só sua nutricionista, fisioterapeuta e preparador físico podem abrir a planilha privada da equipe."], ["Stays private on this phone", "このスマホにのみ非公開で保存", "Fica privado neste celular"], ["Cycle tracker: periods, flow, symptoms and predictions", "月経周期トラッカー:生理、経血量、症状、予測", "Rastreador de ciclo: menstruação, fluxo, sintomas e previsões"], ["Journal notes, photos and your recovery log", "日誌のメモ、写真、リカバリーの記録", "Notas do diário, fotos e seu registro de recuperação"], ["Sex, food allergies, eating style and where you live", "性別、食物アレルギー、食事スタイル、住んでいる地域", "Sexo, alergias alimentares, estilo alimentar e onde você mora"], ["Anyone who can open your unlocked phone can open this app. Private data has no backup: deleting the app or clearing Safari data erases it.", "ロック解除されたスマホを開ける人は誰でもこのアプリを開けます。非公開データにはバックアップがなく、アプリの削除やSafariのデータ消去で消えます。", "Qualquer pessoa que abra seu celular desbloqueado pode abrir este app. Os dados privados não têm backup: apagar o app ou limpar os dados do Safari os apaga."], ["I understand what is shared and what stays private", "共有される内容と非公開の内容を理解しました", "Entendo o que é compartilhado e o que fica privado"], ["Tick the box to confirm you've read what's shared", "共有内容を読んだことを確認するにはチェックを入れてください", "Marque a caixa para confirmar que leu o que é compartilhado"], ["Your data", "あなたのデータ", "Seus dados"], ["What the app shares", "アプリが共有する内容", "O que o app compartilha"], ["Everything you log now goes to team staff automatically, so they can support your training. Here's exactly what that covers.", "記録した内容はトレーニングをサポートするため、自動でチームスタッフに送られるようになりました。対象は以下のとおりです。", "Tudo o que você registra agora vai automaticamente para a comissão, para apoiar seu treino. Veja exatamente o que isso inclui."], ["I understand", "理解しました", "Entendi"], ["Not shared with staff", "スタッフとは共有されません", "Não compartilhado com a comissão"], ["Your periods, flow, symptoms and predictions are saved only on this phone. Nothing on this page is sent to the team sheet.", "生理、経血量、症状、予測はこのスマホにのみ保存されます。このページの内容はチームシートに送られません。", "Sua menstruação, fluxo, sintomas e previsões ficam salvos só neste celular. Nada desta página vai para a planilha da equipe."], ["Your daily check-in (sleep, soreness, energy, mood, stress) is shared. If your period is affecting training, it's your choice whether to tell staff.", "毎日のチェックイン(睡眠、筋肉痛、エネルギー、気分、ストレス)は共有されます。生理がトレーニングに影響している場合、スタッフに伝えるかどうかはあなたが決められます。", "Seu check-in diário (sono, dor, energia, humor, estresse) é compartilhado. Se a menstruação estiver afetando o treino, você decide se conta para a comissão."], ["Only on this phone · not sent to staff", "このスマホのみ・スタッフには送られません", "Só neste celular · não enviado à comissão"], ["There's no backup. Deleting the app or clearing Safari data also erases your cycle history.", "バックアップはありません。アプリの削除やSafariのデータ消去で周期の履歴も消えます。", "Não há backup. Apagar o app ou limpar os dados do Safari também apaga seu histórico do ciclo."]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -1320,6 +1327,8 @@ function vCycle(){const t=isoToday(),iso=cycDate&&cycDate<=t?cycDate:t,c=cycOf(i
  const cell=d=>{const f=cycOf(d).flow,pred=S.next&&!f&&d>=S.next&&d<=predEnd&&d>=t,fut=d>t;return `<button type="button" class="cday ${f?"f-"+f:""} ${pred?"pred":""} ${d===t?"today":""} ${d===iso?"sel":""}" ${fut?"disabled":""} data-cdate="${d}" aria-label="${fmtDate(d)}${f?": "+f:""}${pred?": predicted":""}">${+d.slice(8)}</button>`};
  const tips=[["Heavy days","Iron-rich foods (red meat, chicken thighs, lentils, beans, spinach, fortified cereal) with vitamin C (citrus, peppers, berries) to help absorption."],["Cramps","Heat and light movement help many players. Ask your team doctor or Emma about pain medication before using it regularly."],["Keep fueling","Appetite can rise before your period. That's normal: regular meals and snacks support training."],["Performance","Research finds small, inconsistent changes across the cycle and big differences between women. Your own log beats generic phase rules."]];
  return `<div class="view"><div><p class="eyebrow"><span class="module">Private</span> · Saved only on this phone</p><h1 style="margin-top:4px">Cycle</h1></div>
+  <div class="privacy"><div><span class="eyebrow">Not shared with staff</span><p style="font-size:.9rem">Your periods, flow, symptoms and predictions are saved only on this phone. Nothing on this page is sent to the team sheet.</p></div>
+   <p class="muted warn">Your daily check-in (sleep, soreness, energy, mood, stress) is shared. If your period is affecting training, it's your choice whether to tell staff.</p></div>
   <div class="launch"><span class="eyebrow">Today</span>
    ${S.last?`<div class="t"><span><i>Cycle day</i>${sb(String(S.day).padStart(2,"0"),1)}</span><span><i>Next period</i>${S.late?`<b style="font-size:1rem">${S.late} day${S.late>1?"s":""} late</b>`:`<b style="font-size:1rem">${fmtDate(S.next)}</b>`}</span></div>
     <p class="stamp">${S.avg?`Average cycle ${S.avg} days · period ${S.plen} days · from ${S.L.length} cycle${S.L.length>1?"s":""}`:"Estimate uses 28 days until you've logged two periods."}${hc?" · On hormonal contraception, bleeds follow your method, not your natural cycle.":""}</p>`
@@ -1331,6 +1340,7 @@ function vCycle(){const t=isoToday(),iso=cycDate&&cycDate<=t?cycDate:t,c=cycOf(i
     <div class="choice mini" data-cflow="${iso}">${FLOWS.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(c.flow||"")===v}">${l}</button>`).join("")}</div>
     <span class="eyebrow" style="margin-top:6px">Symptoms</span>
     <div class="choice mini" data-csym="${iso}">${CSYM.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(c.sym||[]).includes(v)}">${l}</button>`).join("")}</div>
+    <p class="stamp">Only on this phone · not sent to staff</p>
    </div></section>
   <section><h2>Last six weeks</h2><div class="card stack">
    <div class="cgrid">${cells.slice(0,7).map(d=>`<span class="stamp">${new Date(d+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"narrow"})}</span>`).join("")}${cells.map(cell).join("")}</div>
@@ -1339,6 +1349,7 @@ function vCycle(){const t=isoToday(),iso=cycDate&&cycDate<=t?cycDate:t,c=cycOf(i
   <section><h2>Fuel and feel</h2><div class="card stack" style="gap:12px">${tips.map(([a,b])=>`<div><b>${a}</b><p class="muted" style="font-size:.9rem">${b}</p></div>`).join("")}
    <button class="linkbtn" data-lesson="f-cycle" style="align-self:flex-start">Your period is a vital sign ›</button></div></section>
   <button class="btn ghost block" data-cclear="1">Delete all cycle data</button>
+  <p class="muted" style="font-size:.8rem;text-align:center">There's no backup. Deleting the app or clearing Safari data also erases your cycle history.</p>
   <p class="src">McNulty et al., Sports Med 2020 (menstrual cycle phase and performance meta-analysis); Mountjoy et al., IOC consensus on REDs, 2023; Elliott-Sale et al., Sports Med 2021 (methods for menstrual cycle research)</p></div>`}
 function featClick(b){const ds=b.dataset;
  if(ds.hwater){const t=isoToday(),d=jGet(t),was=habitDone("water",t);d.water=Math.max(0,Math.min(20,d.water+ +ds.hwater));if(jPut(t,d)){render();if(!was&&habitDone("water",t))logStamp("Goal reached")}return true}
@@ -2205,7 +2216,7 @@ function shareDay(iso){if(!profile)return;const d=jGet(iso),snap=SHSNAP[iso]||{e
     Object.keys(snap.e).forEach(id=>{if(!(id in cur))staffSend({t:"mealdel",entryId:id})});snap.e=cur}
   if(SHARE.water){const oz=ozOf(d);if(snap.w!==oz){staffSend({t:"water",date:iso,bottles:d.water||0,size:HYD.size,oz,goal:HYD.goal});snap.w=oz}}
   SHSNAP[iso]=snap;const keys=Object.keys(SHSNAP).sort();while(keys.length>60)delete SHSNAP[keys.shift()];store.set("shsnap",SHSNAP)}
-function staffSend(o){if(!profile)return;let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
+function staffSend(o){if(!profile||(!profile.consentAt&&profile.position!=="Staff"))return;let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
   const Q=store.get("staffq",[]);Q.push({...o,id,code:myCode(),name:profile.first+" "+profile.last,position:profile.position||""});store.set("staffq",Q.slice(-300));staffFlush()}
 let staffBusy=false;
 async function staffFlush(){if(staffBusy||!CONFIG.rosterURL)return;staffBusy=true;try{let Q=store.get("staffq",[]);
@@ -2296,6 +2307,22 @@ function greeting(first){const h=new Date().getHours(),t=isoToday(),checked=rSco
   return {part,tail};}
 
 /* ===== Views ===== */
+function privacyHTML(){return `<div class="privacy">
+  <div><span class="eyebrow">Shared automatically with team staff</span><ul>
+   <li>Your name, position, jersey number and language</li>
+   <li>Daily check-ins: sleep, soreness, energy, mood and stress</li>
+   <li>Meals you log, water, lifts, completed exercises and conditioning</li></ul>
+   <p class="muted" style="font-size:.8rem;margin-top:6px">Only your dietitian, athletic trainer and strength coach can open the private team sheet.</p></div>
+  <div><span class="eyebrow">Stays private on this phone</span><ul>
+   <li>Cycle tracker: periods, flow, symptoms and predictions</li>
+   <li>Journal notes, photos and your recovery log</li>
+   <li>Sex, food allergies, eating style and where you live</li></ul></div>
+  <p class="muted warn">Anyone who can open your unlocked phone can open this app. Private data has no backup: deleting the app or clearing Safari data erases it.</p>
+ </div>`}
+function vConsent(){return `<div class="view"><div><p class="eyebrow">Your data</p><h1 style="margin-top:4px">What the app shares</h1></div>
+  <p>Everything you log now goes to team staff automatically, so they can support your training. Here's exactly what that covers.</p>
+  ${privacyHTML()}
+  <button class="btn block" data-consent="1">I understand</button></div>`}
 function vOnboard(){
   const p=draft;p.allergies=p.allergies||[];
   return `<div class="view">
@@ -2310,8 +2337,8 @@ function vOnboard(){
     <div class="stack" style="gap:6px"><span class="eyebrow">Eating style</span><div class="choice" data-pick="diet">${[["none","No preference"],["veg","Vegetarian"]].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(p.diet||"none")===v}">${l}</button>`).join("")}</div></div>
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
+    <div class="stack" style="gap:8px"><span class="eyebrow">Your data</span>${privacyHTML()}${p.editing?"":`<label class="consent" for="f-consent"><input type="checkbox" id="f-consent" ${p.consent?"checked":""}><span>I understand what is shared and what stays private</span></label>`}</div>
     <button class="btn block" type="submit">${p.editing?"Save changes":"Enter orbit"}</button>${p.editing?`<button type="button" class="btn ghost block" data-cancel="1">Cancel</button>`:""}
-    <p class="muted" style="font-size:.78rem">Your name, position and what you log (check-ins, meals, water, lifts and conditioning) are shared with team staff to support your training. Your cycle tracker, notes and photos stay on this phone.</p>
    </form></div>`;
 }
 function vStop(){
@@ -2953,6 +2980,7 @@ function _render(){
   $("nav.tabs").hidden=false;
   if(profile.welcomed===false&&tab!=="welcome"&&!["ready","journal","learn","at"].includes(tab))tab="welcome";
   if(tab==="welcome"){$("nav.tabs").hidden=true;app.innerHTML=vWelcome();scheduleInstall();return}
+  if(!profile.consentAt&&profile.position!=="Staff"){app.innerHTML=vConsent();renderTabs();return}
   if((myAllergens().length||profile.other)&&!profile.ack&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
   app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,sc:vSC,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
@@ -3006,6 +3034,7 @@ document.addEventListener("click",e=>{
   if(ds.bg){prefs.bg=ds.bg;store.set("prefs",prefs);render();toast((BACKGROUNDS.find(x=>x.k===ds.bg)||{}).n+" on");return}
   if(ds.scheme){prefs.scheme=ds.scheme;store.set("prefs",prefs);render();toast((SCHEMES.find(x=>x.k===ds.scheme)||{}).n+" on");return}
   if(ds.ack){profile.ack=true;store.set("profile",profile);render();return}
+  if(ds.consent){profile.consentAt=new Date().toISOString();store.set("profile",profile);if(!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}render();scrollTo({top:0});return}
   if(ds.cancel){draft={};render();return}
   if(ds.edit){draft={...profile,editing:true};render();scrollTo({top:0});return}
   if(ds.copy){const el=document.getElementById(ds.copy);const txt=el.textContent;
@@ -3039,7 +3068,9 @@ document.addEventListener("submit",e=>{
     if(!first||!last){toast("Add your first and last name");return}
     const prevAllergy=profile?JSON.stringify([profile.allergies,profile.other]):"";
     const pos=$("#f-pos").value,sex=$("#f-sex").value;if(!sex){toast("Choose female or male");return}
-    profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],diet:draft.diet||"none",other:$("#f-other").value.trim(),ack:profile?profile.ack:false};
+    if(!draft.editing&&!$("#f-consent").checked){toast("Tick the box to confirm you've read what's shared");$("#f-consent").focus();return}
+    const prevConsent=profile&&profile.consentAt;
+    profile={name,first,last,sex,position:pos,role:pos==="Staff"?$("#f-role").value.trim():"",area:$("#f-area").value,num:$("#f-num").value.replace(/\D/g,"").slice(0,2),allergies:draft.allergies||[],diet:draft.diet||"none",other:$("#f-other").value.trim(),ack:profile?profile.ack:false,consentAt:prevConsent||new Date().toISOString()};
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
     store.set("profile",profile);store.set("roster_pending",true);rosterSync();draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
@@ -3066,7 +3097,7 @@ render();
 loadSheets();
 if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
 rosterSync();staffFlush();
-if(profile&&!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}
+if(profile&&profile.consentAt&&!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}
 
 </script>
 </body></html>
