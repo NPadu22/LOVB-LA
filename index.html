@@ -1002,6 +1002,7 @@ addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"],[/^✓ (.+)$/
 addT([["Warm-ups","ウォームアップ","Aquecimento"]]);addR([[/^Next: (.+) · (.+)$/,"次:$1 · $2","Próximo: $1 · $2"]]);
 addT([["Anytime","いつでも","A qualquer hora"]]);addR([[/^Set (\d+)$/,"$1セット目","Série $1"],[/^(\d+) sets$/,"$1セット","$1 séries"]]);
 addT([["You're signed in as staff, so programs aren't shown here. Review and edit everyone's programs in the Google Sheet (Programs tab). Rows coded to your own initials still show, for testing.","スタッフとしてログインしているため、ここにはプログラムは表示されません。全員のプログラムはGoogleシート(Programsタブ)で確認・編集してください。自分のイニシャルのコードの行はテスト用に表示されます。","Você entrou como comissão técnica, então os programas não aparecem aqui. Veja e edite os programas de todas na Planilha Google (aba Programs). Linhas com o código das suas iniciais ainda aparecem, para teste."]]);
+addR([[/^(.+) done$/,"$1 完了","$1 feito"]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -1361,7 +1362,7 @@ const isCond=s=>/condition/i.test(s);
 function scRows(){return (CONFIG.liftsSheetCSV&&SHEET.lift?SHEET.lift.rows:[]).filter(x=>progFor({who:x.who}))}
 function scSessions(){const R=scRows(),S=[];R.forEach(x=>{if(!S.includes(x.s))S.push(x.s)});return S}
 const liftKey=n=>n.toLowerCase().replace(/\(.*?\)/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-let LIFTLOG=store.get("liftlog",{}),SCDONE=store.get("scdone",{}),SCUNIT=store.get("scunit","lb"),scSel=null,scOpen=null,scRPE=null;
+let LIFTDONE=store.get("liftdone",{}),LIFTLOG=store.get("liftlog",{}),SCDONE=store.get("scdone",{}),SCUNIT=store.get("scunit","lb"),scSel=null,scOpen=null,scRPE=null;
 function e1rm(w,r){w=+w;r=+r;if(!w||!r)return null;if(r===1)return w;if(r>12)return null;return w*(1+r/30)}
 function weekStart(iso){const d=new Date(iso+"T12:00:00");return jShift(iso,-((d.getDay()+6)%7))}
 function weekDone(){const ws=weekStart(isoToday()),out=[];Object.keys(SCDONE).forEach(d=>{if(d>=ws&&d<=isoToday())out.push(...SCDONE[d])});return out}
@@ -1386,7 +1387,7 @@ function exCard(x,i){const k=liftKey(x.n),t=isoToday(),today=(LIFTLOG[k]||[]).fi
     ${x.video?`<a class="linkbtn" href="${esc(x.video)}" target="_blank" rel="noopener">Watch demo ›</a>`:""}
     ${x.track?`${last?`<p class="stamp">Last time: ${fmtW(last.top.w)} ${SCUNIT} × ${last.top.r} · ${fmtDate(last.d)}</p>`:""}
      ${today.length?`<div class="row" style="flex-wrap:wrap;gap:6px">${today.map(e=>`<button type="button" class="chip ${isPR(k,e.id)?"accent":""}" data-liftdel="${k}|${e.id}" aria-label="Remove set ${fmtW(e.w)} by ${e.r}">${isPR(k,e.id)?"PR · ":""}${fmtW(e.w)} × ${e.r} ×</button>`).join("")}</div>`:""}
-     <div class="lift-log"><label><span class="sr">Weight</span><input inputmode="decimal" id="lw-${i}" placeholder="${last?fmtW(last.top.w):SCUNIT}" aria-label="Weight in ${SCUNIT}"></label><span class="stamp">${SCUNIT} ×</span><label><span class="sr">Reps</span><input inputmode="numeric" id="lr-${i}" value="${firstRep}" aria-label="Reps"></label><button class="btn sm" data-liftlog="${i}" data-k="${k}">Log set</button></div>`:""}
+     <div class="lift-log"><label><span class="sr">Weight</span><input inputmode="decimal" id="lw-${i}" placeholder="${last?fmtW(last.top.w):SCUNIT}" aria-label="Weight in ${SCUNIT}"></label><span class="stamp">${SCUNIT} ×</span><label><span class="sr">Reps</span><input inputmode="numeric" id="lr-${i}" value="${firstRep}" aria-label="Reps"></label><button class="btn sm" data-liftlog="${i}" data-k="${k}">Log set</button></div>`:(()=>{const dk=k+"|"+x.s,on=(LIFTDONE[t]||[]).includes(dk);return `<button class="btn sm ${on?"":"ghost"}" style="align-self:flex-start" data-liftdone="${esc(dk)}" data-ex="${esc(x.n)}" aria-pressed="${on}">${on?"Done ✓":"Mark done"}</button>`})()}
   </div>`}
 function vSC(){const S=scSessions(),t=isoToday(),wd=weekDone(),R=scRows();
   const lifts=S.filter(s=>!isCond(s)),conds=S.filter(isCond);
@@ -1418,6 +1419,10 @@ function scClick(b){const ds=b.dataset;
    if(!(w>=0)||!r||isNaN(w)){toast("Add weight and reps");return true}
    const k=ds.k,row=scRows().filter(x=>x.s===scSel)[+i];(LIFTLOG[k]=LIFTLOG[k]||[]).push({id:Date.now().toString(36),d:isoToday(),w,r,n:row?row.n:k,u:SCUNIT});
    if(store.set("liftlog",LIFTLOG)){if(SHARE.lift){const e=LIFTLOG[k][LIFTLOG[k].length-1];staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})}render();const el=document.getElementById("lift-"+i);if(el)el.scrollIntoView({block:"center"});const last=LIFTLOG[k][LIFTLOG[k].length-1];if(isPR(k,last.id))logStamp("New PR: "+last.n,"PR");else toast("Set logged")}return true}
+ if(ds.liftdone!==undefined){const t=isoToday(),L=LIFTDONE[t]||[],dk=ds.liftdone,on=!L.includes(dk);LIFTDONE[t]=on?[...L,dk]:L.filter(x=>x!==dk);
+   Object.keys(LIFTDONE).forEach(d=>{if(d<jShift(t,-120))delete LIFTDONE[d]});store.set("liftdone",LIFTDONE);
+   if(SHARE.lift){const sid="done|"+t+"|"+dk;if(on)staffSend({t:"lift",date:t,ex:ds.ex,w:"",u:"✓",r:"",e1rm:"",setId:sid});else staffSend({t:"liftdel",setId:sid})}
+   render();if(on)toast(ds.ex+" done");return true}
  if(ds.liftdel){const [k,id]=ds.liftdel.split("|");if(SHARE.lift)staffSend({t:"liftdel",setId:id});LIFTLOG[k]=(LIFTLOG[k]||[]).filter(x=>x.id!==id);store.set("liftlog",LIFTLOG);render();return true}
  const rp=b.closest("[data-scrpe]");if(rp){scRPE=+ds.v;rp.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(+x.dataset.v===scRPE)));return true}
  if(ds.scdone!==undefined){const t=isoToday(),s=ds.scdone,L=SCDONE[t]||[];if(L.includes(s)){SCDONE[t]=L.filter(x=>x!==s);if(SHARE.lift&&isCond(s))staffSend({t:"conddel",date:t,session:s})}else{SCDONE[t]=[...L,s];
@@ -2205,7 +2210,7 @@ async function staffFlush(){if(staffBusy||!CONFIG.rosterURL)return;staffBusy=tru
     Q=store.get("staffq",[]);Q.shift();store.set("staffq",Q)}}finally{staffBusy=false}}
 function shareReady(iso){if(!SHARE.ready)return;const r=jGet(iso).ready;if(!r)return;const sc=rScore(r);
   staffSend({t:"ready",date:iso,score:sc==null?"":Math.round(sc*10)/10,sleepH:r.sleepH||"",sleepQ:r.sleepQ,sore:r.sore,energy:r.energy,mood:r.mood,stress:r.stress})}
-function shareLiftsToday(){const t=isoToday();Object.keys(LIFTLOG).forEach(k=>(LIFTLOG[k]||[]).filter(e=>e.d===t).forEach(e=>staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})));
+function shareLiftsToday(){const t=isoToday();(LIFTDONE[t]||[]).forEach(dk=>{const r=scRows().find(x=>liftKey(x.n)+"|"+x.s===dk);staffSend({t:"lift",date:t,ex:r?r.n:dk.split("|")[0],w:"",u:"✓",r:"",e1rm:"",setId:"done|"+t+"|"+dk})});Object.keys(LIFTLOG).forEach(k=>(LIFTLOG[k]||[]).filter(e=>e.d===t).forEach(e=>staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})));
   const c=jGet(t).cond;if(c&&(SCDONE[t]||[]).some(isCond))staffSend({t:"cond",date:t,session:(SCDONE[t]||[]).find(isCond),rpe:c.rpe||"",min:c.min||"",load:c.load||""})}
 function shareHTML(){return `<section><h2>Share with staff</h2><div class="card stack">
   <p style="font-size:.9rem">Off unless you turn it on. You can turn it off any time.</p>${profile&&profile.position==="Staff"?`<p class="stamp">You're signed in as staff, so this is here for testing. Anything you share shows up in the staff sheet as Staff; delete test rows afterward.</p>`:""}
