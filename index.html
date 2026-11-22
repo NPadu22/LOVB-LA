@@ -1003,6 +1003,8 @@ addT([["Warm-ups","ウォームアップ","Aquecimento"]]);addR([[/^Next: (.+) �
 addT([["Anytime","いつでも","A qualquer hora"]]);addR([[/^Set (\d+)$/,"$1セット目","Série $1"],[/^(\d+) sets$/,"$1セット","$1 séries"]]);
 addT([["You're signed in as staff, so programs aren't shown here. Review and edit everyone's programs in the Google Sheet (Programs tab). Rows coded to your own initials still show, for testing.","スタッフとしてログインしているため、ここにはプログラムは表示されません。全員のプログラムはGoogleシート(Programsタブ)で確認・編集してください。自分のイニシャルのコードの行はテスト用に表示されます。","Você entrou como comissão técnica, então os programas não aparecem aqui. Veja e edite os programas de todas na Planilha Google (aba Programs). Linhas com o código das suas iniciais ainda aparecem, para teste."]]);
 addR([[/^(.+) done$/,"$1 完了","$1 feito"]]);
+addT([["Shared with team staff","チームスタッフと共有","Compartilhado com a comissão"],["So staff can support your training, what you log goes to a private team sheet that only staff (your dietitian, athletic trainer and strength coach) can open.","トレーニングをサポートするため、記録した内容はスタッフ(管理栄養士、アスレティックトレーナー、ストレングスコーチ)だけが開ける非公開シートに送られます。","Para a comissão apoiar seu treino, o que você registra vai para uma planilha privada que só a comissão (nutricionista, fisioterapeuta e preparador físico) pode abrir."],["Shared","共有される内容","Compartilhado"],["Daily check-ins (sleep, soreness, energy, mood, stress, score) · meals you log · water · lifts, completed exercises and conditioning","毎日のチェックイン(睡眠、筋肉痛、エネルギー、気分、ストレス、スコア)・記録した食事・水分・ウエイト、完了した種目、コンディショニング","Check-ins diários (sono, dor, energia, humor, estresse, pontuação) · refeições registradas · água · treinos de força, exercícios concluídos e condicionamento"],["Stays on this phone","このスマホにのみ保存","Fica neste celular"],["Cycle tracker · journal notes and photos · recovery log","月経周期トラッカー・日誌のメモと写真・リカバリーの記録","Rastreador de ciclo · notas e fotos do diário · registro de recuperação"],["Questions about your data? Ask your dietitian.","データについての質問は管理栄養士へ。","Dúvidas sobre seus dados? Fale com sua nutricionista."],
+["Your name, position and what you log (check-ins, meals, water, lifts and conditioning) are shared with team staff to support your training. Your cycle tracker, notes and photos stay on this phone.","名前、ポジション、記録内容(チェックイン、食事、水分、ウエイト、コンディショニング)はトレーニングのサポートのためチームスタッフと共有されます。月経周期トラッカー、メモ、写真はこのスマホにのみ保存されます。","Seu nome, posição e o que você registra (check-ins, refeições, água, força e condicionamento) são compartilhados com a comissão para apoiar seu treino. O rastreador de ciclo, notas e fotos ficam neste celular."]]);
 function tr(s){if(LANG==="en"||!s)return s;const D=I18N[LANG],k=s.replace(/\s+/g," ").trim();if(!k)return s;
  let v=D[k];
  if(v==null)for(const [re,rep] of I18R[LANG]){if(re.test(k)){v=k.replace(re,rep);break}}
@@ -2193,7 +2195,8 @@ function rosterSync(){if(!CONFIG.rosterURL||!profile||!store.get("roster_pending
   const body=JSON.stringify({id,code:myCode(),first:profile.first,last:profile.last,position:profile.position,num:profile.num||"",lang:LANG});
   fetch(CONFIG.rosterURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).then(()=>store.set("roster_pending",false)).catch(()=>{})}
 /* Opt-in staff sharing: readiness and/or lifts go to a PRIVATE staff sheet via the same Apps Script. Off by default. */
-let SHARE=store.get("share",{ready:false,lift:false,food:false,water:false});
+/* Team policy: everything athletes log is sent to the staff sheet (no opt-out). Cycle, notes and photos never leave the phone. */
+const SHARE={ready:true,lift:true,food:true,water:true};
 /* Meals and hydration: send only what changed since the last send (snapshot per day) */
 let SHSNAP=store.get("shsnap",{});
 function shareDay(iso){if(!profile)return;const d=jGet(iso),snap=SHSNAP[iso]||{e:{},w:null};
@@ -2212,13 +2215,11 @@ function shareReady(iso){if(!SHARE.ready)return;const r=jGet(iso).ready;if(!r)re
   staffSend({t:"ready",date:iso,score:sc==null?"":Math.round(sc*10)/10,sleepH:r.sleepH||"",sleepQ:r.sleepQ,sore:r.sore,energy:r.energy,mood:r.mood,stress:r.stress})}
 function shareLiftsToday(){const t=isoToday();(LIFTDONE[t]||[]).forEach(dk=>{const r=scRows().find(x=>liftKey(x.n)+"|"+x.s===dk);staffSend({t:"lift",date:t,ex:r?r.n:dk.split("|")[0],w:"",u:"✓",r:"",e1rm:"",setId:"done|"+t+"|"+dk})});Object.keys(LIFTLOG).forEach(k=>(LIFTLOG[k]||[]).filter(e=>e.d===t).forEach(e=>staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})));
   const c=jGet(t).cond;if(c&&(SCDONE[t]||[]).some(isCond))staffSend({t:"cond",date:t,session:(SCDONE[t]||[]).find(isCond),rpe:c.rpe||"",min:c.min||"",load:c.load||""})}
-function shareHTML(){return `<section><h2>Share with staff</h2><div class="card stack">
-  <p style="font-size:.9rem">Off unless you turn it on. You can turn it off any time.</p>${profile&&profile.position==="Staff"?`<p class="stamp">You're signed in as staff, so this is here for testing. Anything you share shows up in the staff sheet as Staff; delete test rows afterward.</p>`:""}
-  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Daily readiness</b><span class="muted" style="font-size:.84rem">Sleep hours and quality, soreness, energy, mood, stress and your readiness score. Not your notes.</span></span><button type="button" class="btn sm ${SHARE.ready?"":"ghost"}" data-share="ready" aria-pressed="${SHARE.ready}">${SHARE.ready?"On":"Off"}</button></div>
-  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Lifts and conditioning</b><span class="muted" style="font-size:.84rem">Each set you log (exercise, weight, reps) and conditioning RPE and minutes, for your strength coach.</span></span><button type="button" class="btn sm ${SHARE.lift?"":"ghost"}" data-share="lift" aria-pressed="${SHARE.lift}">${SHARE.lift?"On":"Off"}</button></div>
-  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Meals</b><span class="muted" style="font-size:.84rem">What you log in your journal (meal, time, what you ate), for your dietitian. Not your notes or photos.</span></span><button type="button" class="btn sm ${SHARE.food?"":"ghost"}" data-share="food" aria-pressed="${SHARE.food}">${SHARE.food?"On":"Off"}</button></div>
-  <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Hydration</b><span class="muted" style="font-size:.84rem">Your daily bottles and ounces against your goal.</span></span><button type="button" class="btn sm ${SHARE.water?"":"ghost"}" data-share="water" aria-pressed="${SHARE.water}">${SHARE.water?"On":"Off"}</button></div>
-  <p class="stamp">Goes to a private staff sheet seen only by team staff with access. Never shared: cycle, recovery log, notes or photos. Turning it off stops new entries; ask staff to delete past ones.</p></div></section>`}
+function shareHTML(){return `<section><h2>Shared with team staff</h2><div class="card stack">
+  <p style="font-size:.9rem">So staff can support your training, what you log goes to a private team sheet that only staff (your dietitian, athletic trainer and strength coach) can open.</p>
+  <div class="stack" style="gap:6px"><span class="eyebrow">Shared</span><p class="muted" style="font-size:.86rem">Daily check-ins (sleep, soreness, energy, mood, stress, score) · meals you log · water · lifts, completed exercises and conditioning</p></div>
+  <div class="stack" style="gap:6px"><span class="eyebrow">Stays on this phone</span><p class="muted" style="font-size:.86rem">Cycle tracker · journal notes and photos · recovery log</p></div>
+  <p class="stamp">Questions about your data? Ask your dietitian.</p></div></section>`}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadSheets();rosterSync();staffFlush()}});
@@ -2310,7 +2311,7 @@ function vOnboard(){
     <div class="stack" style="gap:6px"><span class="eyebrow">Food allergies</span><div class="choice" data-pick="allergies" data-multi="1">${ALLERGENS.map(a=>`<button type="button" data-v="${a}" aria-pressed="${p.allergies.includes(a)}">${a}</button>`).join("")}</div>
      <label for="f-other">Other allergy or medical diet<input id="f-other" value="${esc(p.other||"")}" placeholder="e.g. celiac, kiwi, low-FODMAP"></label></div>
     <button class="btn block" type="submit">${p.editing?"Save changes":"Enter orbit"}</button>${p.editing?`<button type="button" class="btn ghost block" data-cancel="1">Cancel</button>`:""}
-    <p class="muted" style="font-size:.78rem">Your name, position, number and language are shared with team staff so they can send you your programs and nutrition. Everything else stays on this phone.</p>
+    <p class="muted" style="font-size:.78rem">Your name, position and what you log (check-ins, meals, water, lifts and conditioning) are shared with team staff to support your training. Your cycle tracker, notes and photos stay on this phone.</p>
    </form></div>`;
 }
 function vStop(){
@@ -2965,7 +2966,6 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
-  if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());if((ds.share==="food"||ds.share==="water")&&SHARE[ds.share])shareDay(isoToday());if(ds.share==="lift"&&SHARE.lift)shareLiftsToday();render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
   {const gc=b.closest("[data-gdcheck]");if(gc){const t=isoToday(),A=store.get("gdcheck",{}),L=A[t]||[];A[t]=L.includes(ds.v)?L.filter(x=>x!==ds.v):[...L,ds.v];Object.keys(A).forEach(k=>{if(k<jShift(t,-14))delete A[k]});store.set("gdcheck",A);render();if(A[t].length===GD_CHECK.length&&!L.includes(ds.v))logStamp("Locked in. Go win.","READY");return}}
   if(ds.wsdismiss){store.set("wsdismiss",ds.wsdismiss);render();return}
   if(featClick(b))return;
@@ -3066,6 +3066,7 @@ render();
 loadSheets();
 if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
 rosterSync();staffFlush();
+if(profile&&!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}
 
 </script>
 </body></html>
