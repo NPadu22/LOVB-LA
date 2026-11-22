@@ -288,11 +288,11 @@ nav.tabs button[aria-current="page"] svg{color:var(--accent-text);transform:tran
 [data-gameday] .btn:not(.ghost){box-shadow:0 0 18px rgb(255 94 26 / .45)}
 [data-gameday] nav.tabs{box-shadow:0 -6px 24px rgb(255 94 26 / .18)}
 @media (prefers-reduced-motion: reduce){.gd-digits i,.gd-ribbon span,.gd-live i,[data-gameday] .hero::after,[data-gameday] .orbit .core{animation:none!important}}
-.scheme,.plan .scheme,.lift .scheme{grid-column:1/-1;display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;margin:2px 0;justify-self:start;width:auto}
-.plan .scheme span,.lift .scheme span{flex:0 0 auto;width:auto}
-.scheme span{display:inline-flex;flex-direction:column;align-items:center;min-width:46px;padding:4px 8px;border-radius:8px;background:rgb(255 94 26 / .1);border:1px solid rgb(255 94 26 / .3);font:700 .9rem var(--mono);color:#C2410C}
-.scheme i{font:600 .58rem var(--mono);font-style:normal;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
-.lift .scheme span{color:var(--accent-text,#FF8A4C);background:rgb(255 94 26 / .12)}
+.repset,.plan .repset,.lift .repset{grid-column:1/-1;display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;margin:2px 0;justify-self:start;width:auto}
+.plan .repset span,.lift .repset span{flex:0 0 auto;width:auto}
+.repset span{display:inline-flex;flex-direction:column;align-items:center;min-width:46px;padding:4px 8px;border-radius:8px;background:rgb(255 94 26 / .1);border:1px solid rgb(255 94 26 / .3);font:700 .9rem var(--mono);color:#C2410C}
+.repset i{font:600 .58rem var(--mono);font-style:normal;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.lift .repset span{color:var(--accent-text,#FF8A4C);background:rgb(255 94 26 / .12)}
 .pdays{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 4px}
 .pdays button{font:700 .74rem var(--mono);letter-spacing:.04em;padding:7px 11px;border-radius:999px;border:1.5px solid rgb(11 19 43 / .18);background:transparent;color:var(--ink);cursor:pointer}
 .pdays button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -2166,7 +2166,7 @@ function progRows(text){const R=parseCSV(text);if(R.length<2)return [];const H=R
 function progPhase(v){const t=(v||"").trim().toLowerCase();if(!t)return "";if(/^pre/.test(t))return "Pre-practice";if(/^post/.test(t))return "Post-practice";if(/^(practice|during|in[- ]practice)/.test(t))return "Practice";return v.trim()}
 const PHASE_ORDER={"":-1,"Pre-practice":0,"Practice":1,"Post-practice":2};
 /* Rep schemes: "30/15/15/15" or "10, 8, 6" means different reps per set */
-function schemeHTML(L){return L?`<div class="scheme" aria-label="Reps per set: ${esc(L.join(", "))}">${L.map((r,j)=>`<span><i>Set ${j+1}</i>${esc(r)}</span>`).join("")}</div>`:""}
+function schemeHTML(L){return L?`<div class="repset" aria-label="Reps per set: ${esc(L.join(", "))}">${L.map((r,j)=>`<span><i>Set ${j+1}</i>${esc(r)}</span>`).join("")}</div>`:""}
 function repScheme(rp){const L=String(rp||"").split(/\s*[\/,]\s*/).map(x=>x.trim()).filter(Boolean);return L.length>1?L:null}
 function fmtDose(se,rp){const L=repScheme(rp);if(L){const n=+se||L.length;return {dose:`${n} sets`,scheme:L}}return {dose:se&&rp?`${se} × ${rp}`:(se?`${se} sets`:rp)||"",scheme:null}}
 const WEEKDAYS=["sun","mon","tue","wed","thu","fri","sat"];
