@@ -2205,6 +2205,8 @@ async function staffFlush(){if(staffBusy||!CONFIG.rosterURL)return;staffBusy=tru
     Q=store.get("staffq",[]);Q.shift();store.set("staffq",Q)}}finally{staffBusy=false}}
 function shareReady(iso){if(!SHARE.ready)return;const r=jGet(iso).ready;if(!r)return;const sc=rScore(r);
   staffSend({t:"ready",date:iso,score:sc==null?"":Math.round(sc*10)/10,sleepH:r.sleepH||"",sleepQ:r.sleepQ,sore:r.sore,energy:r.energy,mood:r.mood,stress:r.stress})}
+function shareLiftsToday(){const t=isoToday();Object.keys(LIFTLOG).forEach(k=>(LIFTLOG[k]||[]).filter(e=>e.d===t).forEach(e=>staffSend({t:"lift",date:e.d,ex:e.n,w:e.w,u:e.u,r:e.r,e1rm:e1rm(e.w,e.r)?Math.round(e1rm(e.w,e.r)):"",setId:e.id})));
+  const c=jGet(t).cond;if(c&&(SCDONE[t]||[]).some(isCond))staffSend({t:"cond",date:t,session:(SCDONE[t]||[]).find(isCond),rpe:c.rpe||"",min:c.min||"",load:c.load||""})}
 function shareHTML(){return `<section><h2>Share with staff</h2><div class="card stack">
   <p style="font-size:.9rem">Off unless you turn it on. You can turn it off any time.</p>${profile&&profile.position==="Staff"?`<p class="stamp">You're signed in as staff, so this is here for testing. Anything you share shows up in the staff sheet as Staff; delete test rows afterward.</p>`:""}
   <div class="row" style="justify-content:space-between;gap:12px;align-items:flex-start"><span class="stack" style="gap:2px"><b>Daily readiness</b><span class="muted" style="font-size:.84rem">Sleep hours and quality, soreness, energy, mood, stress and your readiness score. Not your notes.</span></span><button type="button" class="btn sm ${SHARE.ready?"":"ghost"}" data-share="ready" aria-pressed="${SHARE.ready}">${SHARE.ready?"On":"Off"}</button></div>
@@ -2958,7 +2960,7 @@ document.addEventListener("click",e=>{
   const ds=b.dataset;
   if(jClick(b))return;
   if(atClick(b))return;
-  if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());if((ds.share==="food"||ds.share==="water")&&SHARE[ds.share])shareDay(isoToday());render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
+  if(ds.share){SHARE[ds.share]=!SHARE[ds.share];store.set("share",SHARE);if(ds.share==="ready"&&SHARE.ready)shareReady(isoToday());if((ds.share==="food"||ds.share==="water")&&SHARE[ds.share])shareDay(isoToday());if(ds.share==="lift"&&SHARE.lift)shareLiftsToday();render();toast(SHARE[ds.share]?"Sharing on":"Sharing off");return}
   {const gc=b.closest("[data-gdcheck]");if(gc){const t=isoToday(),A=store.get("gdcheck",{}),L=A[t]||[];A[t]=L.includes(ds.v)?L.filter(x=>x!==ds.v):[...L,ds.v];Object.keys(A).forEach(k=>{if(k<jShift(t,-14))delete A[k]});store.set("gdcheck",A);render();if(A[t].length===GD_CHECK.length&&!L.includes(ds.v))logStamp("Locked in. Go win.","READY");return}}
   if(ds.wsdismiss){store.set("wsdismiss",ds.wsdismiss);render();return}
   if(featClick(b))return;
