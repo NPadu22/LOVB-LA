@@ -2159,7 +2159,7 @@ function myCode(){if(!profile)return "";const L=x=>(x||"").normalize("NFD").repl
   const f=L(profile.first||(profile.name||"").split(" ")[0]),l=L(profile.last||(profile.name||"").split(" ").slice(1).join(""));
   return f&&l?(f[0]+l.slice(0,3)).toUpperCase():""}
 const POS_WORDS={"Outside hitter":["outside","outsides","oh","pins","pin"],"Opposite":["opposite","opposites","opp","right side","rightside","pins","pin"],"Middle blocker":["middle","middles","mb","middle blocker","middle blockers"],"Setter":["setter","setters"],"Libero":["libero","liberos","defensive specialist","ds"]};
-function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.trim()).filter(Boolean)}
+function progTokens(who){return (who||"").toLowerCase().split(/[,;\/&+]|\band\b/).map(t=>t.split(/\s[·•\-–—|]\s|\s\(/)[0].trim()).filter(Boolean)}
 function progIsCode(t){return !/^(everyone|all|team|all athletes|staff)$/.test(t)&&!Object.values(POS_WORDS).some(w=>w.includes(t))}
 function progFor(pg){const T=progTokens(pg.who);if(profile&&profile.position==="Staff"){const c=myCode().toLowerCase();return !!c&&T.includes(c)}if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true;
   const mine=(POS_WORDS[profile&&profile.position]||[]);if(T.some(t=>mine.includes(t)))return true;
