@@ -348,11 +348,13 @@ body{font-stretch:100%}
 .hero .horizon{background:var(--brand)}
 :root[data-scheme="midnight"]{--bg:#000000;--surface:#0B0F1C;--surface-2:#161C30;--line:#232B44;--sb-bg:#000;--sky:none}
 :root[data-scheme="rush"]{--bg:#FBF5EC;--surface:#FFFFFF;--surface-2:#FFE3D1;--line:#F6CDB3;--fg:#0B132B;--muted:#5A607A;--accent:#FF5E1A;--accent-text:#C2410C;--on-accent:#FFFFFF;--sel-bg:#FF5E1A;--sel-fg:#FFFFFF;--sky:none}
-:root[data-scheme="rush"] body{background:radial-gradient(130% 55% at 50% -12%,rgb(255 94 26 / .26),transparent 62%),radial-gradient(120% 45% at 50% 112%,rgb(255 94 26 / .2),transparent 60%),#FBF5EC fixed;background-color:#FBF5EC}
-:root[data-scheme="rush"] h1,:root[data-scheme="rush"] .eyebrow{color:#C2410C}
+:root[data-scheme="rush"] body{background:linear-gradient(180deg,#F0560F 0,rgb(240 86 15 / .7) 46px,rgb(255 94 26 / .18) 92px,transparent 130px) top/100% 130px no-repeat scroll,radial-gradient(120% 45% at 50% 112%,rgb(255 94 26 / .2),transparent 60%) fixed,#FBF5EC;background-color:#FBF5EC}
+:root[data-scheme="rush"] .eyebrow:not(.hero .eyebrow):not(.launch .eyebrow),:root[data-scheme="rush"] h2{color:#C2410C}
+:root[data-scheme="rush"] h1,:root[data-scheme="rush"] .view>div:first-child .eyebrow,:root[data-scheme="rush"] .view>div:first-child .eyebrow .module{color:#0B132B!important}
+:root[data-scheme="rush"] .plan .p-head{background:linear-gradient(90deg,#F0560F,#C2410C);color:#fff}
 :root[data-scheme="rush"] .card,:root[data-scheme="rush"] .rcard,:root[data-scheme="rush"] .ng{box-shadow:inset 0 3px 0 #FF5E1A}
 :root[data-scheme="rush"] .ng svg{color:#FF5E1A}
-:root[data-scheme="rush"] .chip:not(.ok):not(.stop):not(.violet){background:#FFE3D1;color:#B33A0A}
+:root[data-scheme="rush"] .chip:not(.ok):not(.stop):not(.violet):not(.hero .chip){background:#FFE3D1;color:#B33A0A}
 :root[data-scheme="rush"] .feature{background:linear-gradient(135deg,#F0560F,#C2410C);color:#fff}
 :root[data-scheme="rush"] .feature .stamp,:root[data-scheme="rush"] .feature p{color:#FFEDE3}
 :root[data-scheme="rush"] .feature .chip{background:rgb(255 255 255 / .2)!important;color:#fff!important}
