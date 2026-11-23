@@ -2375,7 +2375,7 @@ function vHome(){
    ["fuel","travel","Travel fuel","Airports, city guides, time zones",I.plane],
    ["hydrate","","Hydration","Bottles, ounces, your goal",I.drop],
    ["recover","","Recovery","What helps you bounce back",I.heart],
-   ...(isFemale()?[["cycle","","Cycle","Private tracker on this phone",I.cycle]]:[]),
+   isFemale()?["cycle","","Cycle","Private tracker on this phone",I.cycle]:["fuel","mealprep","Meal prep","Batch-cook plan and grocery list",I.fuel],
    ["journal","","Journal","Meals, water, training, energy",I.journal],
    ["learn","","Learn","Your nutrition path & lessons",I.book],
    ["sky","","Constellations","Your week in stars",I.home],
