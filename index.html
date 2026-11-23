@@ -2197,7 +2197,8 @@ function progFor(pg){const T=progTokens(pg.who);if(profile&&profile.position==="
 function progWho(pg){const T=progTokens(pg.who);if(T.length&&T.every(progIsCode))return profile&&profile.position==="Staff"?"Code "+pg.who.toUpperCase():"Just for you";return pg.who}
 /* Programs: a blank For means "not assigned yet" and is shown to no one; write Everyone for the whole team */
 function atPrograms(){return allPrograms().map(pg=>{const ex=pg.ex.filter(x=>{const w=(x.who!=null?x.who:pg.who||"").trim();return !!w&&progFor({who:w})});return ex.length?{...pg,ex,who:ex[0].who!=null?ex[0].who:pg.who}:null}).filter(Boolean)}
-function nutNotes(){return (CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[]).filter(a=>progFor({who:a.who}))}
+/* Staff see team-wide ("Everyone") posts and their own-coded ones, never posts aimed at a specific athlete or position */
+function nutNotes(){return (CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[]).filter(a=>{if(profile&&profile.position==="Staff"){const T=progTokens(a.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return true}return progFor({who:a.who})})}
 function nutHTML(){const L=nutNotes();if(!L.length)return "";
   return `<section><div class="sec-head"><h2>From your dietitian</h2></div><div class="card" style="padding-block:2px">${L.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag||"Nutrition")}</span>${progTokens(a.who).length&&progTokens(a.who).every(progIsCode)?`<span class="chip violet">${tr("Just for you")}</span>`:""}<span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b>${a.d?`<p class="muted" style="font-size:.88rem">${esc(a.d)}</p>`:""}</div>`).join("")}</div></section>`}
 /* Roster: name, position, number, language and code go to the sheet's Roster tab so staff know who is set up */
