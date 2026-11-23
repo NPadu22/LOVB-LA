@@ -364,15 +364,12 @@ body{font-stretch:100%}
 .hero{background:radial-gradient(60% 18% at 30% 78%,color-mix(in srgb,var(--brand) 55%,transparent),transparent 70%),radial-gradient(70% 14% at 85% 40%,color-mix(in srgb,var(--brand) 35%,transparent),transparent 70%),radial-gradient(120% 70% at 50% 130%,color-mix(in srgb,var(--brand) 40%,transparent),transparent 60%),var(--surface)}
 .hero .horizon{background:var(--brand)}
 :root[data-scheme="midnight"]{--bg:#000000;--surface:#0B0F1C;--surface-2:#161C30;--line:#232B44;--sb-bg:#000;--sky:none}
-:root[data-scheme="rush"]{--bg:#C2410C;--surface:#0B132B;--surface-2:#1D2B52;--line:#2A3A66;--fg:#FFFFFF;--muted:#FFE1D2;--accent:#FFFFFF;--accent-text:#FFFFFF;--on-accent:#0B132B;--sel-bg:#0B132B;--sel-fg:#FFFFFF;--violet:#FFB08A;--sky:none}
-:root[data-scheme="rush"] body{background:linear-gradient(180deg,#D9480F,#9A3409) fixed;background-color:#C2410C}
-:root[data-scheme="rush"] .card .muted,:root[data-scheme="rush"] .ng span,:root[data-scheme="rush"] .rcard span,:root[data-scheme="rush"] .launch .muted{color:#A3AECB}
-:root[data-scheme="rush"] nav.tabs{background:color-mix(in srgb,#0B132B 92%,transparent)}
-:root[data-scheme="rush"] .seg button{background:color-mix(in srgb,#0B132B 35%,transparent);color:#FFE1D2}
-:root[data-scheme="rush"] .seg button[aria-pressed="true"]{background:#0B132B;color:#fff}
-:root[data-scheme="rush"] .ng svg,:root[data-scheme="rush"] nav.tabs button[aria-current="page"] svg{color:#FF8A4C}
-:root[data-scheme="rush"] nav.tabs .pill{background:rgb(255 94 26 / .22);box-shadow:inset 0 0 0 1px rgb(255 94 26 / .5)}
-:root[data-scheme="rush"] .step .when::after{border-color:#FF5E1A}
+:root[data-scheme="rush"]{--bg:#FBF5EC;--surface:#FFFFFF;--surface-2:#FCE6D6;--line:#EEDDCC;--fg:#0B132B;--muted:#5A607A;--accent:#FF5E1A;--accent-text:#C2410C;--on-accent:#FFFFFF;--sel-bg:#FF5E1A;--sel-fg:#FFFFFF;--sky:none}
+:root[data-scheme="rush"] body{background:#FBF5EC}
+:root[data-scheme="rush"] nav.tabs{background:color-mix(in srgb,#C2410C 97%,transparent);border-top-color:#9A3409}
+:root[data-scheme="rush"] nav.tabs button{color:#FFF1EA}
+:root[data-scheme="rush"] nav.tabs button[aria-current="page"],:root[data-scheme="rush"] nav.tabs button[aria-current="page"] svg{color:#FFFFFF}
+:root[data-scheme="rush"] nav.tabs .pill{background:rgb(255 255 255 / .2);box-shadow:inset 0 0 0 1px rgb(255 255 255 / .45)}
 :root[data-scheme="horizon"]{--bg:#FFF1E2;--surface:#FFFAF4;--surface-2:#FCE3CF;--line:#EFD2BC;--fg:#0B132B;--muted:#56607E;--sel-bg:#0B132B;--sel-fg:#FFFFFF;--sky:none}
 :root[data-scheme="horizon"] body{background:linear-gradient(180deg,#FFF6EC 0%,#FFF1E2 60%,#FFE0C7 100%) fixed;background-color:#FFF1E2}
 :root[data-scheme="horizon"] nav.tabs{background:color-mix(in srgb,#FFF1E2 90%,transparent)}
@@ -652,7 +649,7 @@ const SCHEMES=[
  {k:"space",n:"Deep Space",d:"Navy with Orbit Orange",sw:["#0B132B","#14203F","#FF5E1A"]},
  {k:"midnight",n:"Midnight",d:"True black, easy on battery",sw:["#000000","#0B0F1C","#FF5E1A"]},
  {k:"starlight",n:"Starlight",d:"White with navy and orange",sw:["#FFFFFF","#0B132B","#FF5E1A"]},
- {k:"rush",n:"Color Rush",d:"All-orange, like the Color Rush kit",sw:["#C2410C","#0B132B","#FFFFFF"]},
+ {k:"rush",n:"Color Rush",d:"Cream with bold Color Rush orange",sw:["#FBF5EC","#FF5E1A","#0B132B"]},
  {k:"horizon",n:"Horizon",d:"Warm sunset cream with navy and orange",sw:["#FFF1E2","#0B132B","#FF5E1A"]}
 ];
 
@@ -850,7 +847,7 @@ function bgSVG(k,dark){
 function bgURL(k,dark){return k==="none"?"none":`url('data:image/svg+xml,${encodeURIComponent(bgSVG(k,dark)).replace(/'/g,"%27")}')`}
 function applyBg(){const k=prefs.bg||"stars";document.documentElement.style.setProperty("--bgart",bgURL(k,isDarkNow()))}
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyBg())}catch(e){}
-function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large);applyBg()}
+function applyPrefs(){const r=document.documentElement,k=prefs.scheme;r.style.removeProperty("--accent");if(k==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",k==="starlight"||k==="horizon"||k==="rush"?"light":"dark");if(k==="midnight"||k==="rush"||k==="horizon")r.setAttribute("data-scheme",k);else r.removeAttribute("data-scheme");const gd=prefs.gameday!==false&&todayMatch();if(gd){r.setAttribute("data-theme","dark");r.removeAttribute("data-scheme");r.setAttribute("data-gameday","1")}else r.removeAttribute("data-gameday");r.classList.toggle("lg",!!prefs.large);applyBg()}
 function todayMatch(){const t=isoToday();return SCHEDULE.find(m=>m.d===t)||null}
 function toast(m){const t=$("#toast");t.textContent=tr(m);t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
 /* ===== Languages: English, 日本語, Português (Brasil). UI is translated after each render; lessons, recipes, city guides and staff posts stay as written. ===== */
@@ -901,7 +898,7 @@ addT([
 ["Weight before (lb)","練習前の体重 (lb)","Peso antes (lb)"],["Weight after (lb)","練習後の体重 (lb)","Peso depois (lb)"],["Drank during (oz)","練習中に飲んだ量 (oz)","Bebeu durante (oz)"],["Practice length (min)","練習時間 (分)","Duração do treino (min)"],["Calculate","計算","Calcular"],["Search: protein, hydration, iron, creatine…","検索:たんぱく質、水分、鉄、クレアチン…","Buscar: proteína, hidratação, ferro, creatina…"],
 /* me */
 ["On the roster","ロスター","No elenco"],["Home area","居住エリア","Região"],["Allergies","アレルギー","Alergias"],["Edit profile","プロフィール編集","Editar perfil"],["Pin collection","ピンコレクション","Coleção de pins"],["Color scheme","カラー","Tema de cores"],["Background","背景","Fundo"],["Game-day theme","試合日テーマ","Tema de dia de jogo"],["Auto on match days","試合日に自動","Automático em dias de jogo"],["Off","オフ","Desligado"],["Text size","文字サイズ","Tamanho do texto"],["Standard text","標準","Padrão"],["Larger text","大きめ","Maior"],["Your profile","プロフィール","Seu perfil"],["Auto","自動","Automático"],
-["Deep Space by night, Starlight by day","夜はDeep Space、昼はStarlight","Deep Space à noite, Starlight de dia"],["Navy with Orbit Orange","ネイビー×オービットオレンジ","Azul-marinho com laranja Orbit"],["True black, easy on battery","真っ黒でバッテリーにやさしい","Preto puro, economiza bateria"],["White with navy and orange","白×ネイビー×オレンジ","Branco com azul-marinho e laranja"],["All-orange, like the Color Rush kit","Color Rushユニのようなオールオレンジ","Todo laranja, como o uniforme Color Rush"],["Warm sunset cream with navy and orange","夕焼けクリーム×ネイビー×オレンジ","Creme pôr do sol com azul-marinho e laranja"],
+["Deep Space by night, Starlight by day","夜はDeep Space、昼はStarlight","Deep Space à noite, Starlight de dia"],["Navy with Orbit Orange","ネイビー×オービットオレンジ","Azul-marinho com laranja Orbit"],["True black, easy on battery","真っ黒でバッテリーにやさしい","Preto puro, economiza bateria"],["White with navy and orange","白×ネイビー×オレンジ","Branco com azul-marinho e laranja"],["Cream with bold Color Rush orange","クリームに鮮やかなColor Rushオレンジ","Creme com o laranja forte do Color Rush"],["Warm sunset cream with navy and orange","夕焼けクリーム×ネイビー×オレンジ","Creme pôr do sol com azul-marinho e laranja"],
 ["Starfield","星空","Céu estrelado"],["Orbit rings","惑星の輪","Anéis orbitais"],["LA horizon","LAの地平線","Horizonte de LA"],["Nebula","星雲","Nebulosa"],["Satellite trails","衛星の軌跡","Rastros de satélite"],["Plain","なし","Liso"],["Pin earned","ピン獲得","Pin conquistado"],
 /* journal */
 ["Scorebook","スコアブック","Súmula"],["Performance Journal","パフォーマンス日誌","Diário de desempenho"],["Training this day","この日のトレーニング","Treino do dia"],["Rest","休養","Descanso"],["Lift","ウエイト","Musculação"],["Match","試合","Jogo"],["Rehab","リハビリ","Reabilitação"],["Water bottles","ボトル本数","Garrafas de água"],["Meals & drinks","食事・飲み物","Refeições e bebidas"],["logged","件記録","registrados"],["Nothing logged for today yet.","今日はまだ記録がありません。","Nada registrado hoje ainda."],["Log a meal or drink","食事・飲み物を記録","Registrar refeição ou bebida"],["Previous day","前の日","Dia anterior"],["Next day","次の日","Próximo dia"],["One less bottle","ボトルを1本減らす","Uma garrafa a menos"],["One more bottle","ボトルを1本増やす","Uma garrafa a mais"],
