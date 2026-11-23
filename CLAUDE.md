@@ -24,6 +24,7 @@ Owner: Nick, sports dietitian. Wants honest, evidence-based answers, detail, and
 - **Programs:** filtered per row. Rows with a blank For are hidden. Staff accounts see only rows coded to their own initials. **Nutrition posts:** staff see all of them with a "For:" label; athletes see Everyone, their position and their code. The When/Phase order is Anytime, then pre-practice, then post-practice.
 - **Reps:** a scheme such as `30/15/15/15` (split on `/` or `,`) shows as one chip per set. Exercises with Track=No get a "Mark done" check.
 - **Sharing is automatic** (`SHARE` constant, no opt-out), but only after the athlete ticks the sign-up consent box or taps "I understand" on the one-time screen (`profile.consentAt`; `staffSend` refuses without it). Check-ins, meals, water, lifts and conditioning go to the staff sheet. The cycle tracker, notes and photos never leave the phone.
+- **Meal recommendations:** Nutrition tab columns Meal 1-3 name app meals (exact names). Recommended meals get a ★ badge and sort first in the meal plan and Meal prep (`isRec`, `mealFind`, `recMealsHTML`). The dropdown source is Lists!C (a static list): **whenever you add or rename a meal in MEALBANK or MEALPREP, rewrite Lists!C** so the dropdown matches.
 - **Translations:** `addT([[en, ja, pt]])` takes exact, trimmed keys. Write any JS generated from Python with `json.dumps(ensure_ascii=False)`.
 
 ## Open items
