@@ -364,8 +364,15 @@ body{font-stretch:100%}
 .hero{background:radial-gradient(60% 18% at 30% 78%,color-mix(in srgb,var(--brand) 55%,transparent),transparent 70%),radial-gradient(70% 14% at 85% 40%,color-mix(in srgb,var(--brand) 35%,transparent),transparent 70%),radial-gradient(120% 70% at 50% 130%,color-mix(in srgb,var(--brand) 40%,transparent),transparent 60%),var(--surface)}
 .hero .horizon{background:var(--brand)}
 :root[data-scheme="midnight"]{--bg:#000000;--surface:#0B0F1C;--surface-2:#161C30;--line:#232B44;--sb-bg:#000;--sky:none}
-:root[data-scheme="rush"]{--bg:#FBF5EC;--surface:#FFFFFF;--surface-2:#FCE6D6;--line:#EEDDCC;--fg:#0B132B;--muted:#5A607A;--accent:#FF5E1A;--accent-text:#C2410C;--on-accent:#FFFFFF;--sel-bg:#FF5E1A;--sel-fg:#FFFFFF;--sky:none}
-:root[data-scheme="rush"] body{background:#FBF5EC}
+:root[data-scheme="rush"]{--bg:#FBF5EC;--surface:#FFFFFF;--surface-2:#FFE3D1;--line:#F6CDB3;--fg:#0B132B;--muted:#5A607A;--accent:#FF5E1A;--accent-text:#C2410C;--on-accent:#FFFFFF;--sel-bg:#FF5E1A;--sel-fg:#FFFFFF;--sky:none}
+:root[data-scheme="rush"] body{background:radial-gradient(130% 55% at 50% -12%,rgb(255 94 26 / .26),transparent 62%),radial-gradient(120% 45% at 50% 112%,rgb(255 94 26 / .2),transparent 60%),#FBF5EC fixed;background-color:#FBF5EC}
+:root[data-scheme="rush"] h1,:root[data-scheme="rush"] .eyebrow{color:#C2410C}
+:root[data-scheme="rush"] .card,:root[data-scheme="rush"] .rcard,:root[data-scheme="rush"] .ng{box-shadow:inset 0 3px 0 #FF5E1A}
+:root[data-scheme="rush"] .ng svg{color:#FF5E1A}
+:root[data-scheme="rush"] .chip:not(.ok):not(.stop):not(.violet){background:#FFE3D1;color:#B33A0A}
+:root[data-scheme="rush"] .feature{background:linear-gradient(135deg,#F0560F,#C2410C);color:#fff}
+:root[data-scheme="rush"] .feature .stamp,:root[data-scheme="rush"] .feature p{color:#FFEDE3}
+:root[data-scheme="rush"] .feature .chip{background:rgb(255 255 255 / .2)!important;color:#fff!important}
 :root[data-scheme="rush"] nav.tabs{background:color-mix(in srgb,#C2410C 97%,transparent);border-top-color:#9A3409}
 :root[data-scheme="rush"] nav.tabs button{color:#FFF1EA}
 :root[data-scheme="rush"] nav.tabs button[aria-current="page"],:root[data-scheme="rush"] nav.tabs button[aria-current="page"] svg{color:#FFFFFF}
