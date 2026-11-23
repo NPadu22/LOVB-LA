@@ -3096,6 +3096,8 @@ document.addEventListener("input",e=>{const t=e.target;
 render();
 loadSheets();
 if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
+/* Self-heal: a no-cors POST can fail silently, so re-send the roster row once a day (the script upserts by device ID, no duplicates). */
+if(profile&&store.get("roster_day","")!==isoToday()){store.set("roster_day",isoToday());store.set("roster_pending",true)}
 rosterSync();staffFlush();
 if(profile&&profile.consentAt&&!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}
 
