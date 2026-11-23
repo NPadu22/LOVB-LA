@@ -2377,7 +2377,7 @@ function vHome(){
    ["recover","","Recovery","What helps you bounce back",I.heart],
    isFemale()?["cycle","","Cycle","Private tracker on this phone",I.cycle]:["fuel","mealprep","Meal prep","Batch-cook plan and grocery list",I.fuel],
    ["journal","","Journal","Meals, water, training, energy",I.journal],
-   ["learn","","Learn","Your nutrition path & lessons",I.book],
+   ["learn","tools","Supplement check","Check it before you take it",I.shield],
    ["sky","","Constellations","Your week in stars",I.home],
    ["feedback","","App feedback","Ideas, bugs and fixes",I.chat]
   ];
@@ -3006,7 +3006,7 @@ document.addEventListener("click",e=>{
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
   if(ds.welcomego){profile.welcomed=true;store.set("profile",profile);tab=ds.welcomego;if(tab==="ready")rDraft=null;if(ds.seg&&tab==="fuel")fuelSeg=ds.seg;learnLesson=null;render();scrollTo({top:0});return}
   if(ds.tab){tab=ds.tab;learnLesson=null;if(tab==="ready")rDraft=null;render();scrollTo({top:0});return}
-  if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;}render();scrollTo({top:0});return}
+  if(ds.go){e.preventDefault();tab=ds.go;if(tab==="ready")rDraft=null;if(ds.seg){if(tab==="fuel")fuelSeg=ds.seg;if(tab==="learn")learnTab=ds.seg;}render();scrollTo({top:0});return}
   if(ds.lesson!==undefined){learnLesson=ds.lesson||null;tab="learn";render();scrollTo({top:0});return}
   if(ds.learned){EDU.learned=EDU.learned.includes(ds.learned)?EDU.learned.filter(x=>x!==ds.learned):[...EDU.learned,ds.learned];saveEdu();const on=EDU.learned.includes(ds.learned);render();if(on)logStamp("Lesson learned");return}
   if(ds.editpath){editPath=true;render();return}
