@@ -2409,7 +2409,7 @@ function launchCard(m,compact){
    <div class="t"><span><i>T-minus</i>${sb(String(days).padStart(2,"0"),1)} <span class="eyebrow">${days===1?"day":"days"}</span></span></div>
    <p class="muted" style="font-size:.88rem">First serve ${matchLocal(m)}${m.off!==-2?` (${clock(m.pt)} PT)`:""}${m.venue?` · ${esc(m.venue)}`:""}</p>
    
-   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-go="fuel" data-seg="match">Game-day plan</button><button class="btn ghost sm" data-tab="season">Full season</button></div></div>`;
+   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-go="fuel" data-seg="match">Game-day plan</button></div></div>`;
 }
 function vHome(){
   const first=profile.first;
