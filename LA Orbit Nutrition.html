@@ -2217,6 +2217,7 @@ function shareHTML(){return `<section><h2>Shared with team staff</h2><div class=
   <div class="stack" style="gap:6px"><span class="eyebrow">Stays on this phone</span><p class="muted" style="font-size:.86rem">Cycle tracker · journal notes and photos · recovery log</p></div>
   <p class="stamp">Questions about your data? Ask your dietitian.</p></div></section>`}
 function atAnns(){return CONFIG.atSheetCSV&&SHEET.at?SHEET.at.rows:(DATA.atAnnouncements||[])}
+function annWho(a){if(!a.who)return "";const T=progTokens(a.who);if(!T.length||T.some(t=>/^(everyone|all|team|all athletes)$/.test(t)))return "";if(profile&&profile.position==="Staff")return `<span class="chip violet">${tr("For")}: ${esc(a.who)}</span>`;return T.every(progIsCode)?`<span class="chip violet">${tr("Just for you")}</span>`:""}
 function teamAnns(){return CONFIG.teamSheetCSV&&SHEET.team&&SHEET.team.rows.length?SHEET.team.rows:DATA.announcements}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadSheets();rosterSync();staffFlush()}});
 
@@ -2346,7 +2347,7 @@ function launchCard(m,compact){
 }
 function vHome(){
   const first=profile.first;
-  const [feat,...rest]=teamAnns();
+  const allAnns=[...teamAnns(),...nutNotes().map(x=>({...x,tag:x.tag||"Nutrition"}))].sort((a,b)=>(b.when||"").localeCompare(a.when||""));const [feat,...rest]=allAnns;
   const dateLine=new Date().toLocaleDateString(LOCALE(),{weekday:"long",month:"long",day:"numeric"});
   const pre=jGet(isoToday()).prehab||[];
   const go=[
@@ -2376,9 +2377,9 @@ function vHome(){
    ${weekSummaryCard()}${matchDayCard()}${roadTripCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
    <section>${constCard()}</section>
-   ${feat?`<section><div class="sec-head"><h2>Announcements</h2><span class="stamp">Updated ${fmtDate(DATA.updated)}</span></div>
-    <article class="feature"><div class="row" style="justify-content:space-between"><span class="chip accent">${esc(feat.tag)}</span><span class="stamp">${fmtDate(feat.when)}</span></div><h3>${esc(feat.t)}</h3>${feat.d?`<p>${esc(feat.d)}</p>`:""}</article>
-    ${rest.length?`<div class="card" style="padding-block:2px">${rest.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag)}</span><span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b><p class="muted" style="font-size:.88rem">${esc(a.d)}</p></div>`).join("")}</div>`:""}</section>`:""}
+   ${feat?`<section><div class="sec-head"><h2>Announcements</h2><span class="stamp">Updated ${fmtDate(feat.when||DATA.updated)}</span></div>
+    <article class="feature"><div class="row" style="justify-content:space-between"><span class="row" style="gap:6px"><span class="chip accent">${esc(feat.tag)}</span>${annWho(feat)}</span><span class="stamp">${fmtDate(feat.when)}</span></div><h3>${esc(feat.t)}</h3>${feat.d?`<p>${esc(feat.d)}</p>`:""}</article>
+    ${rest.length?`<div class="card" style="padding-block:2px">${rest.map(a=>`<div class="ann"><div class="row"><span class="chip">${esc(a.tag)}</span>${annWho(a)}<span class="stamp">${fmtDate(a.when)}</span></div><b style="margin-top:6px">${esc(a.t)}</b><p class="muted" style="font-size:.88rem">${esc(a.d)}</p></div>`).join("")}</div>`:""}</section>`:""}
    <section><h2>More</h2><div class="nav-grid compact">
     ${go.map(([t,seg,l,d,ic])=>`<button class="ng" data-go="${t}"${seg?` data-seg="${seg}"`:""}>${ic}<b>${l}</b></button>`).join("")}
    </div></section>
