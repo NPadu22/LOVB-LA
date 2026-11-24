@@ -102,6 +102,10 @@ label.consent{display:flex!important;flex-direction:row!important;gap:10px;align
 label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--accent,currentColor)}
 .oasnote{border-left:3px solid var(--warn,#FFC857);padding:4px 0 4px 10px;display:grid;gap:2px;margin-top:4px}
 .oasnote p{font-size:.84rem}
+.ask-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 14%,var(--surface)),var(--surface))}
+.ask-a{background:var(--surface);border-radius:var(--r);padding:2px 14px}
+.ask-a summary{padding:12px 0;font-weight:700;cursor:pointer}
+.ask-a .ans{padding-bottom:12px;display:grid;gap:8px;font-size:.92rem}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1024,6 +1028,7 @@ addT([["Dig", "ディグ", "Defesa"], ["Hit your water goal on 5 days", "5日間
 addT([["From your dietitian", "管理栄養士から", "Da sua nutricionista"], ["Recommended meals", "おすすめの食事", "Refeições recomendadas"], ["Meal prep", "作り置き", "Marmitas"], ["Meal plan", "食事プラン", "Plano alimentar"], ["Log it today", "今日記録する", "Registrar hoje"], ["Open in meal prep", "作り置きで開く", "Abrir nas marmitas"], ["Contains", "含む:", "Contém"], ["which is on your allergy list", "アレルギーリストに入っています", "que está na sua lista de alergias"], ["not in the app, check the spelling", "アプリにありません。つづりを確認", "não está no app, confira a grafia"]]);
 addT([["Lowest risk: USADA-recommended certification", "最低リスク:USADA推奨の認証", "Risco mais baixo: certificação recomendada pela USADA"], ["Low risk: Informed Choice", "低リスク:Informed Choice", "Risco baixo: Informed Choice"]]);
 addT([["Your raw-safe list", "生で食べられるリスト", "Sua lista de crus seguros"], ["Oral allergy syndrome", "口腔アレルギー症候群", "Síndrome de alergia oral"], ["Your meal plan and meal prep follow your raw-safe list. Meals with a raw fruit or vegetable that isn't on it are hidden, and the rest show a swap when needed. Cooked versions are fine for you.", "食事プランと作り置きは生で食べられるリストに従います。リストにない生の果物・野菜を含む食事は非表示になり、必要なものには代替案が表示されます。加熱したものは大丈夫です。", "Seu plano alimentar e as marmitas seguem sua lista de crus seguros. Refeições com fruta ou vegetal cru fora da lista ficam ocultas, e as outras mostram uma troca quando necessário. Versões cozidas estão liberadas."], ["Raw-safe fruit", "生で食べられる果物", "Frutas cruas seguras"], ["Raw-safe vegetables", "生で食べられる野菜", "Vegetais crus seguros"], ["Never, raw or cooked", "生でも加熱でも不可", "Nunca, cru ou cozido"], ["Milks you avoid", "避けるミルク", "Leites que você evita"], ["If your mouth or throat starts itching", "口やのどがかゆくなったら", "Se sua boca ou garganta começar a coçar"], ["Stop eating that food and rinse your mouth with water.", "その食べ物を食べるのをやめ、水で口をすすぐ。", "Pare de comer esse alimento e enxágue a boca com água."], ["Ginger ale or Sprite can soothe your throat. That's comfort only: it doesn't treat the reaction.", "ジンジャーエールやスプライトでのどが楽になることがあります。ただし気休めで、反応の治療にはなりません。", "Ginger ale ou Sprite podem aliviar a garganta. É só conforto: não trata a reação."], ["Take your antihistamine if your doctor prescribed one, and tell Emma or your dietitian.", "医師から抗ヒスタミン薬を処方されていれば服用し、エマか管理栄養士に伝える。", "Tome seu anti-histamínico se o médico receitou e avise a Emma ou sua nutricionista."], ["Call 911 and use epinephrine if you carry it", "911に電話し、持っていればエピネフリンを使用", "Ligue 911 e use a epinefrina se você tiver"], ["Throat tightness, trouble breathing or swallowing, a hoarse voice, hives spreading beyond your mouth, vomiting or feeling faint. Most oral allergy reactions stay in the mouth, but a small share become severe.", "のどの締めつけ、呼吸や飲み込みの困難、声のかすれ、口以外に広がるじんましん、嘔吐、意識が遠のく感じ。多くは口の中だけで治まりますが、一部は重症化します。", "Garganta apertada, dificuldade para respirar ou engolir, rouquidão, urticária além da boca, vômito ou sensação de desmaio. A maioria das reações fica na boca, mas uma pequena parte se agrava."], ["Edit my lists", "リストを編集", "Editar minhas listas"], ["Raw-safe list on", "生で食べられるリスト:オン", "Lista de crus seguros ativada"], ["Has a raw fruit or vegetable that isn't on your raw-safe list", "リストにない生の果物・野菜を含みます", "Tem fruta ou vegetal cru fora da sua lista"]]);
+addT([["Ask the virtual RD", "バーチャル管理栄養士に質問", "Pergunte à nutricionista virtual"], ["Type a question. You'll get the answers your dietitian has reviewed, each with its research source.", "質問を入力すると、管理栄養士が確認した回答が研究の出典付きで表示されます。", "Digite uma pergunta. Você recebe respostas revisadas pela sua nutricionista, cada uma com a fonte científica."], ["e.g. How much protein after practice?", "例:練習後のたんぱく質はどれくらい?", "ex.: Quanta proteína depois do treino?"], ["Popular questions", "よくある質問", "Perguntas populares"], ["Best answers", "最適な回答", "Melhores respostas"], ["No answer in the library yet.", "まだライブラリに回答がありません。", "Ainda não há resposta na biblioteca."], ["Didn't find what you need?", "答えが見つかりませんか?", "Não encontrou o que precisava?"], ["Send your question to your dietitian. Answers that help the team get added to this library.", "質問を管理栄養士に送りましょう。チームに役立つ回答はこのライブラリに追加されます。", "Envie sua pergunta à nutricionista. Respostas úteis para o time entram nesta biblioteca."], ["Ask your dietitian", "管理栄養士に質問する", "Perguntar à nutricionista"], ["Your questions", "あなたの質問", "Suas perguntas"], ["Sent", "送信済み", "Enviada"], ["Your dietitian will follow up with you in person or in a team post.", "管理栄養士が直接、またはチームへの投稿で回答します。", "Sua nutricionista vai responder pessoalmente ou em um aviso ao time."], ["Lesson", "レッスン", "Lição"], ["Ask the RD", "RDに質問", "Pergunte à RD"], ["All Q&A", "すべてのQ&A", "Todas as perguntas"], ["Type your question first", "まず質問を入力してください", "Digite sua pergunta primeiro"], ["Sent to your dietitian", "管理栄養士に送信しました", "Enviada à nutricionista"], ["Already sent", "送信済みです", "Já enviada"]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -1864,35 +1869,47 @@ function setupHTML(){
    <div class="stack" style="gap:6px"><span class="eyebrow">Pregnancy & postpartum</span><div class="choice mini" data-ep="stage">${STAGES.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${EDU.stage===v}">${l}</button>`).join("")}</div></div>`:""}
    <button class="btn block" type="submit">Build my path</button></form>`;
 }
-let learnTab="path", libTrack="core", editPath=false;
+let learnTab="ask", libTrack="core", editPath=false, ASKED=store.get("asked",[]);
+/* Ask the virtual RD: ranked search over the sourced answers and lessons; anything not covered goes to the dietitian */
+const ASK_STOP=new Set("a an and are as at be can do does for from how i if in is it my of on or should so that the this to what when which why with you your me am im i'm much many get eat need take feel feeling time all always any ok okay good best bad really lot lots just still keep thing things vs versus".split(" "));
+const ASK_SYN={pr:"protein",carb:"carbohydrate",carbs:"carbohydrate",water:"hydration",hydrate:"hydration",period:"menstrual",periods:"menstrual",cycle:"menstrual",ferritin:"iron",anemia:"iron",preworkout:"caffeine",coffee:"caffeine",energy:"tired",fatigue:"tired",sleepy:"tired",bed:"sleep",night:"sleep",gameday:"match",game:"match",tournament:"match",injury:"injured",hurt:"injured",weight:"weight",lose:"weight",gain:"weight",cramp:"cramps",cramping:"cramps",gut:"stomach",bloating:"stomach",vegan:"plant",vegetarian:"plant",travel:"travel",flight:"travel",alcohol:"alcohol",beer:"alcohol",shake:"protein",whey:"protein",peptide:"peptides",bpc:"peptides"};
+function askTokens(q){return String(q||"").toLowerCase().replace(/[^a-z0-9\u00c0-\u024f\s-]/g," ").split(/\s+/).filter(t=>t&&!ASK_STOP.has(t)).flatMap(t=>[t,ASK_SYN[t]].filter(Boolean))}
+function askIndex(){if(askIndex.c)return askIndex.c;const L=[];
+  FAQ.forEach((f,i)=>L.push({kind:"faq",i,title:f.q,body:f.a.join(" "),src:f.s}));
+  LESSONS.forEach(l=>L.push({kind:"lesson",id:l.id,title:l.t,body:[l.sum,...(l.secs||[]).map(x=>x.join(" ")),...(l.take||[]),...(l.doIt||[])].join(" "),min:l.min}));
+  L.forEach(x=>{x.T=x.title.toLowerCase();x.B=x.body.toLowerCase()});return askIndex.c=L}
+function askSearch(q){const T=[...new Set(askTokens(q))];if(!T.length)return [];const I=askIndex(),N=I.length;
+  const RE=T.map(t=>new RegExp("\\b"+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
+  const W=RE.map(re=>{const df=I.filter(x=>re.test(x.T)||re.test(x.B)).length;return df?Math.log(1+N/df):0});
+  const tot=W.reduce((a,b)=>a+b,0)||1;
+  return I.map(x=>{let sc=0,cov=0;RE.forEach((re,k)=>{const a=re.test(x.T),b=re.test(x.B);if(a||b)cov+=W[k];sc+=W[k]*((a?3:0)+(b?1:0))});
+    return {...x,cov,sc:sc*(cov/tot)*(x.kind==="faq"?1.15:1)}}).filter(x=>x.sc>=1.2&&x.cov/tot>=0.34).sort((a,b)=>b.sc-a.sc).slice(0,6)}
+function askItemHTML(x,open){if(x.kind==="faq"){const f=FAQ[x.i];return `<details class="ask-a" ${open?"open":""}><summary>${f.q}</summary><div class="ans">${f.a.map(p=>`<p>${p}</p>`).join("")}<p class="src">Source: ${f.s}</p></div></details>`}
+  const l=lessonById(x.id);return `<button class="rcard" data-lesson="${l.id}"><span class="ring">${l.min}′</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${tr("Lesson")} · ${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}
+function askResultsHTML(){const q=(draft.q||"").trim();
+  if(!q)return `<span class="eyebrow">${tr("Popular questions")}</span>${FAQ.slice(0,8).map((f,i)=>askItemHTML({kind:"faq",i})).join("")}`;
+  const R=askSearch(q);
+  return `${R.length?`<span class="eyebrow">${tr("Best answers")}</span>${R.map((x,j)=>askItemHTML(x,j===0&&x.kind==="faq")).join("")}`:`<p class="muted">${tr("No answer in the library yet.")}</p>`}
+   <div class="card stack" style="gap:8px"><b>${tr("Didn't find what you need?")}</b><p class="muted" style="font-size:.88rem">${tr("Send your question to your dietitian. Answers that help the team get added to this library.")}</p><button class="btn sm" style="align-self:flex-start" data-askrd="1">${tr("Ask your dietitian")}</button></div>`}
 function vLearn(){
   if(learnLesson){const l=lessonById(learnLesson);if(l)return lessonHTML(l)}
-  const path=myPath(), shown=path.slice(0,6), doneN=EDU.learned.length;
-  let body="";
-  if(learnTab==="path"){
-    body=(!EDU.setup||editPath)?setupHTML():`
-     <div class="card row"><span class="grow"><span class="eyebrow">Your path</span><br><b style="font-family:var(--display);font-stretch:125%">${shown.filter(x=>EDU.learned.includes(x.id)).length} of ${shown.length} done</b></span><button class="linkbtn" data-editpath="1">Edit</button></div>
-     ${EDU.cycle==="absent"?`<div class="stopbox"><h3>Worth a check</h3><p style="font-size:.9rem">Going 3+ months without a period is a health signal, not a badge of hard training. Please talk with your dietitian or the team doctor in confidence.</p></div>`:""}
-     <div class="stack" style="gap:10px">${shown.map((x,i)=>{const l=lessonById(x.id),d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":String(i+1).padStart(2,"0")}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(x.why)} · ${l.min} min</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div>
-     ${fuelTool()}`;
+  if(!["ask","library","tools"].includes(learnTab))learnTab="ask";
+  const doneN=EDU.learned.length;let body="";
+  if(learnTab==="ask"){
+    body=`<div class="card stack ask-hero" style="gap:10px"><span class="eyebrow">${tr("Ask the virtual RD")}</span><p style="font-size:.92rem">${tr("Type a question. You'll get the answers your dietitian has reviewed, each with its research source.")}</p>
+      <div class="searchbox"><input id="q" type="search" enterkeyhint="search" placeholder="${tr("e.g. How much protein after practice?")}" value="${esc(draft.q||"")}" aria-label="Ask a nutrition question"></div></div>
+     <div class="stack" id="askres" style="gap:8px">${askResultsHTML()}</div>
+     ${ASKED.length?`<section><h2>${tr("Your questions")}</h2><div class="card" style="padding-block:2px">${ASKED.slice().reverse().slice(0,10).map(a=>`<div class="ann"><div class="row"><span class="chip">${tr("Sent")}</span><span class="stamp">${fmtDate(a.d)}</span></div><p style="font-size:.9rem;margin-top:6px">${esc(a.q)}</p></div>`).join("")}</div><p class="stamp">${tr("Your dietitian will follow up with you in person or in a team post.")}</p></section>`:""}`;
   }else if(learnTab==="library"){
     const L=LESSONS.filter(l=>l.tr===libTrack);
-    body=`<div class="seg" data-libtrack="1">${TRACKS.map(([k,l])=>`<button data-v="${k}" aria-pressed="${libTrack===k}">${l}</button>`).join("")}</div>
-     <div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div>`;
-  }else if(learnTab==="tools"){
-    body=`<section><h2>Supplement check</h2>${suppTool()}</section><section><h2>Your plates</h2>${fuelTool()}</section>`;
+    body=`<div class="seg" data-libtrack="1">${[...TRACKS,["qa","All Q&A"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${libTrack===k}">${l}</button>`).join("")}</div>
+     ${libTrack==="qa"?`<div class="stack" style="gap:8px">${FAQ.map((f,i)=>askItemHTML({kind:"faq",i})).join("")}</div>`:`<div class="stack" style="gap:10px">${L.map(l=>{const d=EDU.learned.includes(l.id);return `<button class="rcard" data-lesson="${l.id}" data-done="${d?1:0}"><span class="ring">${d?"✓":l.min+"′"}</span><span class="stack" style="gap:2px"><b>${esc(l.t)}</b><span>${esc(l.sum)}</span></span><span class="linkbtn">Open</span></button>`}).join("")}</div>`}`;
   }else{
-    body=`<div class="searchbox"><input id="q" type="search" placeholder="Search: protein, hydration, iron, creatine…" value="${esc(draft.q||"")}" aria-label="Search quick answers"></div>
-     <div class="stack" id="faq">${faqHTML()}</div>`;
+    body=`<section><h2>Supplement check</h2>${suppTool()}</section><section><h2>Your plates</h2>${fuelTool()}</section>`;
   }
   return `<div class="view"><div><p class="eyebrow"><span class="module">Film room</span> · ${doneN}/${LESSONS.length} learned</p><h1 style="margin-top:4px">Learn</h1></div>
-   <div class="seg" data-learntab="1">${[["path","My path"],["library","Library"],["tools","Tools"],["answers","Quick answers"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
+   <div class="seg" data-learntab="1">${[["ask","Ask the RD"],["library","Library"],["tools","Tools"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${learnTab===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
-
-
-
-/* ===== Team priorities on Home: match-night recovery and road-trip packing ===== */
-/* Weekly summary: last Monday–Sunday, shown Monday to Wednesday until dismissed */
 function weekSummaryCard(){const t=isoToday(),dow0=(new Date(t+"T12:00:00").getDay()+6)%7;if(dow0>2)return "";
   const ws=jShift(mondayOf(t),-7);if(store.get("wsdismiss","")===ws)return "";
   const days=[...Array(7)].map((_,i)=>jShift(ws,i)),prev=[...Array(7)].map((_,i)=>jShift(ws,i-7));
@@ -3106,6 +3123,10 @@ document.addEventListener("click",e=>{
   if(pk){const k=pk.dataset.pack,v=ds.v,L=PACKS[k]||[];PACKS[k]=L.includes(v)?L.filter(x=>x!==v):[...L,v];store.set("packs",PACKS);const n=PACKS[k].length;b.setAttribute("aria-pressed",PACKS[k].includes(v));if(n===PACK.length)logStamp("Packed. Safe travels");return}
   if(ds.habit||ds.logpost){const k=ds.habit||"recover",t=isoToday(),d=jGet(t),was=starLit(t);d.habits={...(d.habits||{})};d.habits[k]=!d.habits[k];
     if(jPut(t,d)){render();const on=d.habits[k];if(on)logStamp(!was&&starLit(t)?"Logged. Tonight's star is lit":(k==="sleep"?"Sleep logged":"Recovery logged")+starHint(t));else toast((k==="sleep"?"Sleep":"Recovery")+" unmarked")}return}
+  if(ds.askrd){const q=(draft.q||"").trim();if(q.length<5){toast("Type your question first");const i=$("#q");if(i)i.focus();return}
+    if(!(profile.consentAt||profile.position==="Staff")){toast("Accept data sharing in Me first");return}
+    if(ASKED.some(a=>a.q===q)){toast("Already sent");return}
+    const d=isoToday(),key=Date.now().toString(36);ASKED.push({q,d,key});store.set("asked",ASKED);staffSend({t:"ask",date:d,q,key});draft.q="";render();toast("Sent to your dietitian");return}
   if(b.closest("[data-learntab]")){learnTab=ds.v;learnLesson=null;editPath=false;render();return}
   if(b.closest("[data-libtrack]")){libTrack=ds.v;render();return}
   const ep=b.closest("[data-ep]");
@@ -3187,7 +3208,8 @@ document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.pla
   const day=Math.round(new Date(iso+"T12:00:00")/864e5),rot=bank==="pre"||bank==="prebed"?0:1;PLANPREF.sel[iso+":"+type+":"+pt+":"+i]=j-(+i)-Math.floor(day/2)*rot;savePlan();render();return}if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
   if(t.dataset&&t.dataset.ed&&ED){const [i,k]=t.dataset.ed.split(".");ED.announcements[+i][k]=t.value;edStatus();return}
-  if(t.id==="q"){draft.q=t.value;const f=$("#faq");if(f)f.innerHTML=faqHTML()}});
+  if(t.id==="q"){draft.q=t.value;clearTimeout(askT);askT=setTimeout(()=>{const f=$("#askres");if(f){f.innerHTML=askResultsHTML();translateDOM(f)}},180)}});
+let askT=null;
 
 render();
 loadSheets();

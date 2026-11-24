@@ -25,6 +25,8 @@ Owner: Nick, sports dietitian. Wants honest, evidence-based answers, detail, and
 - **Reps:** a scheme such as `30/15/15/15` (split on `/` or `,`) shows as one chip per set. Exercises with Track=No get a "Mark done" check.
 - **Sharing is automatic** (`SHARE` constant, no opt-out), but only after the athlete ticks the sign-up consent box or taps "I understand" on the one-time screen (`profile.consentAt`; `staffSend` refuses without it). Check-ins, meals, water, lifts and conditioning go to the staff sheet. The cycle tracker, notes and photos never leave the phone.
 - **Meal recommendations:** Nutrition tab columns Meal 1-3 name app meals (exact names). Recommended meals get a ★ badge and sort first in the meal plan and Meal prep (`isRec`, `mealFind`, `recMealsHTML`). The dropdown source is Lists!C (a static list): **whenever you add or rename a meal in MEALBANK or MEALPREP, rewrite Lists!C** so the dropdown matches.
+- **Learn tab:** Ask the RD (ranked search over FAQ + LESSONS, `askSearch`; unanswered questions go to the staff sheet's Questions tab via `staffSend({t:"ask"})`), Library (lesson tracks + All Q&A), Tools. The old "My path" is gone. To grow the library, add entries to FAQ with a source in `s`.
+- **Oral allergy syndrome:** `profile.oas` (raw-safe fruit/veg, never, milks; phone only). `oasCheck` filters MEALBANK by ingredient keys, `oasPrep` adds swaps to MEALPREP. Defaults (`OAS_DEF`) are one athlete's list.
 - **Translations:** `addT([[en, ja, pt]])` takes exact, trimmed keys. Write any JS generated from Python with `json.dumps(ensure_ascii=False)`.
 
 ## Open items

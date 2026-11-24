@@ -1,11 +1,11 @@
 /**
- * Orbit Performance: sign-up roster + opt-in staff data.
+ * Orbit Performance: sign-up roster + staff data (shared automatically after athlete consent).
  *
  * Paste into the PUBLIC announcements sheet: Extensions > Apps Script, replace everything, Save.
  * Then Deploy > Manage deployments > pencil > Version: New version > Deploy (the /exec URL stays the same).
  *
  * Roster rows go to the "Roster" tab of this (public) sheet: name, position, jersey, language only.
- * Recovery check-ins, lifts, conditioning, meals and hydration that an athlete CHOOSES to share go to a separate PRIVATE sheet:
+ * Recovery check-ins, lifts, conditioning, meals, hydration and questions for the dietitian go to a separate PRIVATE sheet:
  *   1. Create a new Google Sheet (e.g. "Orbit staff data"). Keep General access = Restricted.
  *      Share it only with the staff who should see it.
  *   2. Paste its ID (the long part between /d/ and /edit) or its full link into STAFF_SHEET_ID below.
@@ -19,7 +19,8 @@ const STAFF_TABS = {
   Lifts: ['Date', 'Code', 'Name', 'Position', 'Exercise', 'Weight', 'Unit', 'Reps', 'Est. 1RM', 'Logged', 'Set ID'],
   Conditioning: ['Date', 'Code', 'Name', 'Position', 'Session', 'RPE (1-10)', 'Minutes', 'Load (RPE x min)', 'Logged', 'Key'],
   Nutrition: ['Date', 'Code', 'Name', 'Position', 'Meal', 'Time', 'What they ate', 'From meal plan', 'Logged', 'Entry ID'],
-  Hydration: ['Date', 'Code', 'Name', 'Position', 'Bottles', 'Bottle (oz)', 'Total (oz)', 'Goal (oz)', 'Updated', 'Key']
+  Hydration: ['Date', 'Code', 'Name', 'Position', 'Bottles', 'Bottle (oz)', 'Total (oz)', 'Goal (oz)', 'Updated', 'Key'],
+  Questions: ['Date', 'Code', 'Name', 'Position', 'Question', 'Asked', 'Key']
 };
 
 function doPost(e) {
@@ -55,6 +56,9 @@ function doPost(e) {
       upsert(tab(ss, 'Nutrition'), row, 9);
     } else if (t === 'mealdel') {
       remove(tab(ss, 'Nutrition'), clean(d.entryId, 40), 9);
+    } else if (t === 'ask') {
+      const row = [date].concat(who, [clean(d.q, 500), now, id + '|' + clean(d.key, 20)]);
+      upsert(tab(ss, 'Questions'), row, 6);
     } else if (t === 'water') {
       const row = [date].concat(who, [num(d.bottles), num(d.size), num(d.oz), num(d.goal), now, id + '|' + date]);
       upsert(tab(ss, 'Hydration'), row, 9);
