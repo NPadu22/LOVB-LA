@@ -1079,6 +1079,7 @@ addT([["Why a strong taste works: a nervous-system reset", "強い味が効く�
 addT([["Cramp? 3 steps", "つったら?3ステップ", "Cãibra? 3 passos"], ["Stop", "止まる", "Pare"], ["Don't play through it", "無理に続けない", "Não continue jogando"], ["Stretch", "ストレッチ", "Alongue"], ["Gently, 20–30 s", "ゆっくり20〜30秒", "Devagar, 20–30 s"], ["Strong taste", "強い味", "Sabor forte"], ["Resets the nerve", "神経をリセット", "Reseta o nervo"], ["Step 3 options · evidence", "ステップ3の選択肢・根拠", "Opções do passo 3 · evidência"], ["Prevent", "予防", "Prevenir"], ["Skip", "効果なし", "Evite"], ["See Emma now", "すぐにエマへ", "Procure a Emma agora"]]);
 addT([["My list", "マイリスト", "Minha lista"], ["Add to my list", "マイリストに追加", "Adicionar à minha lista"], ["Add an item, e.g. paper towels", "アイテムを追加(例:キッチンペーパー)", "Adicione um item, ex.: papel-toalha"], ["Add", "追加", "Adicionar"], ["To buy", "買うもの", "Para comprar"], ["left", "残り", "faltam"], ["All done. Nice shop.", "全部そろいました。", "Tudo pronto. Boa compra."], ["In the cart", "カートに入れた", "No carrinho"], ["Copy list", "リストをコピー", "Copiar lista"], ["Remove checked", "チェック済みを削除", "Remover marcados"], ["Clear all", "すべて消去", "Limpar tudo"], ["Your list is empty", "リストは空です", "Sua lista está vazia"], ["Open Meal prep or the weekly grocery list in Meal plan and tap Add to my list, or type items above.", "作り置き、または食事プランの週間買い物リストを開いて「マイリストに追加」をタップするか、上に入力してください。", "Abra Marmitas ou a lista semanal do Plano alimentar e toque em Adicionar à minha lista, ou digite itens acima."], ["Go to Meal prep", "作り置きへ", "Ir para Marmitas"], ["Edit item", "アイテムを編集", "Editar item"], ["Clear your whole grocery list?", "買い物リストをすべて消去しますか?", "Limpar toda a lista de compras?"], ["One running list for the week. Add meal prep or meal plan lists with one tap, then add anything else you need.", "1週間分のまとめリスト。作り置きや食事プランのリストをワンタップで追加し、必要なものを足しましょう。", "Uma lista única para a semana. Adicione as listas de marmitas ou do plano com um toque e inclua o que mais precisar."]]);
 addT([["Tomorrow", "明日", "Amanhã"], ["TOMORROW", "明日", "AMANHÃ"], ["TMRW", "明日", "AMANHÃ"], ["Tomorrow is a…", "明日は…", "Amanhã é…"]]);
+addT([["Grocery list · 7 days from tomorrow", "買い物リスト・明日から7日間", "Lista de compras · 7 dias a partir de amanhã"]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -2731,10 +2732,12 @@ function loggedOn(iso,text){return jGet(iso).entries.some(e=>e.what===text)}
 /* Match days shop for the game-day pattern: breakfast, lunch, pre-match meal, snack, recovery, late dinner */
 function matchSlots(){return [["breakfast",0],["main",1],["main",2],["pre",3],["recovery",4],["main",5]]}
 function weekDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i))}
+/* Grocery list covers the 7 days starting tomorrow, matching the meal plan that opens on tomorrow */
+function groceryDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i+1))}
 function groceryList(){
   const counts={},meals=[];
   const away=awayInfo();
-  weekDays().forEach(iso=>{if(away[iso])return;const type=planType(iso);
+  groceryDays().forEach(iso=>{if(away[iso])return;const type=planType(iso);
     const slots=type==="match"?matchSlots().map(([bank,i])=>({bank,i})):dayTemplate(type,PLANPREF.pt).map((x,i)=>({bank:x.bank,i})).filter(x=>x.bank!=="during");
     slots.forEach(({bank,i})=>{const p=pickFor(type==="match"?"match":type,i,bank,iso);if(!p)return;meals.push(p.n);(p.g||[]).forEach(k=>{counts[k]=(counts[k]||0)+1})})});
   const by={};Object.entries(counts).forEach(([k,c])=>{const [label,sec]=ING[k]||[k,"Pantry & snacks"];(by[sec]=by[sec]||[]).push({k,label,c})});
@@ -2766,14 +2769,14 @@ function glistClick(b){const ds=b.dataset;
   if(ds.glcopy){const txt=document.getElementById("gl-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Grocery list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
   if(ds.segjump){fuelSeg=ds.segjump;render();scrollTo({top:0});return true}
   if(ds.glistmp){const P=mpPlan();const n=glistAdd(P.list,"Meal prep · "+P.sel.map(i=>P.S.r[i].n).join(", "));toast(n?`Added ${n} item${n>1?"s":""} to My list`:"Already on My list");render();return true}
-  if(ds.glistplan){const {by}=groceryList();const items=ING_SECTIONS.filter(sx=>by[sx]).flatMap(sx=>by[sx].map(x=>x.label));const n=glistAdd(items,"Meal plan · week of "+fmtDate(weekDays()[0]));toast(n?`Added ${n} item${n>1?"s":""} to My list`:"Already on My list");render();return true}
+  if(ds.glistplan){const {by}=groceryList();const items=ING_SECTIONS.filter(sx=>by[sx]).flatMap(sx=>by[sx].map(x=>x.label));const n=glistAdd(items,"Meal plan · week of "+fmtDate(groceryDays()[0]));toast(n?`Added ${n} item${n>1?"s":""} to My list`:"Already on My list");render();return true}
   return false}
 function groceryHTML(){
-  const {by,meals}=groceryList(),wk=weekDays()[0];
+  const {by,meals}=groceryList(),wk=groceryDays()[0];
   const got=PLANPREF.got[wk]||[];
   const kitL=Object.keys(awayInfo()).length?roadKitFor().map(x=>"- "+x.n):[];
   const text=["Grocery list · LA Orbit · week of "+fmtDate(wk),...ING_SECTIONS.filter(s=>by[s]).flatMap(s=>["",s.toUpperCase(),...by[s].map(x=>"- "+x.label+(x.c>1?" (×"+x.c+")":""))]),...(kitL.length?["","ROAD KIT",...kitL]:[])].join("\n");
-  return `<div class="card stack" id="grocery"><div class="sec-head"><h3>Grocery list · next 7 days</h3><span class="stamp">${meals} meals & snacks</span></div>
+  return `<div class="card stack" id="grocery"><div class="sec-head"><h3>Grocery list · 7 days from tomorrow</h3><span class="stamp">${meals} meals & snacks</span></div>
    <p class="muted" style="font-size:.86rem">Built from the meals planned for the week. Meals repeat every two days, so cook once and eat the leftovers. "×3" means it shows up in three meals. Tick things off as you shop.</p>
    ${ING_SECTIONS.filter(s=>by[s]).map(s=>`<div class="stack" style="gap:6px"><span class="eyebrow">${s}</span><div class="choice mini">${by[s].map(x=>`<button type="button" data-groc="${x.k}" aria-pressed="${got.includes(x.k)}">${esc(x.label)}${x.c>1?` ×${x.c}`:""}</button>`).join("")}</div></div>`).join("")}
    ${(()=>{const aw=Object.values(awayInfo());if(!aw.length)return "";const kit=roadKitFor(),trip=aw.find(x=>x.kind==="road")||aw[0];
@@ -2783,7 +2786,7 @@ function groceryHTML(){
    <p class="stamp">Staples that last (rice, oats, beans, frozen vegetables, nut-free granola) can be bought in bulk. Check labels against your allergies.</p></div>`;
 }
 /* Road trips inside the planning week: the travel day before a road match and the match day itself are eaten away from home */
-function awayInfo(){const wk=weekDays(),map={};
+function awayInfo(){const wk=[...weekDays(),jShift(isoToday(),7)],map={};
   SCHEDULE.filter(m=>!m.home).forEach(m=>{const tr=jShift(m.d,-1);if(wk.includes(tr)&&!map[tr])map[tr]={kind:"travel",m};if(wk.includes(m.d))map[m.d]={kind:"road",m}});return map}
 const ROADKIT=[{n:"Oatmeal cups",a:[]},{n:"Bars you've tested",a:[]},{n:"Pretzels",a:["Wheat/Gluten"]},{n:"Dried fruit",a:[]},{n:"Applesauce pouches",a:[]},{n:"Rice cakes",a:[]},
  {n:"Chicken pouches",a:[]},{n:"Tuna pouches",a:["Fish"]},{n:"Shelf-stable milk boxes",a:["Dairy"]},{n:"Shelf-stable soy milk boxes",a:["Soy"]},{n:"Nut butter packets",a:["Peanut","Tree nut"]},
@@ -2860,7 +2863,7 @@ function planClick(b){
   if(ds.mpgot){const L=MPGOT[mpStore]||[];MPGOT[mpStore]=L.includes(ds.mpgot)?L.filter(x=>x!==ds.mpgot):[...L,ds.mpgot];store.set("mealprep",MPGOT);b.setAttribute("aria-pressed",MPGOT[mpStore].includes(ds.mpgot));return true}
   if(ds.mpreset){MPB.got=[];mpbSave();render();return true}
   if(ds.copymp){const txt=document.getElementById("mp-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Meal prep list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
-  if(ds.groc){const wk=weekDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
+  if(ds.groc){const wk=groceryDays()[0],L=PLANPREF.got[wk]||[];PLANPREF.got={[wk]:L.includes(ds.groc)?L.filter(x=>x!==ds.groc):[...L,ds.groc]};savePlan();b.setAttribute("aria-pressed",PLANPREF.got[wk].includes(ds.groc));return true}
   if(ds.prep){showPrep=!showPrep;render();if(showPrep)setTimeout(()=>{const g=document.getElementById("prep");if(g)g.scrollIntoView({behavior:"smooth",block:"start"})},50);return true}
   if(ds.grocreset){PLANPREF.got={};savePlan();render();return true}
   if(ds.copygroc){const txt=document.getElementById("groc-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Grocery list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
