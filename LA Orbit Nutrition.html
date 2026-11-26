@@ -138,6 +138,17 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .cramp .cps ul{margin:0;padding-left:16px;font-size:.8rem;display:grid;gap:2px}
 .cramp .cflag{background:color-mix(in srgb,var(--stop) 14%,var(--surface));border-left:4px solid var(--stop);border-radius:10px;padding:10px 12px;font-size:.84rem}
 .cramp .cflag b{color:var(--stop)}
+.glist{list-style:none;margin:0;padding:2px 12px}
+.gl{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.gl:last-child{border-bottom:0}
+.gl-chk{all:unset;cursor:pointer;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--on-accent)}
+.gl-chk[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+.gl-t{display:grid;gap:1px;min-width:0}
+.gl-t b{font-weight:600;font-size:.94rem;overflow-wrap:anywhere}
+.gl-t span{font-size:.72rem;color:var(--muted)}
+.gl.done .gl-t b{text-decoration:line-through;color:var(--muted)}
+.gl-ic{all:unset;cursor:pointer;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
+.gl-ic:focus-visible,.gl-chk:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1066,6 +1077,7 @@ addT([["‹ Back to Learn", "‹ Learnに戻る", "‹ Voltar para Aprender"], [
 addT([["Cramp guide", "足のつり対策ガイド", "Guia de cãibras"], ["Muscle cramp? Do this", "筋肉がつったら", "Cãibra? Faça isto"], ["In the moment", "その場で", "Na hora"], ["Lower your risk", "リスクを下げる", "Reduza o risco"], ["Little or no evidence", "根拠がほとんどない", "Pouca ou nenhuma evidência"], ["See Emma right away", "すぐにエマへ", "Procure a Emma na hora"]]);
 addT([["Why a strong taste works: a nervous-system reset", "強い味が効く理由:神経のリセット", "Por que um sabor forte funciona: um reset do sistema nervoso"]]);
 addT([["Cramp? 3 steps", "つったら?3ステップ", "Cãibra? 3 passos"], ["Stop", "止まる", "Pare"], ["Don't play through it", "無理に続けない", "Não continue jogando"], ["Stretch", "ストレッチ", "Alongue"], ["Gently, 20–30 s", "ゆっくり20〜30秒", "Devagar, 20–30 s"], ["Strong taste", "強い味", "Sabor forte"], ["Resets the nerve", "神経をリセット", "Reseta o nervo"], ["Step 3 options · evidence", "ステップ3の選択肢・根拠", "Opções do passo 3 · evidência"], ["Prevent", "予防", "Prevenir"], ["Skip", "効果なし", "Evite"], ["See Emma now", "すぐにエマへ", "Procure a Emma agora"]]);
+addT([["My list", "マイリスト", "Minha lista"], ["Add to my list", "マイリストに追加", "Adicionar à minha lista"], ["Add an item, e.g. paper towels", "アイテムを追加(例:キッチンペーパー)", "Adicione um item, ex.: papel-toalha"], ["Add", "追加", "Adicionar"], ["To buy", "買うもの", "Para comprar"], ["left", "残り", "faltam"], ["All done. Nice shop.", "全部そろいました。", "Tudo pronto. Boa compra."], ["In the cart", "カートに入れた", "No carrinho"], ["Copy list", "リストをコピー", "Copiar lista"], ["Remove checked", "チェック済みを削除", "Remover marcados"], ["Clear all", "すべて消去", "Limpar tudo"], ["Your list is empty", "リストは空です", "Sua lista está vazia"], ["Open Meal prep or the weekly grocery list in Meal plan and tap Add to my list, or type items above.", "作り置き、または食事プランの週間買い物リストを開いて「マイリストに追加」をタップするか、上に入力してください。", "Abra Marmitas ou a lista semanal do Plano alimentar e toque em Adicionar à minha lista, ou digite itens acima."], ["Go to Meal prep", "作り置きへ", "Ir para Marmitas"], ["Edit item", "アイテムを編集", "Editar item"], ["Clear your whole grocery list?", "買い物リストをすべて消去しますか?", "Limpar toda a lista de compras?"], ["One running list for the week. Add meal prep or meal plan lists with one tap, then add anything else you need.", "1週間分のまとめリスト。作り置きや食事プランのリストをワンタップで追加し、必要なものを足しましょう。", "Uma lista única para a semana. Adicione as listas de marmitas ou do plano com um toque e inclua o que mais precisar."]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -2728,6 +2740,33 @@ function groceryList(){
   ING_SECTIONS.forEach(s=>by[s]&&by[s].sort((a,b)=>a.label.localeCompare(b.label)));
   return {by,meals:meals.length};
 }
+/* My grocery list: one running list on this phone. Meal prep and meal plan lists add to it; athletes add their own items. */
+let GLIST=store.get("glist",[]);
+function glistSave(){store.set("glist",GLIST)}
+function glistAdd(items,src){const have=new Set(GLIST.filter(x=>!x.done).map(x=>x.t.toLowerCase()));let n=0;
+  items.map(t=>String(t).trim()).filter(Boolean).forEach(t=>{if(have.has(t.toLowerCase()))return;have.add(t.toLowerCase());GLIST.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t,src,done:false});n++});glistSave();return n}
+function glistHTML(){const open=GLIST.filter(x=>!x.done),done=GLIST.filter(x=>x.done);
+  const row=x=>`<li class="gl ${x.done?"done":""}"><button class="gl-chk" data-gltoggle="${x.id}" aria-pressed="${x.done}" aria-label="${x.done?"Uncheck":"Check off"} ${esc(x.t)}">${x.done?"✓":""}</button><span class="gl-t"><b>${esc(x.t)}</b>${x.src?`<span>${esc(x.src)}</span>`:""}</span><button class="gl-ic" data-gledit="${x.id}" aria-label="Edit ${esc(x.t)}">✎</button><button class="gl-ic" data-gldel="${x.id}" aria-label="Delete ${esc(x.t)}">✕</button></li>`;
+  const text=["My grocery list · LA Orbit",...open.map(x=>"- "+x.t)].join("\n");
+  return `<p class="muted">One running list for the week. Add meal prep or meal plan lists with one tap, then add anything else you need.</p>
+   <form id="glist-form" class="row" style="gap:8px"><input id="gl-new" placeholder="${tr("Add an item, e.g. paper towels")}" aria-label="Add a grocery item" style="flex:1" autocomplete="off"><button class="btn sm" type="submit">${tr("Add")}</button></form>
+   ${GLIST.length?`<section><div class="sec-head"><h2>${tr("To buy")}</h2><span class="stamp">${open.length} ${tr("left")}</span></div>
+    ${open.length?`<ul class="glist card">${open.map(row).join("")}</ul>`:`<p class="muted">${tr("All done. Nice shop.")}</p>`}</section>
+    ${done.length?`<section><div class="sec-head"><h2>${tr("In the cart")}</h2><span class="stamp">${done.length}</span></div><ul class="glist card">${done.map(row).join("")}</ul></section>`:""}
+    <div class="copybox" id="gl-copy" style="display:none">${esc(text)}</div>
+    <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-glcopy="1">${tr("Copy list")}</button>${done.length?`<button class="btn ghost sm" data-glcleardone="1">${tr("Remove checked")}</button>`:""}<button class="btn ghost sm" data-glclear="1">${tr("Clear all")}</button></div>`
+   :`<div class="card stack"><b>${tr("Your list is empty")}</b><p class="muted" style="font-size:.88rem">${tr("Open Meal prep or the weekly grocery list in Meal plan and tap Add to my list, or type items above.")}</p><button class="btn ghost sm" style="align-self:flex-start" data-segjump="mealprep">${tr("Go to Meal prep")}</button></div>`}`}
+function glistClick(b){const ds=b.dataset;
+  if(ds.gltoggle){const x=GLIST.find(i=>i.id===ds.gltoggle);if(x){x.done=!x.done;glistSave();render()}return true}
+  if(ds.gldel){GLIST=GLIST.filter(i=>i.id!==ds.gldel);glistSave();render();return true}
+  if(ds.gledit){const x=GLIST.find(i=>i.id===ds.gledit);if(!x)return true;const v=prompt(tr("Edit item"),x.t);if(v!=null){const t=v.trim();if(t){x.t=t}else GLIST=GLIST.filter(i=>i.id!==x.id);glistSave();render()}return true}
+  if(ds.glcleardone){GLIST=GLIST.filter(i=>!i.done);glistSave();render();return true}
+  if(ds.glclear){if(confirm(tr("Clear your whole grocery list?"))){GLIST=[];glistSave();render()}return true}
+  if(ds.glcopy){const txt=document.getElementById("gl-copy").textContent;try{navigator.clipboard.writeText(txt).then(()=>toast("Grocery list copied"),()=>toast("Couldn't copy on this phone"))}catch(e){toast("Couldn't copy on this phone")}return true}
+  if(ds.segjump){fuelSeg=ds.segjump;render();scrollTo({top:0});return true}
+  if(ds.glistmp){const P=mpPlan();const n=glistAdd(P.list,"Meal prep · "+P.sel.map(i=>P.S.r[i].n).join(", "));toast(n?`Added ${n} item${n>1?"s":""} to My list`:"Already on My list");render();return true}
+  if(ds.glistplan){const {by}=groceryList();const items=ING_SECTIONS.filter(sx=>by[sx]).flatMap(sx=>by[sx].map(x=>x.label));const n=glistAdd(items,"Meal plan · week of "+fmtDate(weekDays()[0]));toast(n?`Added ${n} item${n>1?"s":""} to My list`:"Already on My list");render();return true}
+  return false}
 function groceryHTML(){
   const {by,meals}=groceryList(),wk=weekDays()[0];
   const got=PLANPREF.got[wk]||[];
@@ -2739,7 +2778,7 @@ function groceryHTML(){
    ${(()=>{const aw=Object.values(awayInfo());if(!aw.length)return "";const kit=roadKitFor(),trip=aw.find(x=>x.kind==="road")||aw[0];
      return `<div class="stack" style="gap:6px"><span class="eyebrow">Road kit · ${esc(trip.m.city.split(",")[0])} trip</span><p class="stamp">Travel and road match days are left out of the home list. Pack these instead.</p><div class="choice mini">${kit.map(x=>`<button type="button" data-groc="kit:${esc(x.n)}" aria-pressed="${got.includes("kit:"+x.n)}">${esc(x.n)}</button>`).join("")}</div></div>`})()}
    <div class="copybox" id="groc-copy" style="display:none">${esc(text)}</div>
-   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copygroc="1">Copy list</button><button class="btn ghost sm" data-grocreset="1">Clear ticks</button></div>
+   <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-glistplan="1">${tr("Add to my list")}</button><button class="btn ghost sm" data-copygroc="1">Copy list</button><button class="btn ghost sm" data-grocreset="1">Clear ticks</button></div>
    <p class="stamp">Staples that last (rice, oats, beans, frozen vegetables, nut-free granola) can be bought in bulk. Check labels against your allergies.</p></div>`;
 }
 /* Road trips inside the planning week: the travel day before a road match and the match day itself are eaten away from home */
@@ -2880,7 +2919,7 @@ function mealPrepHTML(){const P=mpPlan(),S=P.S,al=myAllergens(),got=MPB.got||[];
     <section id="mp-groc"><div class="sec-head"><h2>Grocery list</h2><span class="stamp">${got.filter(x=>P.list.includes(x)).length}/${P.list.length}</span></div>
      <div class="card stack"><div class="choice mini">${P.list.map(x=>`<button type="button" data-mpbgot="${esc(x)}" aria-pressed="${got.includes(x)}">${esc(x)}</button>`).join("")}</div>
       <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
-      <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-copymp="1">Copy grocery list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-glistmp="1">${tr("Add to my list")}</button><button class="btn ghost sm" data-copymp="1">Copy grocery list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
       <p class="stamp">Brands vary: check labels for your allergens.</p></div></section>
     <section><h2>Cook it</h2><div class="stack" style="gap:10px">${P.sel.map((i,j)=>{const r=S.r[i],b=P.batches[j];if(!b)return "";return `<div class="card stack"><div class="meal-top"><h3>${esc(r.n)}</h3><span class="chip accent">×${b} · ${b*P.per} portions${P.per===5?" (split into 5)":""}</span></div><p style="font-size:.9rem">${esc(r.p)}</p>${r.tip?`<p class="muted" style="font-size:.86rem">${esc(r.tip)}</p>`:""}</div>`}).join("")}</div></section>`
    :`<div class="card muted">Choose at least one meal to build your plan.</div>`}
@@ -2896,9 +2935,9 @@ function mpClick(b){const ds=b.dataset;
 
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["plan","Meal plan"],["mealprep","Meal prep"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
+  const segs=[["plan","Meal plan"],["mealprep","Meal prep"],["glist","My list"+(GLIST.filter(x=>!x.done).length?` (${GLIST.filter(x=>!x.done).length})`:"")],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
   let body="";
-  if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="mealprep"){body=mealPrepHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
+  if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="mealprep"){body=mealPrepHTML()}else if(fuelSeg==="glist"){body=glistHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
   }else if(fuelSeg==="travel"){
     const away=SCHEDULE.filter(x=>!x.home&&x.d>=isoToday()).slice(0,3);
@@ -3170,6 +3209,7 @@ document.addEventListener("click",e=>{
   if(featClick(b))return;
   if(mpClick(b))return;
   if(scClick(b))return;
+  if(glistClick(b))return;
   if(recClick(b))return;
   if(planClick(b))return;
   if(ds.patch){const p=PATCHES.find(x=>x.k===ds.patch),on=earnedPatches().has(p.k);toast(on?`${p.n}: ${p.lore}`:`Locked. ${p.how}.`);return}
@@ -3251,6 +3291,7 @@ document.addEventListener("submit",e=>{
     if(prevAllergy!==JSON.stringify([profile.allergies,profile.other]))profile.ack=false;if(profile.oas&&!prevOas)profile.ack=false;
     const isNew=!draft.editing;if(isNew)profile.welcomed=false;else profile.welcomed=true;
     store.set("profile",profile);store.set("roster_pending",true);rosterSync();draft={};tab=isNew?"welcome":"home";render();scrollTo({top:0});if(isNew)welcomeAnim();else toast("Profile saved");return}
+  if(f.id==="glist-form"){const i=$("#gl-new"),v=(i.value||"").trim();if(!v){i.focus();return}glistAdd(v.split(/\s*[,;]\s*|\n/),"Added by you");render();const n=$("#gl-new");if(n)n.focus();return}
   if(f.id==="rem-form"){remSync();const r=remDraft;
     if(!r.title.trim()){toast("Name the reminder");return}
     if(!r.date||!r.time){toast("Pick a date and time");return}
