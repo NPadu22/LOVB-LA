@@ -132,6 +132,29 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .ev3{background:color-mix(in srgb,var(--ok) 22%,transparent)}
 .ev2{background:color-mix(in srgb,var(--warn,#FFC857) 30%,transparent)}
 .ev1{background:color-mix(in srgb,var(--muted) 18%,transparent)}
+.cramp .csteps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cramp .csteps>div{position:relative;background:var(--surface-2);border-radius:14px;padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.cramp .cnum{position:absolute;top:8px;left:10px;font:800 .8rem var(--mono);color:var(--accent-text)}
+.cramp .csteps svg{width:40px;height:40px;fill:var(--accent);stroke:var(--accent)}
+.cramp .csteps strong{font-size:.95rem}
+.cramp .csteps span{font-size:.74rem;color:var(--muted);line-height:1.25}
+.cramp .ctaste{border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:10px}
+.cramp .ctaste p{font-size:.82rem;color:var(--muted)}
+.cramp .cgrid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cramp .cgrid2>div{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;background:var(--surface-2);border-radius:10px;padding:8px 10px}
+.cramp .cgrid2 b{font-size:.88rem}
+.cramp .cgrid2 span:not(.cdots){grid-column:1;font-size:.72rem;color:var(--muted)}
+.cramp .cdots{grid-column:2;grid-row:1/span 2;display:flex;gap:3px}
+.cramp .cdots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--muted) 25%,transparent)}
+.cramp .cdots i.on{background:var(--accent)}
+.cramp .cps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cramp .cps>div{border-radius:12px;padding:10px 12px}
+.cramp .cpos{background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.cramp .cneg{background:color-mix(in srgb,var(--stop) 12%,transparent)}
+.cramp .cps h4{font-size:.85rem;margin:0 0 4px}
+.cramp .cps ul{margin:0;padding-left:16px;font-size:.8rem;display:grid;gap:2px}
+.cramp .cflag{background:color-mix(in srgb,var(--stop) 14%,var(--surface));border-left:4px solid var(--stop);border-radius:10px;padding:10px 12px;font-size:.84rem}
+.cramp .cflag b{color:var(--stop)}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1059,6 +1082,7 @@ addT([["Ask the virtual RD", "バーチャル管理栄養士に質問", "Pergunt
 addT([["‹ Back to Learn", "‹ Learnに戻る", "‹ Voltar para Aprender"], ["Search any nutrition question for a sourced answer", "栄養の質問を検索して出典付きの回答を見る", "Pesquise qualquer dúvida de nutrição e veja a resposta com fonte"]]);
 addT([["Cramp guide", "足のつり対策ガイド", "Guia de cãibras"], ["Muscle cramp? Do this", "筋肉がつったら", "Cãibra? Faça isto"], ["In the moment", "その場で", "Na hora"], ["Lower your risk", "リスクを下げる", "Reduza o risco"], ["Little or no evidence", "根拠がほとんどない", "Pouca ou nenhuma evidência"], ["See Emma right away", "すぐにエマへ", "Procure a Emma na hora"]]);
 addT([["Why a strong taste works: a nervous-system reset", "強い味が効く理由:神経のリセット", "Por que um sabor forte funciona: um reset do sistema nervoso"]]);
+addT([["Cramp? 3 steps", "つったら?3ステップ", "Cãibra? 3 passos"], ["Stop", "止まる", "Pare"], ["Don't play through it", "無理に続けない", "Não continue jogando"], ["Stretch", "ストレッチ", "Alongue"], ["Gently, 20–30 s", "ゆっくり20〜30秒", "Devagar, 20–30 s"], ["Strong taste", "強い味", "Sabor forte"], ["Resets the nerve", "神経をリセット", "Reseta o nervo"], ["Step 3 options · evidence", "ステップ3の選択肢・根拠", "Opções do passo 3 · evidência"], ["Prevent", "予防", "Prevenir"], ["Skip", "効果なし", "Evite"], ["See Emma now", "すぐにエマへ", "Procure a Emma agora"]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -1816,21 +1840,21 @@ const CAFF={dose:200,taken:18,peak:19,half:5,from:17,to:31};
 function caffMg(t){const c=CAFF;if(t<c.taken)return 0;if(t<c.peak)return c.dose*(t-c.taken)/(c.peak-c.taken);return c.dose*Math.pow(.5,(t-c.peak)/c.half)}
 function hourLabel(t){const h=((Math.round(t*2)/2)%24+24)%24,hh=Math.floor(h),m=h%1?":30":"";return (hh%12||12)+m+(hh<12?" am":" pm")}
 function figHTML(id){
-  if(id==="cramp")return `<figure class="card fig" style="margin:0"><span class="fig-title">Muscle cramp? Do this</span>
-   <span class="eyebrow">In the moment</span>
-   <ol class="tl">${[["STOP","Pause the drill","Playing through a locked muscle risks a strain."],["0–30 SEC","Stretch it gently","Calf: straighten the knee, pull toes toward you. Hamstring: straight leg, hinge forward. Quad: heel to glute. Hold 20–30 seconds."],["IF IT RETURNS","Massage, then stretch again","Firm pressure on the muscle helps it let go."],["OPTIONAL","A strong taste: pickle juice, mustard, wasabi or spicy","A sip or a packet. It works through your nerves in seconds, not through hydration (see below)."],["AFTER","Sports drink and a snack","Long, hot or salty-sweat sessions: replace fluid, sodium and carbs."]].map(([t,h,d])=>`<li><span class="t">${t}</span><div class="b"><b>${h}</b><span>${d}</span></div></li>`).join("")}</ol>
-   <div class="nerve"><span class="eyebrow">Why a strong taste works: a nervous-system reset</span>
-    <p>A cramp is a nerve problem as much as a muscle one: the signal telling the muscle to contract gets stuck "on." Sharp sour, pungent or spicy tastes fire sensors in your mouth and throat (TRP channels). That burst of signals travels to your brainstem and spinal cord and quiets the overactive nerves driving the cramp, so the muscle lets go. It happens within about a minute, far too fast for anything to be absorbed into your blood.</p>
-    <table class="evid"><tr><th>Option</th><th>What triggers the nerves</th><th>Evidence</th></tr>
-     <tr><td>Pickle juice, 2–3 oz</td><td>Vinegar (acid)</td><td><b class="ev ev3">Lab studies</b></td></tr>
-     <tr><td>Spicy (capsaicin) or ginger-cinnamon shots</td><td>Heat sensors (TRPV1)</td><td><b class="ev ev2">Small trials</b></td></tr>
-     <tr><td>Mustard, 1 packet</td><td>Pungent compound (TRPA1)</td><td><b class="ev ev1">Theory only</b></td></tr>
-     <tr><td>Wasabi, a small dab</td><td>Same compound as mustard</td><td><b class="ev ev1">Theory only</b></td></tr></table>
-    <p class="stamp">Try it in practice first: sour and spicy can upset some stomachs. It helps once a cramp starts; it doesn't prevent cramps.</p></div>
-   <div class="bb"><div><h4><span class="ic" style="background:var(--ok)">+</span>Lower your risk</h4><ul><li>Fuel before long sessions: tired, under-fueled muscles cramp more</li><li>Ramp up training gradually; preseason and late in long matches are peak times</li><li>Drink to your plan; add sodium if you're a salty sweater (white streaks)</li><li>Sleep and recover between two-a-days</li></ul></div>
-    <div><h4><span class="ic" style="background:var(--stop)">−</span>Little or no evidence</h4><ul><li>Bananas or potassium for cramps</li><li>Magnesium pills (no proven benefit)</li><li>Drinking extra plain water on its own</li><li>Quinine or tonic water: not safe for cramps</li></ul></div></div>
-   <div class="stopbox"><h3>See Emma right away</h3><p style="font-size:.88rem">Muscles that feel weak or limp rather than locked, collapsing, severe pain or swelling, dark cola-colored urine, confusion or vomiting, or cramps that keep coming back. Period cramps are different: see the Cycle page.</p></div>
-   <p class="src">Maughan & Shirreffs, Sports Med 2019 (cramping causes and solutions); Schwellnus et al., Br J Sports Med 2011 (fatigue and cramps); Miller et al., Med Sci Sports Exerc 2010 (pickle juice); Craighead et al., Muscle Nerve 2017 (TRP agonist drink and cramps); Garrison et al., Cochrane Review 2020 (magnesium); FDA 2010 quinine warning</p></figure>`;
+  if(id==="cramp"){const dots=n=>`<span class="cdots" aria-label="${["","theory only","small trials","lab studies"][n]}">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+   return `<figure class="card fig cramp" style="margin:0"><span class="fig-title">Cramp? 3 steps</span>
+   <div class="csteps">
+    <div><b class="cnum">1</b><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="10" width="8" height="28" rx="3"/><rect x="28" y="10" width="8" height="28" rx="3"/></svg><strong>Stop</strong><span>Don't play through it</span></div>
+    <div><b class="cnum">2</b><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34h22l10-14" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="14" r="4"/></svg><strong>Stretch</strong><span>Gently, 20–30 s</span></div>
+    <div><b class="cnum">3</b><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M18 8h12v6l4 6v18a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V20l4-6z"/></svg><strong>Strong taste</strong><span>Resets the nerve</span></div>
+   </div>
+   <div class="ctaste"><span class="eyebrow">Step 3 options · evidence</span>
+    <div class="cgrid2">${[["Pickle juice","2–3 oz",3],["Spicy shot","capsaicin, ginger",2],["Mustard","1 packet",1],["Wasabi","small dab",1]].map(([n,d,e])=>`<div><b>${n}</b><span>${d}</span>${dots(e)}</div>`).join("")}</div>
+    <p>Sour, spicy and pungent tastes fire nerves in your mouth that tell the spinal cord to release the cramp. Works in about a minute, so it's not hydration.</p></div>
+   <div class="cps"><div class="cpos"><h4>Prevent</h4><ul><li>Fuel before long sessions</li><li>Build load gradually</li><li>Salty sweater? Add sodium</li></ul></div>
+    <div class="cneg"><h4>Skip</h4><ul><li>Bananas for cramps</li><li>Magnesium pills</li><li>Quinine or tonic water</li></ul></div></div>
+   <div class="cflag"><b>See Emma now</b> if muscles feel weak or limp (not locked), you collapse, or pain, swelling or dark urine follow.</div>
+   <p class="stamp">Dots: ●●● lab studies · ●● small trials · ● theory only. Try sour or spicy in practice first.</p>
+   <p class="src">Maughan & Shirreffs, Sports Med 2019 (cramping causes and solutions); Schwellnus et al., Br J Sports Med 2011 (fatigue and cramps); Miller et al., Med Sci Sports Exerc 2010 (pickle juice); Craighead et al., Muscle Nerve 2017 (TRP agonist drink and cramps); Garrison et al., Cochrane Review 2020 (magnesium); FDA 2010 quinine warning</p></figure>`}
   if(id==="recovery")return `<figure class="card fig" style="margin:0"><span class="fig-title">Match night, in order</span>
    <ol class="tl">${[["LAST POINT","Pack it before you leave","Recovery drink or shake, a bar or banana, a full bottle."],["WITHIN 1 HR","Protein + carbs + fluid","About 20–40 g protein in the locker room, before the drive or bus."],["1–2 HRS AFTER","Late dinner","Carbs, protein and vegetables. Lighter on grease; no alcohol."],["30–60 MIN BEFORE BED","Protein snack","Greek yogurt, cottage cheese or milk (about 30–40 g protein)."],["LIGHTS OUT","Sleep is recovery too","Dim screens, cool dark room, water by the bed."]].map(([t,h,d])=>`<li><span class="t">${t}</span><div class="b"><b>${h}</b><span>${d}</span></div></li>`).join("")}</ol>
    <p class="src">Thomas, Erdman & Burke 2016; Jäger et al., ISSN 2017; Res et al. 2012 (pre-sleep protein)</p></figure>`;
