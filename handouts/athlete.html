@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Orbit Performance Athlete Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Fraunces:ital,opsz,wght@1,9..144,300;1,9..144,500&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+@page{size:1280px 720px;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#FAF7F2}
+body{font-family:Archivo,Arial,sans-serif;color:#0B132B;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.s{width:1280px;height:720px;position:relative;overflow:hidden;page-break-after:always;break-after:page;background:#FBF7F2;padding:56px 64px}
+.s:last-child{page-break-after:auto}
+.dark{background:radial-gradient(70% 90% at 100% 0%,rgba(255,94,26,.55),transparent 60%),radial-gradient(60% 70% at 0% 100%,rgba(194,65,12,.35),transparent 60%),linear-gradient(160deg,#14203F,#0B132B 55%,#070B18);color:#FFF1E2}
+.ey{font:700 13px/1 "JetBrains Mono",monospace;letter-spacing:.24em;text-transform:uppercase;color:#C2410C}
+.dark .ey{color:#FFC9A3}
+h1{font:900 64px/0.95 Archivo;font-stretch:125%;text-transform:uppercase;margin:16px 0 0;letter-spacing:.005em}
+h2{font:900 40px/1 Archivo;font-stretch:125%;text-transform:uppercase;margin:12px 0 0}
+.it{font:italic 300 30px/1.15 Fraunces,Georgia,serif;color:#C2410C}
+.dark .it{color:#FFC9A3}
+p,li{font-size:19px;line-height:1.45}
+.muted{color:#56607E}.dark .muted{color:rgba(255,241,226,.75)}
+.rule{width:64px;height:3px;border-radius:3px;background:linear-gradient(90deg,#FFC857,#FF5E1A);margin:22px 0}
+.foot{position:absolute;left:64px;right:64px;bottom:28px;display:flex;justify-content:space-between;font:600 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#8A8FA3}
+.dark .foot{color:rgba(255,241,226,.55)}
+.row{display:flex;gap:40px;align-items:flex-start}
+.phone{flex:none;width:236px;height:511px;border-radius:34px;padding:8px;background:#0B132B;box-shadow:0 24px 50px rgba(11,19,43,.35),inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone img{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:27px;display:block}
+.phone.sm{width:190px;height:411px;border-radius:28px;padding:6px}.phone.sm img{border-radius:23px}
+.cards{display:grid;gap:14px}
+.c{background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 1px 0 rgba(11,19,43,.06),0 8px 24px rgba(11,19,43,.06);border:1px solid #EFE6DC}
+.c b{display:block;font:800 17px/1.2 Archivo;font-stretch:112%;margin-bottom:4px}
+.c span{font-size:15.5px;line-height:1.4;color:#56607E;display:block}
+.n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#FF5E1A;color:#fff;font:800 13px Archivo;margin-right:10px;vertical-align:2px}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th{text-align:left;font:700 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#56607E;padding:8px 10px;border-bottom:2px solid #0B132B}
+td{padding:9px 10px;border-bottom:1px solid #E6DED4;vertical-align:top;line-height:1.35}
+td:first-child{font-weight:800}
+.q{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid #E6DED4;font-size:16.5px;line-height:1.38}
+.q:last-child{border-bottom:0}
+.q i{font:800 14px Archivo;color:#C2410C;font-style:normal;padding-top:1px}
+.blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #B9AFA4;margin-left:6px;height:18px;vertical-align:-3px}
+.tag{display:inline-block;font:700 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:#FFE3CF;color:#9A3409;margin-right:6px}
+.tag.navy{background:#E3E7F0;color:#0B132B}.tag.green{background:#DDF6EA;color:#13643F}
+.callout{background:#0B132B;color:#FFF1E2;border-radius:16px;padding:16px 20px;font-size:16px;line-height:1.45}
+.callout b{color:#FFC9A3}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.big{position:absolute;right:-40px;bottom:-120px;font:900 520px/1 Archivo;font-stretch:125%;color:transparent;-webkit-text-stroke:2px rgba(255,241,226,.18)}
+code{font:600 14px "JetBrains Mono",monospace;background:#F1E9DF;padding:2px 6px;border-radius:6px}
+
+.tight .c{padding:11px 16px}.tight .c b{font-size:16px}.tight .c span{font-size:14.5px}.tight{gap:10px!important}
+.lg .q{font-size:19px;padding:15px 0}.lg .q i{font-size:16px}
+.lg table{font-size:19px}.lg td{padding:14px 12px}.lg th{font-size:13px}
+.lg .c{padding:20px 22px}.lg .c b{font-size:19px}.lg .c span{font-size:17px}
+
+.c b .n{display:inline-grid;color:#fff;font:800 13px Archivo;width:24px;height:24px;margin-right:9px;vertical-align:1px}
+
+.pin{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #E6DED4}
+.pin:last-child{border-bottom:0}
+.pin i{flex:none;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(140,106,31,.55)}
+.pin b{display:block;font:800 16px/1.2 Archivo;font-stretch:112%}.pin span{font-size:14.5px;color:#56607E}
+.step{display:flex;gap:14px;align-items:flex-start;margin:0 0 16px}.step .n{flex:none;margin:0;width:30px;height:30px;font-size:14px}
+.step p{margin:2px 0 0;font-size:18px}
+.moon{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid #E6DED4}
+.moon:last-child{border-bottom:0}
+.moon i{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE9C2,#FFC857 45%,#FF5E1A);box-shadow:0 0 12px rgba(255,94,26,.45)}
+.moon b{font:800 17px Archivo;font-stretch:112%}.moon span{display:block;font-size:15px;color:#56607E}
+.tour .phone.sm{width:160px;height:346px;border-radius:24px;padding:5px}.tour .phone.sm img{border-radius:20px}.tour .muted{font-size:13px!important}</style></head><body>
+<!-- 1 Title -->
+<section class="s dark">
+ <div class="big">9</div>
+ <div class="ey">Athlete guide · 2026–27 season</div>
+ <h1 style="margin-top:110px">Orbit<br>Performance</h1>
+ <div class="it" style="margin-top:18px">Your season, in your pocket</div>
+ <div class="rule"></div>
+ <p class="muted" style="max-width:640px">Fuel, recovery, training room and game-day plans in one app. Built for LA Orbit by your sports dietitian and athletic trainer.</p>
+ <div class="foot"><span>npadu22.github.io/LOVB-LA</span><span>01</span></div>
+</section>
+
+<!-- 2 Install -->
+<section class="s">
+ <div class="ey">Step one</div><h2>Put it on your Home Screen</h2>
+ <div class="row" style="margin-top:28px;gap:56px">
+  <div class="phone"><img src="img/install.png"></div>
+  <div style="flex:1">
+   <p style="margin-top:0">Open <b>npadu22.github.io/LOVB-LA</b> on your phone. No App Store, no account, no password.</p>
+   <div class="grid2" style="margin-top:20px">
+    <div><div class="tag navy">iPhone · Safari</div>
+     <div class="step" style="margin-top:14px"><span class="n">1</span><p>Tap <b>Share</b></p></div>
+     <div class="step"><span class="n">2</span><p>Tap <b>Add to Home Screen</b></p></div>
+     <div class="step"><span class="n">3</span><p>Tap <b>Add</b>, then open it from the icon</p></div></div>
+    <div><div class="tag navy">Android · Chrome</div>
+     <div class="step" style="margin-top:14px"><span class="n">1</span><p>Tap the <b>⋮</b> menu</p></div>
+     <div class="step"><span class="n">2</span><p>Tap <b>Install app</b></p></div>
+     <div class="step"><span class="n">3</span><p>Open it from the icon</p></div></div>
+   </div>
+   <div class="callout" style="margin-top:12px"><b>Add it first, then sign up.</b> On iPhone the Home Screen app keeps its own data, separate from Safari. Sign up and log from the icon so nothing gets split.</div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>02</span></div>
+</section>
+
+<!-- 3 Sign up + tabs -->
+<section class="s">
+ <div class="ey">Your app</div><h2>Six tabs, one minute</h2>
+ <div class="tour" style="display:flex;gap:10px;margin-top:28px;justify-content:space-between">
+  <div style="text-align:center"><div class="phone sm"><img src="img/home.png"></div><p style="margin:12px 0 0"><b>Home</b><br><span class="muted" style="font-size:15px">Your day at a glance</span></p></div>
+  <div style="text-align:center"><div class="phone sm"><img src="img/fuel.png"></div><p style="margin:12px 0 0"><b>Fuel</b><br><span class="muted" style="font-size:15px">Meal plan, game day, travel</span></p></div>
+  <div style="text-align:center"><div class="phone sm"><img src="img/at-full.png"></div><p style="margin:12px 0 0"><b>Training</b><br><span class="muted" style="font-size:15px">Emma's programs and posts</span></p></div>
+  <div style="text-align:center"><div class="phone sm"><img src="img/sc.png"></div><p style="margin:12px 0 0"><b>Strength</b><br><span class="muted" style="font-size:15px">Lifts and conditioning</span></p></div>
+  <div style="text-align:center"><div class="phone sm"><img src="img/learn.png"></div><p style="margin:12px 0 0"><b>Learn</b><br><span class="muted" style="font-size:15px">Ask the RD, library, tools</span></p></div>
+  <div style="text-align:center"><div class="phone sm"><img src="img/me.png"></div><p style="margin:12px 0 0"><b>Me</b><br><span class="muted" style="font-size:15px">Profile, pins, your look</span></p></div>
+ </div>
+ <p class="muted" style="text-align:center;margin-top:22px;font-size:17px">Sign up with your <b>language</b>, <b>name as it is on the roster</b>, position, sex, number, eating style and any allergies, then tick the box to confirm you've read <b>what's shared</b>. About two minutes.</p>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>03</span></div>
+</section>
+
+<!-- 4 Orbit -->
+<section class="s">
+ <div class="ey">Home</div><h2>Light your five moons</h2>
+ <div class="row" style="margin-top:28px;gap:56px">
+  <div class="phone"><img src="img/home.png"></div>
+  <div style="flex:1">
+   <p style="margin-top:0">Each day has five habits. Tap one when it's done and its moon lights up. Each moon counts on its own.</p>
+   <div style="margin-top:10px">
+    <div class="moon"><i></i><div><b>Check-in</b><span>15 seconds: sleep, soreness, energy, mood, stress, and what helped you recover yesterday</span></div></div>
+    <div class="moon"><i></i><div><b>Fuel log</b><span>Log at least one meal in your journal</span></div></div>
+    <div class="moon"><i></i><div><b>Hydrate</b><span>Tap +1 bottle until you reach your daily ounce goal</span></div></div>
+    <div class="moon"><i></i><div><b>Recover</b><span>Tap what you did: sleep, ice, cold tub, stretch, recovery meal…</span></div></div>
+    <div class="moon"><i></i><div><b>Sleep 7h+</b><span>Tap once you've slept 7 or more hours</span></div></div>
+   </div>
+   <p class="muted" style="font-size:16px;margin-top:14px">Light 3 or more moons for tonight's star. Every Monday, Home shows your <b>Last week</b> summary.</p>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>04</span></div>
+</section>
+
+<!-- 5 Check-in + journal -->
+<section class="s">
+ <div class="ey">The scorebook</div><h2>Check in, log, look back</h2>
+ <div class="row" style="margin-top:28px;gap:40px">
+  <div class="phone"><img src="img/checkin.png"></div>
+  <div class="phone"><img src="img/journal.png"></div>
+  <div class="cards" style="flex:1">
+   <div class="c"><b>Readiness check-in</b><span>Five quick taps each morning give you a readiness score, so you and your staff can talk about how you're really doing.</span></div>
+   <div class="c"><b>Performance journal</b><span>Log meals, training and water bottles. Meals from your meal plan log with one tap.</span></div>
+   <div class="c"><b>Shared with your staff</b><span>Check-ins, meals, water, lifts and conditioning go automatically to a private sheet only your dietitian, athletic trainer and strength coach can open. Journal notes, photos and your cycle tracker never leave your phone.</span></div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>05</span></div>
+</section>
+
+<!-- 6 Fuel -->
+<section class="s">
+ <div class="ey">The training table</div><h2>A meal plan for every day</h2>
+ <div class="row" style="margin-top:28px;gap:56px">
+  <div class="phone"><img src="img/fuel.png"></div>
+  <div class="cards" style="grid-template-columns:1fr 1fr;flex:1">
+   <div class="c"><b>Built around your day</b><span>Practice days follow the team schedule: 8:00, 10:30, 1:30, 5:00 and an 8:00 pm recovery snack.</span></div>
+   <div class="c"><b>Fits your profile</b><span>Options skip your allergens, match your eating style and follow your raw-safe list if you have oral allergy syndrome.</span></div>
+   <div class="c"><b>Pick from a dropdown</b><span>Choose what you'll actually eat for each meal. <b>★ From your dietitian</b> marks meals picked for you. Ate it? Log it in one tap.</span></div>
+   <div class="c"><b>Grocery list</b><span>One list for the week, sorted by store section.</span></div>
+   <div class="c"><b>Meal prep</b><span>Pick a store and one meal, choose days and training or rest-day portions: it builds the grocery list.</span></div>
+   <div class="c"><b>Eating out near you</b><span>Picks for your home area in SoCal, plus what to cook at home.</span></div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>06</span></div>
+</section>
+
+<!-- 7 Game day + road -->
+<section class="s dark">
+ <div class="big" style="font-size:420px;bottom:-90px">GO</div>
+ <div class="ey">Match days</div><h2>Game day and the road</h2>
+ <div class="row" style="margin-top:28px;gap:56px">
+  <div class="phone"><img src="img/road.png"></div>
+  <div style="flex:1;max-width:600px">
+   <div class="step"><span class="n">1</span><p><b>Game-day theme.</b> On match days the app turns black and orange.</p></div>
+   <div class="step"><span class="n">2</span><p><b>Match-day timeline.</b> Pre-match meal, snacks and fluids, timed back from first serve.</p></div>
+   <div class="step"><span class="n">3</span><p><b>Recovery tonight.</b> What to eat after the match, including late-night options on the road.</p></div>
+   <div class="step"><span class="n">4</span><p><b>Road guides.</b> What to order in each road city and at the airports, plus a packing list of travel snacks.</p></div>
+   <div class="step"><span class="n">5</span><p><b>Full season.</b> Every match, home and away, with a countdown to the next one.</p></div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>07</span></div>
+</section>
+
+<!-- 8 Training -->
+<section class="s">
+ <div class="ey">The tape table</div><h2>Your Training room</h2>
+ <div class="row" style="margin-top:28px;gap:40px">
+  <div class="phone"><img src="img/at-full.png"></div>
+  <div class="phone"><img src="img/at-full2.png"></div>
+  <div class="cards tight" style="flex:1">
+   <div class="c"><b>Your programs</b><span>Team prehab, programs for your position, and any program Emma posts just for you. Check off each exercise daily.</span></div>
+   <div class="c"><b>Days and phases</b><span>Tap Day 1, Day 2… Exercises are grouped Pre-practice, Practice and Post-practice. Watch demo opens Emma's video.</span></div>
+   <div class="c"><b>Your program code</b><span>First initial + first three letters of your last name (Jordan Lee = JLEE). Shown under Your programs.</span></div>
+   <div class="c"><b>From Emma</b><span>Prehab notes, road-trip reminders and updates, posted by Emma directly.</span></div>
+  </div>
+ </div>
+ <div class="foot"><span>Shown with sample posts and a sample program</span><span>08</span></div>
+</section>
+
+<!-- 8b Strength -->
+<section class="s">
+ <div class="ey">The weight room</div><h2>Strength with Caíque</h2>
+ <div class="row" style="margin-top:28px;gap:56px">
+  <div class="phone"><img src="img/sc.png"></div>
+  <div class="cards" style="flex:1">
+   <div class="c"><b>Four lifts + one conditioning a week</b><span>Caíque Bothelo sets the program for your position. Tap Lift 1–4 or Conditioning; Watch demo shows each movement.</span></div>
+   <div class="c"><b>Log every set</b><span>Enter weight × reps. The app shows what you lifted last time; tap Finish when you're done. Conditioning asks how hard it was (RPE 1–10) and how long.</span></div>
+   <div class="c"><b>Watch yourself improve</b><span>A chart for every lift across the season with best weight and estimated 1RM. Beat your best for a PR stamp and the Kill pin.</span></div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>09</span></div>
+</section>
+
+<!-- 8c Hydrate recover cycle -->
+<section class="s">
+ <div class="ey">Every day</div><h2>Hydrate, recover, track</h2>
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:24px">
+  <div class="stack" style="display:flex;flex-direction:column;align-items:center;gap:14px"><div class="phone sm"><img src="img/g-hyd-en.png"></div><div class="c" style="width:100%"><b>Hydration</b><span>Pick your bottle size and a daily goal (start around 80 oz); tap +1 bottle as you go.</span></div></div>
+  <div class="stack" style="display:flex;flex-direction:column;align-items:center;gap:14px"><div class="phone sm"><img src="img/g-rec-en.png"></div><div class="c" style="width:100%"><b>Recovery</b><span>Log what you did. After a week, What works for you shows the habits before your best mornings.</span></div></div>
+  <div class="stack" style="display:flex;flex-direction:column;align-items:center;gap:14px"><div class="phone sm"><img src="img/g-cyc-en.png"></div><div class="c" style="width:100%"><b>Cycle (female athletes)</b><span>Private on your phone: log flow and symptoms, see your cycle day and next period estimate.</span></div></div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>10</span></div>
+</section>
+
+<!-- 9 Learn -->
+<section class="s">
+ <div class="ey">Film room</div><h2>Ask the RD</h2>
+ <div class="row" style="margin-top:28px;gap:40px">
+  <div class="phone"><img src="img/ask.png"></div>
+  <div class="phone"><img src="img/lesson.png"></div>
+  <div class="cards" style="flex:1">
+   <div class="c"><b>Ask the virtual RD</b><span>Type any question: protein, iron, creatine, game-day food. You get answers your dietitian has reviewed, each with its research source.</span></div>
+   <div class="c"><b>Not there? Ask your dietitian</b><span>One tap sends your question to your dietitian. Useful answers get added to the library.</span></div>
+   <div class="c"><b>Library</b><span>Short lessons by topic, including athletic training with Emma, plus every Q&amp;A in one list.</span></div>
+   <div class="c"><b>Supplement check</b><span>Use products certified by a USADA-recommended program (NSF Certified for Sport, Informed Sport, BSCG and others), and check with your dietitian first.</span></div>
+  </div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>11</span></div>
+</section>
+
+<!-- 10 Me + pins -->
+<section class="s">
+ <div class="ey">Me</div><h2>Earn all twelve pins</h2>
+ <div class="row" style="margin-top:28px;gap:44px">
+  <div class="phone"><img src="img/pins.png"></div>
+  <div class="grid2" style="flex:1;gap:22px;grid-template-columns:1fr 1fr 1fr">
+   <div><div class="pin"><i style="background:#FF5E1A"></i><div><b>First Touch</b><span>Save your first check-in</span></div></div><div class="pin"><i style="background:#5E82F0"></i><div><b>Side Out</b><span>Check in 3 days in a row</span></div></div><div class="pin"><i style="background:#FFC857"></i><div><b>Full Rotation</b><span>Light all 5 moons in one day</span></div></div><div class="pin"><i style="background:#7FA2FF"></i><div><b>Match Point</b><span>Light a star all 7 nights of a week</span></div></div></div><div><div class="pin"><i style="background:#3DD69B"></i><div><b>Training Table</b><span>Log 5 meals from your meal plan</span></div></div><div class="pin"><i style="background:#FF8A4C"></i><div><b>Road Warrior</b><span>Log a meal on a travel or road match day</span></div></div><div class="pin"><i style="background:#C9A7FF"></i><div><b>Film Study</b><span>Learn 5 lessons</span></div></div><div class="pin"><i style="background:#2EC4B6"></i><div><b>Kill</b><span>Set a new personal best on a lift</span></div></div><div class="pin"><i style="background:#FF5A6E"></i><div><b>Ace</b><span>Log your recovery on a match night</span></div></div></div><div><div class="pin"><i style="background:#4FC3F7"></i><div><b>Dig</b><span>Hit your water goal on 5 days</span></div></div><div class="pin"><i style="background:#FFB020"></i><div><b>Stuff Block</b><span>Train in the weight room on 12 days</span></div></div><div class="pin"><i style="background:#9C8CFF"></i><div><b>Pancake</b><span>Sleep 8+ hours on 5 nights</span></div></div></div>
+  </div>
+ </div>
+ <p class="muted" style="position:absolute;left:344px;right:64px;bottom:64px;font-size:16px;margin:0">Also on Me: profile card, eating style, color schemes, backgrounds, language and what's shared with staff.</p>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>12</span></div>
+</section>
+
+<!-- 11 Good to know -->
+<section class="s">
+ <div class="ey">Good to know</div><h2>Use it well</h2>
+ <div class="cards lg" style="grid-template-columns:1fr 1fr;margin-top:30px;gap:18px">
+  <div class="c"><b>Your data</b><span>Check-ins, meals, water and training go to your staff's private sheet. Cycle tracker, notes, photos and allergies stay on your phone. A new phone starts fresh, so keep the same Home Screen icon.</span></div>
+  <div class="c"><b>Not medical care</b><span>Pain, swelling, a head hit or anything that worries you: see Emma the same day. The app doesn't replace her or the team doctor.</span></div>
+  <div class="c"><b>Fuel questions</b><span>Search Learn › Ask the RD first. Allergies, weight goals, a supplement or a meal plan that doesn't fit: talk to your sports dietitian.</span></div>
+  <div class="c"><b>Make it better</b><span>Something broken or missing? Home › App feedback sends a note straight to your dietitian.</span></div>
+ </div>
+ <div class="foot"><span>Orbit Performance · LA Orbit</span><span>13</span></div>
+</section>
+
+<!-- 12 Start -->
+<section class="s dark">
+ <div class="big" style="font-size:420px;bottom:-80px">GO</div>
+ <div class="ey">Today</div>
+ <h2 style="margin-top:40px">Your first five minutes</h2>
+ <div class="rule"></div>
+ <div style="max-width:780px">
+  <p><span class="n">1</span>Open <b>npadu22.github.io/LOVB-LA</b> and add it to your Home Screen</p>
+  <p><span class="n">2</span>Open it from the icon, sign up with your roster name and tick the box for <b>what's shared</b></p>
+  <p><span class="n">3</span>Do your first check-in to earn <b>First Touch</b></p>
+  <p><span class="n">4</span>Open Fuel › Meal plan and log today's first meal</p>
+  <p><span class="n">5</span>Check Training for Emma's latest and your programs</p>
+ </div>
+ <div class="foot"><span>Questions: your sports dietitian or Emma, your athletic trainer</span><span>14</span></div>
+</section>
+<script>function fitDeck(){var z=Math.min(1,innerWidth/1280);document.body.style.zoom=z<1?z:""}addEventListener("resize",fitDeck);fitDeck()</script>
+</body></html>
