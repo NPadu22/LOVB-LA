@@ -254,6 +254,19 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 @keyframes lkRoom{to{opacity:.8}}
 @keyframes lkCard{from{opacity:0;transform:translateY(40px) rotate(-1.5deg)}to{opacity:1;transform:none}}
 @keyframes lkRow{from{opacity:0;transform:translateX(-8px)}}
+.syncc{border-left:4px solid var(--line)}
+.syncc.good{border-left-color:var(--ok)}.syncc.sent{border-left-color:var(--warn,#FFC857)}.syncc.bad{border-left-color:var(--stop)}
+.syncdot{width:12px;height:12px;border-radius:50%;flex:none;background:var(--muted)}
+.syncc.good .syncdot{background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 25%,transparent)}.syncc.sent .syncdot{background:var(--warn,#FFC857)}.syncc.bad .syncdot{background:var(--stop)}
+.skyc{background:radial-gradient(120% 90% at 50% 0%,#1C2A55,#0B132B 70%)!important;color:#FFF1E2}
+.skyc svg{width:100%;height:auto;display:block}
+.skyc line{stroke:rgb(255 231 163 / .45);stroke-width:1}
+.skyc circle{fill:rgb(255 241 226 / .35)}
+.skyc circle.on{fill:#FFE7A3;filter:drop-shadow(0 0 3px rgb(255 214 120 / .9))}
+.skyc .stamp{color:rgb(255 241 226 / .7)}
+.pt{position:relative}
+.pt.worn svg{filter:saturate(.9) brightness(1.06) contrast(1.04)}
+.pt.worn::after{content:"";position:absolute;left:18%;top:8%;width:64%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgb(255 255 255 / .35),transparent 55%);pointer-events:none}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -883,6 +896,8 @@ const MEALPREP=[
   {n:"Tofu & Edamame Teriyaki Stir-Fry (vegetarian)",v:1,m:[820,106,46,23],a:["Soy","Wheat/Gluten"],g:["3 blocks extra-firm tofu","2 cups shelled edamame","2 cups dry jasmine rice","1 lb frozen stir-fry vegetables","1/2 cup teriyaki sauce","1 tbsp vegetable oil"],p:"Press and cube tofu; bake at 425°F for 25 min or pan-fry until golden. Stir-fry vegetables and edamame 5 min, add tofu and teriyaki and toss. Portion over rice."},
   {n:"Egg & Black Bean Burritos (vegetarian)",v:1,m:[785,82,44,32],a:["Egg","Wheat/Gluten","Dairy"],g:["12 eggs","2 cans black beans","8 large flour tortillas","1 cup shredded Mexican-blend cheese","1 cup salsa"],p:"Scramble the eggs and warm the beans. Fill each tortilla with eggs, beans and cheese, roll tight and wrap in foil. Two burritos per portion. Reheat from the fridge in 2 min.",tip:"Freezes well: good for days 4 and later."}]},
  {k:"tj",n:"Trader Joe's",r:[
+  {n:"Garlic Shrimp Orzo with Spinach",m:[727, 90, 66, 13],a:["Shellfish", "Wheat/Gluten", "Dairy"],g:["2 lb frozen raw peeled shrimp", "1 lb dry orzo", "4 cups spinach", "1 pint cherry tomatoes", "2 tbsp olive oil", "1/2 cup grated Parmesan", "6 cloves garlic", "1 lemon"],p:"Thaw shrimp under cold running water. Cook orzo. Sauté sliced garlic in the oil 1 minute, add shrimp and cook 2 minutes per side. Stir in orzo, halved tomatoes and spinach until it wilts. Finish with lemon and Parmesan.",tip:"Trader Joe's frozen raw shrimp thaws in about 10 minutes, so this is a 25-minute batch."},
+  {n:"Tempeh & Black Bean Burrito Bowls (vegetarian)",v:1,m:[727, 98, 50, 18],a:["Soy", "Dairy"],g:["2 packages organic tempeh (8 oz)", "1 can black beans", "1 1/2 cups dry white rice", "1 cup frozen corn", "1 cup salsa", "2 cups plain Greek yogurt", "1/2 cup shredded cheese", "Taco seasoning"],p:"Crumble tempeh and brown with taco seasoning and a splash of water, 8 minutes. Cook rice and warm beans and corn. Portion; top with salsa, cheese and a big spoon of Greek yogurt when you eat.",tip:"Two cups of Greek yogurt as the topping bring this to about 50 g protein a portion."},
   {n:"Mediterranean Chicken Shawarma Bowls",m:[795,84,57,24],a:["Wheat/Gluten","Sesame","Dairy"],g:["2 lb shawarma-marinated chicken thighs","1 1/2 cups dry basmati rice","1 cucumber","1 pint cherry tomatoes","1/2 cup hummus","2 pita breads","1/2 cup tzatziki sauce"],p:"Roast chicken, cook rice, and portion with chopped vegetables and half a pita each. Pack hummus and tzatziki separately."},
   {n:"Korean Beef Bulgogi Bowls",m:[775,88,61,22],a:["Soy","Wheat/Gluten","Sesame"],g:["2 lb 93% lean ground beef","1 3/4 cups dry jasmine rice","2 cups shelled edamame","2 carrots","6 tbsp bulgogi sauce","1 tbsp sesame seeds"],p:"Brown beef with bulgogi sauce; portion with cooked rice, edamame and shredded carrots."},
   {n:"Mandarin Orange Chicken & Fried Rice",m:[850,105,39,30],a:["Wheat/Gluten","Soy","Egg"],g:["2 bags frozen Mandarin Orange Chicken","2 bags frozen vegetable fried rice","1 bag shelled edamame","1 bag broccoli florets","Sesame seeds (optional)"],p:"Cook frozen items according to package directions and divide into four containers.",tip:"Lowest protein of the twelve. On heavy training days, add a Greek yogurt or a glass of milk."},
@@ -904,6 +919,8 @@ const MEALPREP=[
   {n:"Tofu Tikka Masala with Rice (vegetarian)",v:1,m:[705,79,41,25],a:["Soy","Dairy"],g:["3 blocks extra-firm tofu","1 jar tikka masala simmer sauce","1 1/2 cups dry basmati rice","1 lb cauliflower","1/2 cup plain Greek yogurt"],p:"Press and cube tofu; bake at 425°F for 20 min. Simmer with the sauce and cauliflower florets 10 min. Serve over rice with a spoon of yogurt."},
   {n:"Veggie Frittata with Roasted Potatoes (vegetarian)",v:1,m:[750,69,43,34],a:["Egg","Dairy"],g:["16 eggs","1 cup cottage cheese","1 cup crumbled feta","4 cups spinach","2 bell peppers","3 lb baby potatoes","1 tbsp olive oil"],p:"Roast halved potatoes with oil at 425°F for 30 min. Whisk eggs with cottage cheese, stir in spinach, diced peppers and feta, pour into a baking dish and bake at 375°F for 30–35 min. Cut into 4 and portion with potatoes."}]},
  {k:"sprouts",n:"Sprouts",r:[
+  {n:"Shrimp Fajita Bowls",m:[779, 119, 60, 6],a:["Shellfish"],g:["2 lb frozen raw peeled shrimp", "2 1/2 cups dry white rice", "3 bell peppers", "1 onion", "1 can pinto beans", "1 tbsp olive oil", "1 cup salsa", "Fajita seasoning", "2 limes"],p:"Thaw shrimp under cold running water and toss with fajita seasoning. Cook rice. Sauté sliced peppers and onion in the oil 6 minutes, push aside and cook shrimp 2 minutes per side. Warm beans. Portion; add salsa and lime when you eat.",tip:"Very lean: almost all the fat is the tablespoon of oil, so add avocado on the day if you want more."},
+  {n:"Tofu & Edamame Sesame Soba Bowls (vegetarian)",v:1,m:[720, 92, 49, 21],a:["Soy", "Wheat/Gluten", "Sesame"],g:["2 blocks extra-firm tofu", "2 cups shelled edamame", "12 oz dry soba noodles", "1 lb frozen stir-fry vegetables", "1/4 cup low-sodium soy sauce", "1 tbsp sesame oil", "2 tbsp honey", "Ginger and garlic"],p:"Press and cube tofu; bake at 425°F for 25 minutes. Cook soba and rinse cold. Stir-fry vegetables and edamame 5 minutes. Whisk soy sauce, sesame oil, honey, ginger and garlic; toss everything together and portion.",tip:"Most soba contains wheat; 100% buckwheat soba is gluten-free if you need it."},
   {n:"Turkey Taco Burrito Bowls",m:[750,86,72,14],a:["Dairy"],g:["2 lb 99% lean ground turkey breast","1 1/2 cups dry rice","1 can black beans","1 cup corn","1/2 cup shredded cheese","Salsa","1 avocado","Taco seasoning"],p:"Brown turkey with seasoning; portion with rice, beans, corn and cheese. Add avocado when serving."},
   {n:"Kevin's Chicken Burrito Bowls",m:[755,105,49,13],a:[],g:["2 packs Kevin's Natural Foods sous vide chicken, any flavor (16 oz)","1 1/2 cups dry white rice","1 can black beans","1 cup frozen corn","3 bell peppers","1 onion","1 cup salsa","1 avocado"],p:"Cook rice. Sauté sliced peppers and onion 8 minutes, then add the beans and corn to warm through. Warm Kevin's chicken in its sauce (it's fully cooked). Portion over rice and add salsa; add avocado on the day you eat it.",tip:"Kevin's chicken is already sous vide cooked, so there's no raw chicken to handle. Label is about 160 kcal and 22 g protein per 5 oz; check yours."},
   {n:"Honey Garlic Chicken & Roasted Potatoes",m:[850,99,51,28],a:["Soy","Wheat/Gluten"],g:["2 lb boneless chicken thighs","3 lb baby potatoes","1 lb carrots","1/4 cup honey","1/4 cup low-sodium soy sauce","3 garlic cloves","2 tbsp olive oil"],p:"Roast potatoes and carrots. Bake chicken with honey-garlic sauce and portion."},
@@ -1199,6 +1216,8 @@ addT([["Grocery list · 7 days from tomorrow", "買い物リスト・明日か�
 addT([["Build a grocery list from this plan", "このプランから買い物リストを作る", "Criar lista de compras deste plano"], ["Grocery list for tomorrow", "明日の買い物リスト", "Lista de compras para amanhã"], ["Grocery list for today", "今日の買い物リスト", "Lista de compras para hoje"], ["meals & snacks", "食事・間食", "refeições e lanches"], ["Everything for the meals in this plan. Change a meal above and the list updates. \"×2\" means it's in two meals. Tick things off as you shop.", "このプランの食事に必要なものすべて。上で食事を変えるとリストも更新されます。「×2」は2回の食事で使うという意味。買ったらチェックしましょう。", "Tudo para as refeições deste plano. Mude uma refeição acima e a lista atualiza. \"×2\" quer dizer que aparece em duas refeições. Marque conforme compra."], ["You're away this day, so pack these instead of shopping for home meals.", "この日は遠征なので、家の食事の買い物ではなくこれを持っていきましょう。", "Você estará fora neste dia: leve estes itens em vez de comprar para casa."]]);
 addT([["Logged", "記録済み", "Registrado"], ["Now showing", "上映中", "Em cartaz"], ["Road passport", "遠征パスポート", "Passaporte de viagem"], ["Log a meal on a road trip, the travel day or match day, to stamp that city.", "遠征(移動日か試合日)で食事を記録すると、その都市のスタンプがもらえます。", "Registre uma refeição na viagem, no dia de deslocamento ou de jogo, para carimbar a cidade."], ["Check-ins", "チェックイン", "Check-ins"], ["Meals logged", "記録した食事", "Refeições registradas"], ["Water (oz)", "水分(oz)", "Água (oz)"], ["Pins", "ピン", "Pins"], ["Passport stamps", "パスポートスタンプ", "Carimbos"], ["Lessons", "レッスン", "Lições"], ["Tap to flip back", "タップで戻る", "Toque para virar"]]);
 addT([["Game day", "試合日", "Dia de jogo"], ["Starting lineup", "スターティングラインナップ", "Escalação"], ["first serve", "サーブ開始", "primeiro saque"], ["Let's go", "いこう", "Vamos"], ["Show today's lineup card", "今日のラインナップカードを見る", "Ver a escalação de hoje"]]);
+addT([["Synced with team", "チームと同期済み", "Sincronizado com a equipe"], ["Sent to team", "チームに送信済み", "Enviado à equipe"], ["Not synced yet", "まだ同期されていません", "Ainda não sincronizado"], ["this phone can't confirm, but it was sent", "この端末では確認できませんが、送信されました", "este celular não confirma, mas foi enviado"], ["Tap Retry. If it keeps failing, show this to your dietitian.", "「再試行」をタップ。失敗が続く場合は管理栄養士に見せてください。", "Toque em Tentar de novo. Se continuar falhando, mostre à sua nutricionista."], ["logs waiting to send", "件の記録が送信待ち", "registros aguardando envio"], ["Retry", "再試行", "Tentar de novo"], ["Sending…", "送信中…", "Enviando…"], ["Season sky", "シーズンの星空", "Céu da temporada"], ["nights lit", "夜が点灯", "noites acesas"], ["One constellation per week since preseason. Light 3 moons in a day to light that night's star.", "プレシーズンから毎週1つの星座。1日に月を3つ灯すとその夜の星が灯ります。", "Uma constelação por semana desde a pré-temporada. Acenda 3 luas num dia para acender a estrela da noite."], ["Carbs plus a little protein.", "炭水化物と少しのたんぱく質。", "Carboidrato com um pouco de proteína."]]);
+addT([["Pickle juice", "ピクルス液", "Suco de picles"], ["2–3 oz", "60〜90 mL", "60–90 mL"], ["Spicy shot", "辛味ショット", "Shot picante"], ["capsaicin, ginger", "カプサイシン、しょうが", "capsaicina, gengibre"], ["Mustard", "マスタード", "Mostarda"], ["1 packet", "1袋", "1 sachê"], ["Wasabi", "わさび", "Wasabi"], ["small dab", "少量", "um pouquinho"], ["Sour, spicy and pungent tastes fire nerves in your mouth that tell the spinal cord to release the cramp. Works in about a minute, so it's not hydration.", "酸味・辛味・刺激のある味が口の神経を刺激し、脊髄に「つりを解け」と伝えます。約1分で効くので、水分補給の効果ではありません。", "Sabores azedos, picantes e pungentes ativam nervos da boca que mandam a medula soltar a cãibra. Funciona em cerca de um minuto, então não é hidratação."], ["Fuel before long sessions", "長い練習の前に補給", "Coma antes de sessões longas"], ["Build load gradually", "負荷は少しずつ上げる", "Aumente a carga aos poucos"], ["Salty sweater? Add sodium", "汗が塩辛い人は塩分を足す", "Suor salgado? Adicione sódio"], ["Bananas for cramps", "つりにバナナ", "Banana para cãibra"], ["Magnesium pills", "マグネシウムのサプリ", "Comprimidos de magnésio"], ["Quinine or tonic water", "キニーネやトニックウォーター", "Quinino ou água tônica"], ["if muscles feel weak or limp (not locked), you collapse, or pain, swelling or dark urine follow.", "筋肉が(つるのではなく)弱く力が入らない、倒れた、または痛み・腫れ・濃い色の尿が続く場合。", "se os músculos ficarem fracos ou moles (não travados), se você desmaiar, ou se vierem dor, inchaço ou urina escura."], ["Lab studies", "実験研究", "Estudos de laboratório"], ["Small trials", "小規模試験", "Estudos pequenos"], ["Theory only · Try sour or spicy in practice first.", "理論のみ · 酸味や辛味はまず練習で試しましょう。", "Só teoria · Teste azedo ou picante no treino primeiro."], ["25% carbs · 25% protein · 50% produce", "炭水化物25% · たんぱく質25% · 野菜果物50%", "25% carboidrato · 25% proteína · 50% vegetais e frutas"], ["33% carbs · 33% protein · 33% produce", "炭水化物33% · たんぱく質33% · 野菜果物33%", "33% carboidrato · 33% proteína · 33% vegetais e frutas"], ["50% carbs · 25% protein · 25% produce", "炭水化物50% · たんぱく質25% · 野菜果物25%", "50% carboidrato · 25% proteína · 25% vegetais e frutas"], ["Orange = grains and starches · navy = protein · green = fruit and vegetables. Add a little healthy fat and a drink to every plate.", "オレンジ=穀物・でんぷん · 紺=たんぱく質 · 緑=果物と野菜。どの皿にも少しの良質な脂質と飲み物を。", "Laranja = grãos e amidos · azul-marinho = proteína · verde = frutas e vegetais. Adicione um pouco de gordura boa e uma bebida a cada prato."]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -2220,6 +2239,8 @@ function icsFor(r){
     "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${clean(r.title)}`,"TRIGGER:-PT10M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
 }
 const IN_CLAUDE=/claudeusercontent\.com$/.test(location.hostname);
+/* Offline support (GitHub Pages only): sw.js keeps the app on the phone */
+try{if("serviceWorker" in navigator&&!IN_CLAUDE&&(location.protocol==="https:"||location.hostname==="localhost"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}catch(e){}
 function gcalHref(r){
   const n=remNext(r,new Date(r.date+"T00:00:00")),p=x=>String(x).padStart(2,"0"),f=d=>`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
   const end=new Date(n.getTime()+30*60000);
@@ -2422,7 +2443,7 @@ function atPrograms(){return allPrograms().map(pg=>{const ex=pg.ex.filter(x=>{co
 function mealFind(name){const q=String(name||"").trim().toLowerCase();if(!q)return null;
   for(const b in MEALBANK){const x=MEALBANK[b].find(m=>m.n.toLowerCase()===q);if(x)return {kind:"bank",bank:b,x}}
   for(const st of MEALPREP){const x=st.r.find(m=>m.n.toLowerCase()===q);if(x)return {kind:"prep",store:st.k,storeName:st.n,x}}return null}
-function recSet(){const L=CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[];return new Set(L.filter(a=>progFor({who:a.who})).flatMap(a=>a.meals||[]).map(x=>x.toLowerCase()))}
+function recSet(){const L=CONFIG.nutritionSheetCSV&&SHEET.nut?SHEET.nut.rows:[];const top=L.filter(a=>progFor({who:a.who}))[0];return new Set((top&&top.meals||[]).map(x=>x.toLowerCase()))}
 let REC_CACHE=null,REC_KEY=null;
 function isRec(m){const k=(SHEET.nut?SHEET.nut.fetched:"none")+"|"+(profile&&profile.position)+"|"+(profile&&profile.first);if(k!==REC_KEY||!REC_CACHE){REC_KEY=k;try{REC_CACHE=recSet()}catch(e){REC_CACHE=new Set()}}return !!m&&REC_CACHE.has(String(m.n).toLowerCase())}
 let recOpen=null;
@@ -2447,7 +2468,14 @@ function nutHTML(){const L=nutNotes();if(!L.length)return "";
 function rosterSync(){if(!CONFIG.rosterURL||!profile||!store.get("roster_pending",false))return;
   let id=store.get("devid",null);if(!id){id=Math.random().toString(36).slice(2,12)+Date.now().toString(36);store.set("devid",id)}
   const body=JSON.stringify({id,code:myCode(),first:profile.first,last:profile.last,position:profile.position,num:profile.num||"",lang:LANG});
-  fetch(CONFIG.rosterURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).then(()=>store.set("roster_pending",false)).catch(()=>{})}
+  const opts={method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body},now=()=>new Date().toISOString();
+  /* Try a readable request first so the app can confirm Google saved it; fall back to a fire-and-forget send. The script updates by device ID, so a repeat is harmless. */
+  fetch(CONFIG.rosterURL,{...opts,mode:"cors"}).then(r=>r.json()).then(j=>{store.set("roster_pending",false);store.set("syncstat",{ok:!!(j&&j.ok),confirmed:true,at:now()});syncRefresh()})
+   .catch(()=>fetch(CONFIG.rosterURL,{...opts,mode:"no-cors"}).then(()=>{store.set("roster_pending",false);store.set("syncstat",{ok:true,confirmed:false,at:now()});syncRefresh()}).catch(()=>{store.set("syncstat",{ok:false,at:now()});syncRefresh()}))}
+function syncRefresh(){if(tab==="me"&&!draft.editing)render()}
+function syncHTML(){if(!CONFIG.rosterURL)return "";const st=store.get("syncstat",null),q=(store.get("staffq",[])||[]).length,pend=store.get("roster_pending",false);
+  const ok=st&&st.ok&&!pend,when=st?new Date(st.at).toLocaleString(LOCALE(),{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+  return `<div class="card syncc ${ok?(st.confirmed?"good":"sent"):"bad"}"><div class="row" style="gap:10px;align-items:center"><span class="syncdot" aria-hidden="true"></span><div class="grow"><b>${ok?(st.confirmed?tr("Synced with team"):tr("Sent to team")):tr("Not synced yet")}</b><span class="muted" style="display:block;font-size:.8rem">${ok?(st.confirmed?when:when+" · "+tr("this phone can't confirm, but it was sent")):tr("Tap Retry. If it keeps failing, show this to your dietitian.")}${q?` · ${q} ${tr("logs waiting to send")}`:""}</span></div>${ok&&!q?"":`<button class="btn sm" data-syncretry="1">${tr("Retry")}</button>`}</div></div>`}
 /* Opt-in staff sharing: readiness and/or lifts go to a PRIVATE staff sheet via the same Apps Script. Off by default. */
 /* Team policy: everything athletes log is sent to the staff sheet (no opt-out). Cycle, notes and photos never leave the phone. */
 const SHARE={ready:true,lift:true,food:true,water:true};
@@ -2574,12 +2602,21 @@ function showLocker(force){const m=todayMatch();if(!m||!profile||draft.editing)r
   const close=()=>{el.classList.add("out");setTimeout(()=>el.remove(),rm?0:300)};
   btn.addEventListener("click",close);el.addEventListener("keydown",e=>{if(e.key==="Escape")close()})}
 function lockerMaybe(){if(!profile||tab!=="home"||profile.welcomed===false)return;if((myAllergens().length||profile.other||oas())&&!profile.ack)return;showLocker(false)}
+/* Season sky: every week since preseason becomes a constellation; lit stars are nights you lit your star */
+const SEASON_START="2026-11-16";
+function seasonSkyHTML(){const t=isoToday();if(t<SEASON_START)return "";const weeks=Math.floor(dDiff(SEASON_START,t)/7)+1,cols=4,cw=85,ch=78,rows=Math.ceil(weeks/cols),H=rows*ch+10;let lit=0,tot=0,svg="";
+  for(let w=0;w<weeks;w++){const cx=(w%cols)*cw+cw/2,cy=Math.floor(w/cols)*ch+ch/2+2;let seed=(w+3)*7919;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;const pts=[];
+   for(let d=0;d<7;d++){const iso=jShift(SEASON_START,w*7+d);if(iso>t)break;tot++;const on=starLit(iso);if(on)lit++;pts.push({x:cx+(rnd()-.5)*58,y:cy+(rnd()-.5)*46,on})}
+   const L=pts.filter(p=>p.on);for(let i=1;i<L.length;i++)svg+=`<line x1="${L[i-1].x.toFixed(1)}" y1="${L[i-1].y.toFixed(1)}" x2="${L[i].x.toFixed(1)}" y2="${L[i].y.toFixed(1)}"/>`;
+   pts.forEach(p=>svg+=p.on?`<circle class="on" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.6"/>`:`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="1.1"/>`)}
+  return `<section><div class="sec-head"><h2>${tr("Season sky")}</h2><span class="stamp">${lit}/${tot} ${tr("nights lit")}</span></div><div class="card skyc"><svg viewBox="0 0 ${cols*cw} ${H}" role="img" aria-label="Season sky: ${lit} of ${tot} nights lit since preseason">${svg}</svg><p class="stamp">${tr("One constellation per week since preseason. Light 3 moons in a day to light that night's star.")}</p></div></section>`}
+function patchDates(got){const PD=store.get("patchdates",{});let ch=false;got.forEach(k=>{if(!PD[k]){PD[k]=isoToday();ch=true}});if(ch)store.set("patchdates",PD);return PD}
 /* Rising planet: the next match climbs over the Home horizon as it gets closer */
 function planetHTML(){const m=nextMatch();if(!m)return "";const d=daysBetween(isoToday(),m.d),p=Math.max(0,Math.min(1,1-d/30)),opp=m.opp.replace("LOVB ","");
   return `<div class="planet" style="--p:${p.toFixed(3)}" role="img" aria-label="Next match: ${esc(m.home?"vs ":"at ")+esc(opp)}, ${d===0?"today":d+" days away"}"><i></i><span>${d===0?tr("Today"):esc(opp.slice(0,3).toUpperCase())+" · "+d+"D"}</span></div>`}
-function patchesHTML(){const got=earnedPatches();
+function patchesHTML(){const got=earnedPatches(),PD=patchDates(got),worn=k=>PD[k]&&dDiff(PD[k],isoToday())>=30;
   return `<section><div class="sec-head"><h2>Pin collection</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
-   <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
+   <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""} ${on&&worn(p.k)?"worn":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
 /* Hidden discovery: tap the Home patch for the coach's timeout whiteboard */
 const STATION_LOG=["Timeout: talk on every ball.","Timeout: first contact sets the tone.","Timeout: next ball. Let the last one go.",
  "Timeout: serve tough, pass to target.","Timeout: recovery tonight wins Saturday's fifth set.","Timeout: you found the whiteboard. Tell your setter."];
@@ -2727,6 +2764,16 @@ const ING={
 const ING_SECTIONS=["Produce","Protein","Grains & starches","Dairy & alternatives","Pantry & snacks"];
 /* Options: n name, a allergens (ALLERGENS names), v vegetarian, g ingredients, r how to make it */
 const MEALBANK={
+ bridge:[
+  {n:"Greek yogurt cup with honey",a:["Dairy"],v:1,g:["yogurt", "honey"],r:"A single-serve Greek yogurt (about 15 g protein) with a drizzle of honey."},
+  {n:"String cheese and pretzels",a:["Dairy", "Wheat/Gluten"],v:1,g:["stringcheese", "pretzels"],r:"One string cheese and a handful of pretzels (about 10 g protein)."},
+  {n:"Chocolate milk (12 oz)",a:["Dairy"],v:1,g:["chocmilk"],r:"About 12 oz, cold (about 12 g protein). Easy on the stomach right before practice."},
+  {n:"Half a PB&J sandwich",a:["Peanut", "Wheat/Gluten"],v:1,g:["bread", "pb", "jam"],r:"One slice of bread folded over peanut butter and jam (about 7 g protein)."},
+  {n:"Banana and half a protein shake",a:[],v:1,g:["banana", "plantprotein"],r:"A banana plus half a scoop of tested protein powder in water (about 12 g protein)."},
+  {n:"Applesauce pouch and a string cheese",a:["Dairy"],v:1,g:["applesauce", "stringcheese"],r:"Fast carbs plus a little protein (about 7 g)."},
+  {n:"Turkey and rice crackers",a:[],g:["deliturkey", "ricecrackers"],r:"Two slices of turkey rolled up with a handful of rice crackers (about 10 g protein)."},
+  {n:"Rice cakes with peanut butter and honey",a:["Peanut"],v:1,g:["ricecakes", "pb", "honey"],r:"Two rice cakes, a thin layer of peanut butter and a drizzle of honey (about 5 g protein)."}
+ ],
  breakfast:[
   {n:"Oatmeal made with milk, banana and peanut butter",a:["Dairy","Peanut"],v:1,g:["oats","milk","banana","pb"],r:"Microwave ½–1 cup oats with milk for 2 minutes. Top with sliced banana and a spoon of peanut butter."},
   {n:"Scrambled eggs, toast and a piece of fruit",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","bread","fruit"],r:"Scramble 2–3 eggs in a little oil, 2 minutes. Two slices of toast and a piece of fruit on the side."},
@@ -2812,7 +2859,7 @@ const MEALBANK={
   {n:"A cup of edamame",a:["Soy"],v:1,g:["edamame"],r:"Microwave frozen edamame 3 minutes; salt lightly. About 17 g protein: add a Greek yogurt cup or a glass of milk to reach 30 g."},
   {n:"Hard-boiled eggs and toast",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","bread"],r:"Two hard-boiled eggs and a slice of toast."}]
 };
-const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
+const BANKNOTE={bridge:"Carbs plus a little protein.",breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
  main:"",snack:"Bridges the gap.",prebed:"Protein for overnight repair.",during:"Water every break. Sports drink if long or hot."};
 const PLATE={easy:"Easy plate",practice:"Practice plate",match:"Big-day plate"};
 const PRACTICE_TIMES=[["team","Team 9–1"],["am","Morning"],["mid","Midday"],["pm","Afternoon"]];
@@ -2822,7 +2869,7 @@ function dayTemplate(type,pt){
   if(type==="rest")return [o(T(8,30),"Breakfast","breakfast","Breakfast","easy"),o(T(12,30),"Lunch","main","Lunch","easy"),o(T(15,30),"Snack","snack","Snack"),o(T(18,30),"Dinner","main","Dinner","easy"),o(T(21,30),"Before bed (optional)","prebed","Snack")];
   if(type==="double")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Session 1 · 9–11 am","during",null),o(T(11,15),"Recovery","recovery","Post-training"),
    o(T(12,30),"Lunch","main","Lunch","match"),o(T(14,45),"Pre-practice","pre","Pre-training"),o(T(15,30),"Session 2 · 3:30–5:30 pm","during",null),o(T(17,45),"Recovery","recovery","Post-training"),o(T(19),"Dinner","main","Dinner","match"),o(T(21,30),"Before bed","prebed","Snack")];
-  if(pt==="team")return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(9),"Lift · around 9–10:30 am","during",null),o(T(10,30),"Post-lift / pre-practice snack","pre","Pre-training",null,{note:"Carbs plus a little protein. Keep it light: practice starts in 15 minutes."}),o(T(10,45),"Practice · around 10:45 am–1 pm","during",null),
+  if(pt==="team")return [o(T(8),"Breakfast","breakfast","Breakfast","practice"),o(T(9),"Lift · around 9–10:30 am","during",null),o(T(10,30),"Post-lift / pre-practice snack","bridge","Pre-training",null,{note:"Carbs plus a little protein. Keep it light: practice starts in 15 minutes."}),o(T(10,45),"Practice · around 10:45 am–1 pm","during",null),
    o(T(13,30),"Post-practice lunch","main","Post-training","practice"),o(T(17),"Dinner","main","Dinner","practice"),o(T(20),"Pre-sleep recovery snack","prebed","Snack")];
   if(pt==="am")return [o(T(6,45),"Breakfast","breakfast","Breakfast","practice"),o(T(8,15),"Pre-practice","pre","Pre-training"),o(T(9),"Practice · 9–11:30 am","during",null),o(T(11,45),"Recovery","recovery","Post-training"),
    o(T(13),"Lunch","main","Lunch","practice"),o(T(16),"Snack","snack","Snack"),o(T(19),"Dinner","main","Dinner","practice"),o(T(21,30),"Before bed","prebed","Snack")];
@@ -2891,7 +2938,7 @@ function planRot(bank,day){return bank==="main"||bank==="recovery"?Math.floor(da
 function loggedOn(iso,text){return jGet(iso).entries.some(e=>e.what===text)}
 /* Match days shop for the game-day pattern: breakfast, lunch, pre-match meal, snack, recovery, late dinner */
 function matchSlots(){return [["breakfast",0],["main",1],["main",2],["pre",3],["recovery",4],["main",5]]}
-function weekDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i))}
+function weekDays(){const t=isoToday();return [...Array(8)].map((_,i)=>jShift(t,i))}
 /* Grocery list covers the 7 days starting tomorrow, matching the meal plan that opens on tomorrow */
 function groceryDays(){const t=isoToday();return [...Array(7)].map((_,i)=>jShift(t,i+1))}
 /* The meal plan day currently shown (opens on tomorrow) */
@@ -3162,7 +3209,8 @@ function vMe(){
     <div class="row"><span class="grow muted">Eating style</span><b style="text-align:right">${isVeg()?"Vegetarian":"No preference"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>${oas()?`<div class="row"><span class="grow muted">${tr("Oral allergy syndrome")}</span><b>${tr("Raw-safe list on")}</b></div>`:""}
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
-   ${patchesHTML()}${passportHTML()}
+   ${syncHTML()}
+   ${patchesHTML()}${seasonSkyHTML()}${passportHTML()}
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
    <section><h2>Color scheme</h2><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
@@ -3376,6 +3424,7 @@ document.addEventListener("click",e=>{
   if(mpClick(b))return;
   if(scClick(b))return;
   if(ds.lineup){showLocker(true);return}
+  if(ds.syncretry){store.set("roster_pending",true);rosterSync();try{staffFlush()}catch(e){}toast(tr("Sending…"));return}
   if(glistClick(b))return;
   if(recClick(b))return;
   if(planClick(b))return;

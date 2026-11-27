@@ -27,6 +27,8 @@ Owner: Nick, sports dietitian. Wants honest, evidence-based answers, detail, and
 - **Meal recommendations:** Nutrition tab columns Meal 1-3 name app meals (exact names). Recommended meals get a ★ badge and sort first in the meal plan and Meal prep (`isRec`, `mealFind`, `recMealsHTML`). The dropdown source is Lists!C (a static list): **whenever you add or rename a meal in MEALBANK or MEALPREP, rewrite Lists!C** so the dropdown matches.
 - **Learn tab:** Ask the RD (ranked search over FAQ + LESSONS, `askSearch`; unanswered questions go to the staff sheet's Questions tab via `staffSend({t:"ask"})`), Library (lesson tracks + All Q&A), Tools. The old "My path" is gone. To grow the library, add entries to FAQ with a source in `s`.
 - **Oral allergy syndrome:** `profile.oas` (raw-safe fruit/veg, never, milks; phone only). `oasCheck` filters MEALBANK by ingredient keys, `oasPrep` adds swaps to MEALPREP. Defaults (`OAS_DEF`) are one athlete's list.
+- **Offline:** `sw.js` (repo root) caches the app shell on GitHub Pages; bump `V` in sw.js if you change which files it caches. Not registered inside the Claude artifact.
+- **10:30 team snack** uses the `bridge` bank (carbs + 5–15 g protein); pre-sleep defaults to `hp:1` options (30 g+ protein).
 - **Translations:** `addT([[en, ja, pt]])` takes exact, trimmed keys. Write any JS generated from Python with `json.dumps(ensure_ascii=False)`.
 
 ## Open items

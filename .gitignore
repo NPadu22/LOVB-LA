@@ -1,0 +1,4 @@
+# Test screenshots must never land in the repo root
+/*.png
+!/icon-*.png
+!/Orbit Performance icon.png
