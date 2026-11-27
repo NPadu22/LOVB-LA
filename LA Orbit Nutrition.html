@@ -207,6 +207,36 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .medalg{color:#1B1405!important}
 .cramp .cgrid2 .medal{grid-column:2;grid-row:1/span 2;width:20px;height:20px}
 .medal-key .medal{width:12px;height:12px;margin:0 2px 0 6px;vertical-align:-1px}
+/* Locker room reveal */
+.locker{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));background:#04060D;overflow:hidden;animation:lkIn .2s ease both}
+.locker.out{opacity:0;transition:opacity .3s}
+.lk-room{position:absolute;inset:0;background:
+  linear-gradient(to bottom,transparent 0 62%,rgb(0 0 0 / .55) 62% 64%,transparent 64%),
+  repeating-linear-gradient(90deg,#141B2E 0 70px,#0E1424 70px 74px),
+  linear-gradient(#0B1120,#05070E);opacity:.15;animation:lkRoom 1.6s ease .2s both}
+.lk-room::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 30px,rgb(255 255 255 / .06) 30px 33px,transparent 33px 74px),radial-gradient(60% 40% at 50% 0%,rgb(255 214 170 / .25),transparent 70%)}
+.lk-lights{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-around;padding:0 12%}
+.lk-lights i{display:block;width:70px;height:10px;border-radius:0 0 8px 8px;background:#2A2F3A;box-shadow:none;animation:lkLight .25s ease both}
+.lk-lights i:nth-child(1){animation-delay:.35s}.lk-lights i:nth-child(2){animation-delay:.75s}.lk-lights i:nth-child(3){animation-delay:1.15s}
+.lk-card{position:relative;width:100%;max-width:440px;background:linear-gradient(#FFF8EE,#FBEFDF);color:#0B132B;border-radius:18px;padding:20px 18px 16px;box-shadow:0 30px 60px rgb(0 0 0 / .5);display:grid;gap:10px;animation:lkCard .5s cubic-bezier(.2,.9,.25,1) 1.5s both}
+.lk-card::before{content:"";position:absolute;left:50%;top:-9px;width:46px;height:18px;transform:translateX(-50%);border-radius:4px;background:repeating-linear-gradient(90deg,#E8DFC9 0 3px,#DCD1B8 3px 6px);box-shadow:0 2px 3px rgb(0 0 0 / .2)}
+.lk-ey{font:700 .66rem var(--mono);letter-spacing:.18em;text-transform:uppercase;color:#C2410C}
+.lk-card h2{font:900 1.8rem/1 var(--display);font-stretch:125%;text-transform:uppercase;margin:0;color:#0B132B}
+.lk-card h2::before,.lk-card h2::after{display:none!important;content:none!important}
+.lk-card h2{display:block}
+.lk-opp{font-size:.9rem;color:#56607E}
+.lk-list{list-style:none;margin:2px 0 6px;padding:0;display:grid;gap:0;border-top:2px solid #0B132B}
+.lk-list li{display:grid;grid-template-columns:28px 72px 1fr;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid #E3D6C2;animation:lkRow .3s ease both;animation-delay:calc(1.8s + var(--i) * .08s)}
+.lk-n{font:800 .8rem var(--mono);color:#C2410C}
+.lk-t{font:700 .82rem var(--mono);color:#0B132B}
+.lk-w b{display:block;font-size:.92rem}.lk-w span{font-size:.78rem;color:#56607E}
+.locker.still,.locker.still *{animation:none!important}
+.locker.still .lk-room{opacity:.8}.locker.still .lk-lights i{background:#FFF1D6;box-shadow:0 6px 30px 10px rgb(255 214 160 / .35)}
+@keyframes lkIn{from{opacity:0}}
+@keyframes lkLight{to{background:#FFF1D6;box-shadow:0 6px 30px 10px rgb(255 214 160 / .35)}}
+@keyframes lkRoom{to{opacity:.8}}
+@keyframes lkCard{from{opacity:0;transform:translateY(40px) rotate(-1.5deg)}to{opacity:1;transform:none}}
+@keyframes lkRow{from{opacity:0;transform:translateX(-8px)}}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1151,6 +1181,7 @@ addT([["Tomorrow", "明日", "Amanhã"], ["TOMORROW", "明日", "AMANHÃ"], ["TM
 addT([["Grocery list · 7 days from tomorrow", "買い物リスト・明日から7日間", "Lista de compras · 7 dias a partir de amanhã"]]);
 addT([["Build a grocery list from this plan", "このプランから買い物リストを作る", "Criar lista de compras deste plano"], ["Grocery list for tomorrow", "明日の買い物リスト", "Lista de compras para amanhã"], ["Grocery list for today", "今日の買い物リスト", "Lista de compras para hoje"], ["meals & snacks", "食事・間食", "refeições e lanches"], ["Everything for the meals in this plan. Change a meal above and the list updates. \"×2\" means it's in two meals. Tick things off as you shop.", "このプランの食事に必要なものすべて。上で食事を変えるとリストも更新されます。「×2」は2回の食事で使うという意味。買ったらチェックしましょう。", "Tudo para as refeições deste plano. Mude uma refeição acima e a lista atualiza. \"×2\" quer dizer que aparece em duas refeições. Marque conforme compra."], ["You're away this day, so pack these instead of shopping for home meals.", "この日は遠征なので、家の食事の買い物ではなくこれを持っていきましょう。", "Você estará fora neste dia: leve estes itens em vez de comprar para casa."]]);
 addT([["Logged", "記録済み", "Registrado"], ["Now showing", "上映中", "Em cartaz"], ["Road passport", "遠征パスポート", "Passaporte de viagem"], ["Log a meal on a road trip, the travel day or match day, to stamp that city.", "遠征(移動日か試合日)で食事を記録すると、その都市のスタンプがもらえます。", "Registre uma refeição na viagem, no dia de deslocamento ou de jogo, para carimbar a cidade."], ["Check-ins", "チェックイン", "Check-ins"], ["Meals logged", "記録した食事", "Refeições registradas"], ["Water (oz)", "水分(oz)", "Água (oz)"], ["Pins", "ピン", "Pins"], ["Passport stamps", "パスポートスタンプ", "Carimbos"], ["Lessons", "レッスン", "Lições"], ["Tap to flip back", "タップで戻る", "Toque para virar"]]);
+addT([["Game day", "試合日", "Dia de jogo"], ["Starting lineup", "スターティングラインナップ", "Escalação"], ["first serve", "サーブ開始", "primeiro saque"], ["Let's go", "いこう", "Vamos"], ["Show today's lineup card", "今日のラインナップカードを見る", "Ver a escalação de hoje"]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -2505,6 +2536,27 @@ function profBackHTML(){const days=Object.keys(J.days),ck=days.filter(d=>rScore(
   const row=(k,v)=>`<div><b>${v}</b><span>${k}</span></div>`;
   return `<div class="prof-back" aria-hidden="true"><span class="ey">Season card · 2026–27</span><div class="pb-grid">${row(tr("Check-ins"),ck)}${row(tr("Meals logged"),meals)}${row(tr("Water (oz)"),oz.toLocaleString())}${row(tr("Pins"),pins+"/"+PATCHES.length)}${row(tr("Passport stamps"),stamps)}${row(tr("Lessons"),EDU.learned.length)}</div><span class="pb-hint">${tr("Tap to flip back")}</span></div>`}
 let profFlip=false;
+/* Game-day locker room reveal: first open on a match day, the lights come up and today's plan arrives as a lineup card */
+function lineupRows(m){const L=GAME[m.home?"home":"road"].filter(x=>x.rel>-1440&&x.rel<=150&&x.t!=="Pack & go"),tz=TZ[m.off]||"PT";
+  return L.map(x=>({time:clock(m.local+x.rel),t:x.t,n:x.n,tz}))}
+function lockerHTML(m){const R=lineupRows(m),opp=m.opp.replace("LOVB ","");
+  return `<div class="locker" role="dialog" aria-modal="true" aria-label="Game day lineup card">
+   <div class="lk-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+   <div class="lk-room" aria-hidden="true"></div>
+   <div class="lk-card">
+    <span class="lk-ey">${tr("Game day")} · ${esc(fmtDate(m.d))}</span>
+    <h2>${tr("Starting lineup")}</h2>
+    <p class="lk-opp">${m.home?"vs":"at"} <span class="flap">${esc(opp)}</span> · ${tr("first serve")} ${esc(matchLocal(m))}</p>
+    <ol class="lk-list">${R.map((r,i)=>`<li style="--i:${i}"><span class="lk-n">${String(i+1).padStart(2,"0")}</span><span class="lk-t">${esc(r.time)}</span><span class="lk-w"><b>${esc(r.t)}</b><span>${esc(r.n)}</span></span></li>`).join("")}</ol>
+    <button class="btn block" data-lockerclose="1">${tr("Let's go")}</button>
+   </div></div>`}
+function showLocker(force){const m=todayMatch();if(!m||!profile||draft.editing)return;const k="lockerseen_"+m.d;if(!force&&store.get(k,false))return;
+  store.set(k,true);let rm=false;try{rm=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+  const w=document.createElement("div");w.innerHTML=lockerHTML(m);const el=w.firstElementChild;if(rm)el.classList.add("still");translateDOM(el);document.body.appendChild(el);
+  const btn=el.querySelector("[data-lockerclose]");setTimeout(()=>btn&&btn.focus(),rm?50:1900);
+  const close=()=>{el.classList.add("out");setTimeout(()=>el.remove(),rm?0:300)};
+  btn.addEventListener("click",close);el.addEventListener("keydown",e=>{if(e.key==="Escape")close()})}
+function lockerMaybe(){if(!profile||tab!=="home"||profile.welcomed===false)return;if((myAllergens().length||profile.other||oas())&&!profile.ack)return;showLocker(false)}
 /* Rising planet: the next match climbs over the Home horizon as it gets closer */
 function planetHTML(){const m=nextMatch();if(!m)return "";const d=daysBetween(isoToday(),m.d),p=Math.max(0,Math.min(1,1-d/30)),opp=m.opp.replace("LOVB ","");
   return `<div class="planet" style="--p:${p.toFixed(3)}" role="img" aria-label="Next match: ${esc(m.home?"vs ":"at ")+esc(opp)}, ${d===0?"today":d+" days away"}"><i></i><span>${d===0?tr("Today"):esc(opp.slice(0,3).toUpperCase())+" · "+d+"D"}</span></div>`}
@@ -2617,7 +2669,7 @@ function vHome(){
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
     <div class="grain"></div><div class="horizon"></div>${planetHTML()}
    </header>
-   ${gdBoard()}
+   ${gdBoard()}${todayMatch()?`<button class="linkbtn" data-lineup="1" style="align-self:flex-start">${tr("Show today's lineup card")}</button>`:""}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
    ${weekSummaryCard()}${matchDayCard()}${roadTripCard()}
    <section><div class="sec-head"><h2>Next match</h2><button class="linkbtn" data-tab="season">Season</button></div>${launchCard(nextMatch())}</section>
@@ -3306,6 +3358,7 @@ document.addEventListener("click",e=>{
   if(featClick(b))return;
   if(mpClick(b))return;
   if(scClick(b))return;
+  if(ds.lineup){showLocker(true);return}
   if(glistClick(b))return;
   if(recClick(b))return;
   if(planClick(b))return;
@@ -3416,7 +3469,7 @@ loadSheets();
 if(profile&&!store.get("roster_v1",false)){store.set("roster_pending",true);store.set("roster_v1",true)}
 /* Self-heal: a no-cors POST can fail silently, so re-send the roster row once a day (the script upserts by device ID, no duplicates). */
 if(profile&&store.get("roster_day","")!==isoToday()){store.set("roster_day",isoToday());store.set("roster_pending",true)}
-rosterSync();staffFlush();
+rosterSync();staffFlush();setTimeout(lockerMaybe,700);
 if(profile&&profile.consentAt&&!store.get("share_all_v1",false)){store.set("share_all_v1",true);try{shareReady(isoToday());shareDay(isoToday());shareLiftsToday()}catch(e){}}
 
 </script>
