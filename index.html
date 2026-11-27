@@ -166,6 +166,17 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .gl.done .gl-t b{text-decoration:line-through;color:var(--muted)}
 .gl-ic{all:unset;cursor:pointer;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
 .gl-ic:focus-visible,.gl-chk:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fuel-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.cartbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:color-mix(in srgb,var(--ok) 18%,var(--surface));color:var(--fg);font-weight:700;font-size:.9rem;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 55%,transparent);white-space:nowrap}
+.cartbtn svg{width:20px;height:20px;color:color-mix(in srgb,var(--ok) 70%,var(--fg))}
+.cartbtn b{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--ok);color:#06281C;font:800 .72rem/20px var(--mono);text-align:center}
+.cartbtn[aria-pressed="true"]{background:var(--ok);color:#06281C}
+.cartbtn[aria-pressed="true"] svg{color:#06281C}
+.cartbtn[aria-pressed="true"] b{background:#06281C;color:var(--ok)}
+.cartbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.groc{background:color-mix(in srgb,var(--ok) 9%,var(--surface))!important;box-shadow:inset 4px 0 0 var(--ok)!important;background-image:repeating-linear-gradient(transparent 0 33px,color-mix(in srgb,var(--ok) 10%,transparent) 33px 34px)!important}
+.groc .choice button[aria-pressed="true"]{background:var(--ok);color:#06281C}
+.groc .btn:not(.ghost),[data-glistmp],[data-glistplan],#glist-form .btn{background:var(--ok)!important;color:#06281C!important}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -2790,8 +2801,8 @@ function glistHTML(){const open=GLIST.filter(x=>!x.done),done=GLIST.filter(x=>x.
   return `<p class="muted">One running list for the week. Add meal prep or meal plan lists with one tap, then add anything else you need.</p>
    <form id="glist-form" class="row" style="gap:8px"><input id="gl-new" placeholder="${tr("Add an item, e.g. paper towels")}" aria-label="Add a grocery item" style="flex:1" autocomplete="off"><button class="btn sm" type="submit">${tr("Add")}</button></form>
    ${GLIST.length?`<section><div class="sec-head"><h2>${tr("To buy")}</h2><span class="stamp">${open.length} ${tr("left")}</span></div>
-    ${open.length?`<ul class="glist card">${open.map(row).join("")}</ul>`:`<p class="muted">${tr("All done. Nice shop.")}</p>`}</section>
-    ${done.length?`<section><div class="sec-head"><h2>${tr("In the cart")}</h2><span class="stamp">${done.length}</span></div><ul class="glist card">${done.map(row).join("")}</ul></section>`:""}
+    ${open.length?`<ul class="glist card groc">${open.map(row).join("")}</ul>`:`<p class="muted">${tr("All done. Nice shop.")}</p>`}</section>
+    ${done.length?`<section><div class="sec-head"><h2>${tr("In the cart")}</h2><span class="stamp">${done.length}</span></div><ul class="glist card groc">${done.map(row).join("")}</ul></section>`:""}
     <div class="copybox" id="gl-copy" style="display:none">${esc(text)}</div>
     <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-glcopy="1">${tr("Copy list")}</button>${done.length?`<button class="btn ghost sm" data-glcleardone="1">${tr("Remove checked")}</button>`:""}<button class="btn ghost sm" data-glclear="1">${tr("Clear all")}</button></div>`
    :`<div class="card stack"><b>${tr("Your list is empty")}</b><p class="muted" style="font-size:.88rem">${tr("Open Meal prep or the weekly grocery list in Meal plan and tap Add to my list, or type items above.")}</p><button class="btn ghost sm" style="align-self:flex-start" data-segjump="mealprep">${tr("Go to Meal prep")}</button></div>`}`}
@@ -2811,7 +2822,7 @@ function groceryHTML(){
   const got=PLANPREF.got[iso]||[],aw=awayInfo()[iso];
   const kit=aw?roadKitFor():[];
   const text=["Grocery list · LA Orbit · "+lbl+" ("+fmtDate(iso)+")",...ING_SECTIONS.filter(s=>by[s]).flatMap(s=>["",s.toUpperCase(),...by[s].map(x=>"- "+x.label+(x.c>1?" (×"+x.c+")":""))]),...(kit.length?["","ROAD KIT",...kit.map(x=>"- "+x.n)]:[])].join("\n");
-  return `<div class="card stack" id="grocery"><div class="sec-head"><h3>${tr("Grocery list for "+lbl)}</h3><span class="stamp">${meals} ${tr("meals & snacks")}</span></div>
+  return `<div class="card stack groc" id="grocery"><div class="sec-head"><h3>${tr("Grocery list for "+lbl)}</h3><span class="stamp">${meals} ${tr("meals & snacks")}</span></div>
    <p class="muted" style="font-size:.86rem">${tr("Everything for the meals in this plan. Change a meal above and the list updates. \"×2\" means it's in two meals. Tick things off as you shop.")}</p>
    ${meals?ING_SECTIONS.filter(s=>by[s]).map(s=>`<div class="stack" style="gap:6px"><span class="eyebrow">${s}</span><div class="choice mini">${by[s].map(x=>`<button type="button" data-groc="${x.k}" aria-pressed="${got.includes(x.k)}">${esc(x.label)}${x.c>1?` ×${x.c}`:""}</button>`).join("")}</div></div>`).join(""):""}
    ${aw?`<div class="stack" style="gap:6px"><span class="eyebrow">Road kit · ${esc(aw.m.city.split(",")[0])} trip</span><p class="stamp">${tr("You're away this day, so pack these instead of shopping for home meals.")}</p><div class="choice mini">${kit.map(x=>`<button type="button" data-groc="kit:${esc(x.n)}" aria-pressed="${got.includes("kit:"+x.n)}">${esc(x.n)}</button>`).join("")}</div></div>`:""}
@@ -2953,7 +2964,7 @@ function mealPrepHTML(){const P=mpPlan(),S=P.S,al=myAllergens(),got=MPB.got||[];
      <div class="card stack" style="gap:6px"><p style="font-size:.92rem">Cook ${P.sel.map((i,j)=>P.batches[j]?`<b>${esc(name(i))}</b> ×${P.batches[j]}`:"").filter(Boolean).join(", ")}. Each batch makes ${P.per} portions.${P.spare?` That's ${P.spare} spare portion${P.spare>1?"s":""}: freeze them or share.`:""}</p></div>
      ${MPB.days>3?`<p class="stamp" style="margin-top:8px">Cooked food keeps 3–4 days in the fridge, so freeze the portions you'll eat on day 4 and later, and move each one to the fridge the night before.</p>`:""}</section>
     <section id="mp-groc"><div class="sec-head"><h2>Grocery list</h2><span class="stamp">${got.filter(x=>P.list.includes(x)).length}/${P.list.length}</span></div>
-     <div class="card stack"><div class="choice mini">${P.list.map(x=>`<button type="button" data-mpbgot="${esc(x)}" aria-pressed="${got.includes(x)}">${esc(x)}</button>`).join("")}</div>
+     <div class="card stack groc"><div class="choice mini">${P.list.map(x=>`<button type="button" data-mpbgot="${esc(x)}" aria-pressed="${got.includes(x)}">${esc(x)}</button>`).join("")}</div>
       <div class="copybox" id="mp-copy" style="display:none">${esc(text)}</div>
       <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-glistmp="1">${tr("Add to my list")}</button><button class="btn ghost sm" data-copymp="1">Copy grocery list</button><button class="btn ghost sm" data-mpreset="1">Clear ticks</button></div>
       <p class="stamp">Brands vary: check labels for your allergens.</p></div></section>
@@ -2971,7 +2982,7 @@ function mpClick(b){const ds=b.dataset;
 
 function vFuel(){
   if(fuelSeg==="match"){const m=nextMatch();fuelSeg=m&&!m.home?"road":"homegame"}
-  const segs=[["plan","Meal plan"],["mealprep","Meal prep"],["glist","My list"+(GLIST.filter(x=>!x.done).length?` (${GLIST.filter(x=>!x.done).length})`:"")],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
+  const segs=[["plan","Meal plan"],["mealprep","Meal prep"],["homegame","Home game"],["road","Road game"],["travel","Travel"],["out","Eating out"],["homecook","At home"]];
   let body="";
   if(fuelSeg==="plan"){body=planHTML()}else if(fuelSeg==="mealprep"){body=mealPrepHTML()}else if(fuelSeg==="glist"){body=glistHTML()}else if(fuelSeg==="homegame"||fuelSeg==="road"){
     body=gamePlanHTML(fuelSeg==="road"?"road":"home");
@@ -2994,7 +3005,7 @@ function vFuel(){
      :`<p class="muted">Fast staples and recipes for the days between road trips.</p>${areaPicker()}
      ${A?`<div class="card stack"><span class="eyebrow">Shopping near you · ${esc(A.short)}</span><p style="font-size:.92rem">${esc(A.shop)}</p></div>`:""}${list()}`;
   }
-  return `<div class="view"><div><p class="eyebrow module">The training table</p><h1 style="margin-top:4px">Fuel</h1></div>${oasCardHTML()}
+  return `<div class="view"><div class="fuel-head"><div><p class="eyebrow module">The training table</p><h1 style="margin-top:4px">Fuel</h1></div>${(n=>`<button class="cartbtn" data-segjump="${fuelSeg==="glist"?"plan":"glist"}" aria-pressed="${fuelSeg==="glist"}" aria-label="${fuelSeg==="glist"?"Close my grocery list":"Open my grocery list"}${n?`, ${n} items`:""}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="19.5" r="1.5" fill="currentColor"/><circle cx="17" cy="19.5" r="1.5" fill="currentColor"/></svg><span>${tr("My list")}</span>${n?`<b>${n}</b>`:""}</button>`)(GLIST.filter(x=>!x.done).length)}</div>${oasCardHTML()}
    <div class="seg" data-segset="fuel">${segs.map(([k,l])=>`<button data-v="${k}" aria-pressed="${fuelSeg===k}">${l}</button>`).join("")}</div>${body}</div>`;
 }
 
