@@ -126,7 +126,7 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .cramp .cgrid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cramp .cgrid2>div{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;background:var(--surface-2);border-radius:10px;padding:8px 10px}
 .cramp .cgrid2 b{font-size:.88rem}
-.cramp .cgrid2 span:not(.cdots){grid-column:1;font-size:.72rem;color:var(--muted)}
+.cramp .cgrid2 span:not(.medal){grid-column:1;font-size:.72rem;color:var(--muted)}
 .cramp .cdots{grid-column:2;grid-row:1/span 2;display:flex;gap:3px}
 .cramp .cdots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--muted) 25%,transparent)}
 .cramp .cdots i.on{background:var(--accent)}
@@ -160,6 +160,53 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .groc{background:color-mix(in srgb,var(--ok) 9%,var(--surface))!important;box-shadow:inset 4px 0 0 var(--ok)!important;background-image:repeating-linear-gradient(transparent 0 33px,color-mix(in srgb,var(--ok) 10%,transparent) 33px 34px)!important}
 .groc .choice button[aria-pressed="true"]{background:var(--ok);color:#06281C}
 .groc .btn:not(.ghost),[data-glistmp],[data-glistplan],#glist-form .btn{background:var(--ok)!important;color:#06281C!important}
+/* ===== Places (Rohde): each tab has its own setting ===== */
+#app[data-tab="fuel"] .plan .p-head{position:relative}
+#app[data-tab="fuel"] .plan .p-head::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:10px;background:radial-gradient(circle at 6px 0,var(--paper) 4px,transparent 4.5px) 0 0/12px 10px repeat-x}
+.step .tstamp{position:absolute;right:2px;top:8px;transform:rotate(-9deg);border:2px solid var(--ok);color:var(--ok);font:800 .6rem var(--mono);letter-spacing:.16em;padding:3px 7px;border-radius:6px;text-transform:uppercase;opacity:.9;pointer-events:none}
+#app[data-tab="at"] .view>div:first-child h1{display:inline-block;color:#0B132B;padding:2px 14px 0;transform:rotate(-1.2deg);background:repeating-linear-gradient(100deg,rgb(0 0 0 / .035) 0 2px,transparent 2px 6px),linear-gradient(#F6F1E7,#EDE5D6);clip-path:polygon(0 8%,3% 0,6% 9%,9% 1%,12% 8%,100% 4%,97% 50%,100% 96%,94% 100%,90% 92%,6% 100%,3% 92%,0 100%,2% 50%);box-shadow:0 2px 0 rgb(0 0 0 / .06)}
+#app[data-tab="sc"] .lift{box-shadow:inset 5px 0 0 var(--plate,#D7263D)}
+#app[data-tab="sc"] .lift:nth-of-type(4n+2){--plate:#2F6FDE}#app[data-tab="sc"] .lift:nth-of-type(4n+3){--plate:#F2C230}#app[data-tab="sc"] .lift:nth-of-type(4n+4){--plate:#2BA84A}
+#app[data-tab="sc"] .view>div:first-child h1{text-shadow:0 0 1px rgb(255 255 255 / .5),1px 1px 0 rgb(255 255 255 / .12),-1px 0 2px rgb(255 255 255 / .18)}
+#app[data-tab="learn"] .rcard[data-lesson]{position:relative;padding-left:26px;padding-right:26px;background-image:radial-gradient(circle,color-mix(in srgb,var(--fg) 22%,transparent) 2.2px,transparent 2.6px),radial-gradient(circle,color-mix(in srgb,var(--fg) 22%,transparent) 2.2px,transparent 2.6px);background-size:10px 12px,10px 12px;background-position:4px 3px,calc(100% - 4px) 3px;background-repeat:repeat-y,repeat-y}
+.nowshow{display:inline-block;background:var(--accent);color:var(--on-accent);padding:2px 6px;border-radius:4px;margin-right:4px;letter-spacing:.12em}
+.flap{display:inline-block;font:700 .82em var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#FFE7D6;padding:1px 6px;border-radius:4px;background:linear-gradient(#1C2233 0 49%,#0B0F1C 51% 100%);box-shadow:inset 0 1px 0 rgb(255 255 255 / .08)}
+/* Rising planet */
+.hero .planet{position:absolute;right:calc(18px + var(--p) * 6px);bottom:calc(-52px + var(--p) * 82px);width:calc(44px + var(--p) * 60px);aspect-ratio:1;pointer-events:none;z-index:0;transition:bottom .6s ease}
+.hero .planet i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 30%,#FFE3CC 0,#FF8A4C 22%,#FF5E1A 48%,#9A3409 82%,#5A1E05 100%);box-shadow:0 0 calc(10px + var(--p)*30px) rgb(255 94 26 / calc(.25 + var(--p)*.35))}
+.hero .planet i::after{content:"";position:absolute;left:-28%;right:-28%;top:42%;height:16%;border-radius:50%;border:2px solid rgb(255 231 214 / .55);transform:rotate(-14deg)}
+.hero .planet span{position:absolute;left:50%;top:-18px;transform:translateX(-50%);font:700 .56rem var(--mono);letter-spacing:.14em;color:rgb(255 241 226 / .8);white-space:nowrap;opacity:calc(.35 + var(--p)*.65)}
+.hero>*:not(.planet):not(.grain):not(.horizon){position:relative;z-index:1}
+/* Passport */
+.passport{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pstamp2{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;padding:8px;border:2px dashed color-mix(in srgb,var(--muted) 45%,transparent);color:var(--muted);transform:rotate(var(--r));opacity:.75}
+.pstamp2.circle{border-radius:50%}.pstamp2.rect{border-radius:10px}.pstamp2.hex{clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%);border:0;background:color-mix(in srgb,var(--muted) 12%,transparent)}
+.pstamp2 b{font:800 .7rem var(--display);font-stretch:112%;text-transform:uppercase;line-height:1.1}
+.pstamp2 span{font-size:.66rem;line-height:1.15}
+.pstamp2 i{font:700 .56rem var(--mono);font-style:normal;letter-spacing:.1em;opacity:.8}
+.pstamp2.on{border:3px double var(--c);color:var(--c);opacity:1;background:color-mix(in srgb,var(--c) 8%,transparent)}
+.pstamp2.on.hex{border:0;background:color-mix(in srgb,var(--c) 18%,transparent)}
+/* Season card flip */
+.prof{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.prof .prof-back{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;gap:12px;padding:20px;background:linear-gradient(160deg,#14203F,#0B132B);color:#FFF1E2;border-radius:inherit;opacity:0;transform:rotateY(90deg);transition:opacity .25s,transform .35s;pointer-events:none}
+.prof.flipped .prof-back{opacity:1;transform:none}
+.prof-back .ey{color:#FFC9A3}
+.pb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;flex:1;align-content:center}
+.pb-grid div{display:grid;gap:2px;border-bottom:1px solid rgb(255 255 255 / .12);padding-bottom:6px}
+.pb-grid b{font:800 1.5rem var(--display);font-stretch:112%;color:#FF8A4C}
+.pb-grid span{font:600 .62rem var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.pb-hint{font:600 .58rem var(--mono);letter-spacing:.14em;text-transform:uppercase;opacity:.55;text-align:right}
+.prof:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.prof .prof-back,.hero .planet{transition:none}}
+/* Archive cards and medal tiers for evidence */
+.src{padding:6px 8px 6px 10px;border-radius:6px;background:color-mix(in srgb,var(--fg) 4%,transparent);border-left:2px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.medal{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:-3px;box-shadow:inset 0 0 0 2px rgb(0 0 0 / .15),inset 0 -3px 0 rgb(0 0 0 / .12)}
+.medal.m3,.medalg.m3{background:radial-gradient(circle at 35% 30%,#FFF3B0,#E8B923 55%,#A8790E)}
+.medal.m2,.medalg.m2{background:radial-gradient(circle at 35% 30%,#FFFFFF,#C9CED6 55%,#868D99)}
+.medal.m1,.medalg.m1{background:radial-gradient(circle at 35% 30%,#FFD9B8,#C7834A 55%,#7E4A20)}
+.medalg{color:#1B1405!important}
+.cramp .cgrid2 .medal{grid-column:2;grid-row:1/span 2;width:20px;height:20px}
+.medal-key .medal{width:12px;height:12px;margin:0 2px 0 6px;vertical-align:-1px}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1103,6 +1150,7 @@ addT([["My list", "マイリスト", "Minha lista"], ["Add to my list", "マイ�
 addT([["Tomorrow", "明日", "Amanhã"], ["TOMORROW", "明日", "AMANHÃ"], ["TMRW", "明日", "AMANHÃ"], ["Tomorrow is a…", "明日は…", "Amanhã é…"]]);
 addT([["Grocery list · 7 days from tomorrow", "買い物リスト・明日から7日間", "Lista de compras · 7 dias a partir de amanhã"]]);
 addT([["Build a grocery list from this plan", "このプランから買い物リストを作る", "Criar lista de compras deste plano"], ["Grocery list for tomorrow", "明日の買い物リスト", "Lista de compras para amanhã"], ["Grocery list for today", "今日の買い物リスト", "Lista de compras para hoje"], ["meals & snacks", "食事・間食", "refeições e lanches"], ["Everything for the meals in this plan. Change a meal above and the list updates. \"×2\" means it's in two meals. Tick things off as you shop.", "このプランの食事に必要なものすべて。上で食事を変えるとリストも更新されます。「×2」は2回の食事で使うという意味。買ったらチェックしましょう。", "Tudo para as refeições deste plano. Mude uma refeição acima e a lista atualiza. \"×2\" quer dizer que aparece em duas refeições. Marque conforme compra."], ["You're away this day, so pack these instead of shopping for home meals.", "この日は遠征なので、家の食事の買い物ではなくこれを持っていきましょう。", "Você estará fora neste dia: leve estes itens em vez de comprar para casa."]]);
+addT([["Logged", "記録済み", "Registrado"], ["Now showing", "上映中", "Em cartaz"], ["Road passport", "遠征パスポート", "Passaporte de viagem"], ["Log a meal on a road trip, the travel day or match day, to stamp that city.", "遠征(移動日か試合日)で食事を記録すると、その都市のスタンプがもらえます。", "Registre uma refeição na viagem, no dia de deslocamento ou de jogo, para carimbar a cidade."], ["Check-ins", "チェックイン", "Check-ins"], ["Meals logged", "記録した食事", "Refeições registradas"], ["Water (oz)", "水分(oz)", "Água (oz)"], ["Pins", "ピン", "Pins"], ["Passport stamps", "パスポートスタンプ", "Carimbos"], ["Lessons", "レッスン", "Lições"], ["Tap to flip back", "タップで戻る", "Toque para virar"]]);
 function translateDOM(root){if(LANG==="en"||!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;
  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest("script,style,[data-notr]"))continue;L.push(n)}
  L.forEach(n=>{const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
@@ -1860,7 +1908,7 @@ const CAFF={dose:200,taken:18,peak:19,half:5,from:17,to:31};
 function caffMg(t){const c=CAFF;if(t<c.taken)return 0;if(t<c.peak)return c.dose*(t-c.taken)/(c.peak-c.taken);return c.dose*Math.pow(.5,(t-c.peak)/c.half)}
 function hourLabel(t){const h=((Math.round(t*2)/2)%24+24)%24,hh=Math.floor(h),m=h%1?":30":"";return (hh%12||12)+m+(hh<12?" am":" pm")}
 function figHTML(id){
-  if(id==="cramp"){const dots=n=>`<span class="cdots" aria-label="${["","theory only","small trials","lab studies"][n]}">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+  if(id==="cramp"){const dots=n=>`<span class="medal m${n}" title="${["","Bronze: theory only","Silver: small trials","Gold: lab studies"][n]}" aria-label="${["","bronze, theory only","silver, small trials","gold, lab studies"][n]}"></span>`;
    return `<figure class="card fig cramp" style="margin:0"><span class="fig-title">Cramp? 3 steps</span>
    <div class="csteps">
     <div><b class="cnum">1</b><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="10" width="8" height="28" rx="3"/><rect x="28" y="10" width="8" height="28" rx="3"/></svg><strong>Stop</strong><span>Don't play through it</span></div>
@@ -1873,7 +1921,7 @@ function figHTML(id){
    <div class="cps"><div class="cpos"><h4>Prevent</h4><ul><li>Fuel before long sessions</li><li>Build load gradually</li><li>Salty sweater? Add sodium</li></ul></div>
     <div class="cneg"><h4>Skip</h4><ul><li>Bananas for cramps</li><li>Magnesium pills</li><li>Quinine or tonic water</li></ul></div></div>
    <div class="cflag"><b>See Emma now</b> if muscles feel weak or limp (not locked), you collapse, or pain, swelling or dark urine follow.</div>
-   <p class="stamp">Dots: ●●● lab studies · ●● small trials · ● theory only. Try sour or spicy in practice first.</p>
+   <p class="stamp medal-key"><span class="medal m3"></span> Lab studies <span class="medal m2"></span> Small trials <span class="medal m1"></span> Theory only · Try sour or spicy in practice first.</p>
    <p class="src">Maughan & Shirreffs, Sports Med 2019 (cramping causes and solutions); Schwellnus et al., Br J Sports Med 2011 (fatigue and cramps); Miller et al., Med Sci Sports Exerc 2010 (pickle juice); Craighead et al., Muscle Nerve 2017 (TRP agonist drink and cramps); Garrison et al., Cochrane Review 2020 (magnesium); FDA 2010 quinine warning</p></figure>`}
   if(id==="recovery")return `<figure class="card fig" style="margin:0"><span class="fig-title">Match night, in order</span>
    <ol class="tl">${[["LAST POINT","Pack it before you leave","Recovery drink or shake, a bar or banana, a full bottle."],["WITHIN 1 HR","Protein + carbs + fluid","About 20–40 g protein in the locker room, before the drive or bus."],["1–2 HRS AFTER","Late dinner","Carbs, protein and vegetables. Lighter on grease; no alcohol."],["30–60 MIN BEFORE BED","Protein snack","Greek yogurt, cottage cheese or milk (about 30–40 g protein)."],["LIGHTS OUT","Sleep is recovery too","Dim screens, cool dark room, water by the bed."]].map(([t,h,d])=>`<li><span class="t">${t}</span><div class="b"><b>${h}</b><span>${d}</span></div></li>`).join("")}</ol>
@@ -1896,9 +1944,9 @@ function figHTML(id){
    <p class="src">Sim et al., Eur J Appl Physiol 2019; Stoffel et al., Lancet Haematol 2017 & 2020</p></figure>`;
   if(id==="tiers")return `<figure class="card fig" style="margin:0"><span class="fig-title">Supplement evidence, top to bottom</span>
    <div class="tiers">
-    <div><span class="g" style="background:var(--viz-1)">A</span><div><b>Strong evidence</b><p>Caffeine, creatine, beta-alanine, bicarbonate, nitrate. Iron, calcium and vitamin D when a test shows you need them. Sports drinks, gels and protein powder.</p></div></div>
-    <div><span class="g" style="background:color-mix(in srgb,var(--viz-1) 62%,var(--surface-2))">B</span><div><b>Emerging</b><p>Collagen, fish oil and similar. Only with your dietitian, as part of a plan.</p></div></div>
-    <div><span class="g" style="background:color-mix(in srgb,var(--fg) 28%,var(--surface-2))">C</span><div><b>Little support</b><p>Most "recovery", "immune", "detox" and proprietary blends.</p></div></div>
+    <div><span class="g medalg m3">A</span><div><b>Strong evidence</b><p>Caffeine, creatine, beta-alanine, bicarbonate, nitrate. Iron, calcium and vitamin D when a test shows you need them. Sports drinks, gels and protein powder.</p></div></div>
+    <div><span class="g medalg m2">B</span><div><b>Emerging</b><p>Collagen, fish oil and similar. Only with your dietitian, as part of a plan.</p></div></div>
+    <div><span class="g medalg m1">C</span><div><b>Little support</b><p>Most "recovery", "immune", "detox" and proprietary blends.</p></div></div>
     <div><span class="g" style="background:var(--stop)" aria-hidden="true">✕</span><div><b>D · Banned or high risk</b><p>Stimulant pre-workouts, prohormones, SARMs, peptides and fat burners. Never take these.</p></div></div>
    </div><p class="src">AIS Sports Supplement Framework; Maughan et al., IOC consensus, Br J Sports Med 2018</p></figure>`;
   if(id==="caff"){
@@ -1947,7 +1995,7 @@ let learnLesson=null;
 function lessonHTML(l){
   const done=EDU.learned.includes(l.id), tr=(TRACKS.find(t=>t[0]===l.tr)||[])[1];
   return `<div class="view"><button class="linkbtn" data-lesson="">‹ Back to Learn</button>
-   <div><p class="eyebrow">${esc(tr)} · ${l.min} min read</p><h1 style="margin-top:4px">${esc(l.t)}</h1><p class="muted" style="margin-top:6px">${esc(l.sum)}</p></div>
+   <div><p class="eyebrow"><span class="nowshow">Now showing</span> ${esc(tr)} · ${l.min} min read</p><h1 style="margin-top:4px">${esc(l.t)}</h1><p class="muted" style="margin-top:6px">${esc(l.sum)}</p></div>
    <div class="card stack lesson">${l.secs.map(([h,p])=>`<section style="gap:6px"><h3>${esc(h)}</h3><p>${esc(p)}</p></section>`).join("")}</div>
    ${l.fig?figHTML(l.fig):""}
    ${l.tool==="fuel"?fuelTool():l.tool==="sweat"?sweatTool():""}
@@ -2443,6 +2491,23 @@ function patchStamp(p){let rm=false;try{rm=matchMedia("(prefers-reduced-motion: 
   toast("Pin earned: "+p.n);if(rm||document.querySelector(".wa,.ins-back"))return;
   const el=document.createElement("div");el.className="pstamp";el.setAttribute("aria-hidden","true");el.innerHTML=`${patchSVG(p,true)}<b>${esc(p.n)}</b><span>Pin earned</span>`;
   translateDOM(el);document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+const PASSPORT={"Cypress, TX": {"n": "Houston", "food": "Tex-Mex", "c": "#E4572E", "shape": "circle"}, "Madison, WI": {"n": "Madison", "food": "Cheese curds", "c": "#F2B134", "shape": "rect"}, "Austin, TX": {"n": "Austin", "food": "Breakfast tacos", "c": "#C2410C", "shape": "hex"}, "Salt Lake City, UT": {"n": "Salt Lake", "food": "Fry sauce", "c": "#3A86FF", "shape": "circle"}, "Miami, FL": {"n": "Miami", "food": "Cuban sandwich", "c": "#00A6A6", "shape": "rect"}, "Omaha, NE": {"n": "Omaha", "food": "Runza", "c": "#B5179E", "shape": "hex"}, "San Francisco, CA": {"n": "San Francisco", "food": "Sourdough", "c": "#E76F51", "shape": "circle"}, "Minneapolis, MN": {"n": "Minneapolis", "food": "Juicy Lucy", "c": "#4361EE", "shape": "rect"}, "Atlanta, GA": {"n": "Atlanta", "food": "Peach cobbler", "c": "#F4845F", "shape": "hex"}};
+/* Road passport: log a meal on a road trip (match day or the travel day before) and that city stamps your passport */
+function passportTrips(){const seen={},L=[];SCHEDULE.filter(m=>!m.home).forEach(m=>{if(seen[m.city])return;seen[m.city]=1;L.push(m)});return L}
+function passportEarned(m){const days=SCHEDULE.filter(x=>!x.home&&x.city===m.city).flatMap(x=>[jShift(x.d,-1),x.d]);const hit=days.find(d=>J.days[d]&&jGet(d).entries.length);return hit||null}
+function passportHTML(){const T=passportTrips();if(!T.length)return "";const got=T.filter(passportEarned).length;
+  return `<section><div class="sec-head"><h2>${tr("Road passport")}</h2><span class="stamp">${got}/${T.length}</span></div>
+   <div class="passport">${T.map((m,i)=>{const p=PASSPORT[m.city]||{n:m.city.split(",")[0],food:"",c:"#FF5E1A",shape:"circle"},d=passportEarned(m),rot=((i*37)%15)-7;
+    return `<div class="pstamp2 ${p.shape} ${d?"on":""}" style="--c:${p.c};--r:${rot}deg" aria-label="${esc(p.n)}: ${d?"stamped "+fmtDate(d):"log a meal there to stamp it"}"><b>${esc(p.n)}</b><span>${d?esc(p.food):"?"}</span><i>${d?esc(mmdd(d)):esc(mmdd(m.d))}</i></div>`}).join("")}</div>
+   <p class="stamp">${tr("Log a meal on a road trip, the travel day or match day, to stamp that city.")}</p></section>`}
+function profBackHTML(){const days=Object.keys(J.days),ck=days.filter(d=>rScore(jGet(d).ready)!=null).length,meals=days.reduce((a,d)=>a+jGet(d).entries.length,0),
+  oz=days.reduce((a,d)=>a+ozOf(jGet(d)),0),pins=earnedPatches().size,stamps=passportTrips().filter(passportEarned).length,pr=typeof anyPR==="function"&&anyPR()?"Yes":"Not yet";
+  const row=(k,v)=>`<div><b>${v}</b><span>${k}</span></div>`;
+  return `<div class="prof-back" aria-hidden="true"><span class="ey">Season card · 2026–27</span><div class="pb-grid">${row(tr("Check-ins"),ck)}${row(tr("Meals logged"),meals)}${row(tr("Water (oz)"),oz.toLocaleString())}${row(tr("Pins"),pins+"/"+PATCHES.length)}${row(tr("Passport stamps"),stamps)}${row(tr("Lessons"),EDU.learned.length)}</div><span class="pb-hint">${tr("Tap to flip back")}</span></div>`}
+let profFlip=false;
+/* Rising planet: the next match climbs over the Home horizon as it gets closer */
+function planetHTML(){const m=nextMatch();if(!m)return "";const d=daysBetween(isoToday(),m.d),p=Math.max(0,Math.min(1,1-d/30)),opp=m.opp.replace("LOVB ","");
+  return `<div class="planet" style="--p:${p.toFixed(3)}" role="img" aria-label="Next match: ${esc(m.home?"vs ":"at ")+esc(opp)}, ${d===0?"today":d+" days away"}"><i></i><span>${d===0?tr("Today"):esc(opp.slice(0,3).toUpperCase())+" · "+d+"D"}</span></div>`}
 function patchesHTML(){const got=earnedPatches();
   return `<section><div class="sec-head"><h2>Pin collection</h2><span class="stamp">${got.size}/${PATCHES.length}</span></div>
    <div class="patches">${PATCHES.map(p=>{const on=got.has(p.k);return `<button class="pt ${on?"on":""}" data-patch="${p.k}" aria-label="${esc(p.n)}: ${on?"earned":"locked. "+esc(p.how)}">${patchSVG(p,on)}<b>${on?esc(p.n):"?"}</b></button>`}).join("")}</div></section>`}
@@ -2550,7 +2615,7 @@ function vHome(){
     <p class="wordmark">Orbit</p><p class="wordmark-sub">Performance</p>
     <p class="hello">${todayMatch()?`Game day, ${esc(first)}. Fuel the win.`:`${(g=>`${g.part}, ${esc(first)}.<span class="hello-sub">${esc(g.tail)}</span>`)(greeting(first))}`}</p>
     <div class="meta">${myAllergens().length?`<span class="chip stop">${myAllergens().length} allergen${myAllergens().length>1?"s":""} flagged</span>`:`<span class="chip ok">No allergens listed</span>`}${profile.position?`<span class="chip">${esc(posLabel())}</span>`:""}</div>
-    <div class="grain"></div><div class="horizon"></div>
+    <div class="grain"></div><div class="horizon"></div>${planetHTML()}
    </header>
    ${gdBoard()}
    <section><div class="sec-head"><h2>Your orbit</h2><span class="stamp">${fmtDate(isoToday())}</span></div>${orbitHTML()}</section>
@@ -2870,7 +2935,7 @@ function planHTML(){
       ${pick?(n>1?`<label class="mpick"><span class="sr">Choose ${esc(x.n.toLowerCase())}</span><select data-planpick="${iso}|${type}|${PLANPREF.pt}|${i}|${x.bank}">${mealOptions(x.bank).map((o,j)=>`<option value="${j}" ${o===pick?"selected":""}>${isRec(o)?"★ ":""}${esc(o.n)}</option>`).join("")}</select></label>`:`<b>${esc(pick.n)}</b>`):`<b>No option fits your allergies here</b><p>Ask your dietitian for a swap.</p>`}
       ${(x.note||BANKNOTE[x.bank])?`<p>${x.note||BANKNOTE[x.bank]}</p>`:""}${pick?oasNotesHTML(oasCheck(pick).notes):""}
       ${pick&&pick.r?`<details class="mdet"><summary>How to make it</summary><p>${esc(pick.r)}</p>${pick.g&&pick.g.length?`<p class="stamp">You'll need: ${esc(pick.g.map(k=>(ING[k]||[k])[0].toLowerCase()).join(", "))}</p>`:""}</details>`:""}
-      ${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
+      ${done?`<span class="tstamp" aria-hidden="true">${tr("Logged")}</span>`:""}${pick?`<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:2px">${isToday?`<button class="btn sm ${done?"ghost":""}" data-planlog="${i}">${done?"Logged ✓":"Log it"}</button>`:""}</div>`:""}</div>`}).join("")}
   </div>
   ${grocery}
   <p class="src">Thomas, Erdman & Burke, ACSM/AND/DC position stand 2016; Kerksick et al., ISSN nutrient timing 2017; USOPC & University of Colorado Athlete's Plates</p>`;
@@ -3000,7 +3065,7 @@ function vSeason(){
    ${launchCard(nx,true)}
    <div class="seg" data-segset="season">${[["all","All"],["home",LANG==="en"?"Home":"Home games"],["away","Road"]].map(([k,l])=>`<button data-v="${k}" aria-pressed="${seasonSeg===k}">${l}</button>`).join("")}</div>
    ${Object.entries(months).map(([mo,L])=>`<section><h2>${mo}</h2><div class="card" style="padding-block:0">${L.map(m=>{const notes=matchNotes(m);
-     return `<div class="match ${nx&&m.i===nx.i?"next":""} ${m.d<t?"past":""}"><span class="d"><em>${dow(m.d)}</em>${sb(mmdd(m.d))}</span><span class="stack" style="gap:2px"><b>${m.home?"vs":"at"} ${esc(m.opp.replace("LOVB ",""))}</b><span class="stamp">${matchLocal(m)}${m.off!==-2?` · ${clock(m.pt)} PT`:""} · ${esc(m.venue||m.city)}</span></span><span class="chip ${m.home?"accent":"violet"}">${m.home?"Home":"Away"}</span>
+     return `<div class="match ${nx&&m.i===nx.i?"next":""} ${m.d<t?"past":""}"><span class="d"><em>${dow(m.d)}</em>${sb(mmdd(m.d))}</span><span class="stack" style="gap:2px"><b>${m.home?"vs":"at"} <span class="flap">${esc(m.opp.replace("LOVB ",""))}</span></b><span class="stamp">${matchLocal(m)}${m.off!==-2?` · ${clock(m.pt)} PT`:""} · ${esc(m.venue||m.city)}</span></span><span class="chip ${m.home?"accent":"violet"}">${m.home?"Home":"Away"}</span>
       <p class="mnote">${esc(notes.slice(1).join(" ")||notes[0])}</p></div>`}).join("")}</div></section>`).join("")}
    <p class="stamp">Schedule from the LOVB Pro 2026–27 release. Times can change; check team communications before travel.</p></div>`;
 }
@@ -3014,20 +3079,21 @@ function vMe(){
   const staff=profile.position==="Staff", big=staff?((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase():(profile.num||((profile.first[0]||"")+(profile.last[0]||"")).toUpperCase());
   const role=staff?(profile.role||"Staff"):(profile.position||""), last=profile.last||"", longest=Math.max(1,...last.split(/[\s-]+/).map(w=>w.length+1)), lastSize=Math.min(2.6,Math.max(1.1,16/longest)).toFixed(2);
   return `<div class="view">
-   <section class="prof" aria-label="Your profile">
+   <section class="prof ${profFlip?"flipped":""}" data-flip="1" tabindex="0" role="button" aria-label="Your profile card. Tap to see your season stats.">
     <div class="grain" aria-hidden="true"></div><span class="bignum ${big.length>2?"sm":""}" aria-hidden="true">${esc(big)}</span>
     <span class="ey">On the roster</span>
     <span class="first">${esc(profile.first)}</span>
     <h1 aria-label="${esc(profile.name)}" style="font-size:${lastSize}rem">${esc(last)}</h1>
     <div class="rule" aria-hidden="true"></div>
     <div class="role">${role?`<span>${esc(role)}</span>`:""}${!staff&&profile.num?`<i>No. ${esc(profile.num)}</i>`:""}</div>
+    ${profBackHTML()}
    </section>
    <div class="card stack">
     <div class="row"><span class="grow muted">Home area</span><b style="text-align:right">${esc((myArea()||{}).short||(profile.area==="other"?"Somewhere else":"—"))}</b></div>
     <div class="row"><span class="grow muted">Eating style</span><b style="text-align:right">${isVeg()?"Vegetarian":"No preference"}</b></div>
     <div class="row" style="align-items:flex-start"><span class="grow muted">Allergies</span><div class="tags" style="justify-content:flex-end">${[...myAllergens(),profile.other].filter(Boolean).map(a=>`<span class="chip stop">${esc(a)}</span>`).join("")||"<b>None</b>"}</div></div>${oas()?`<div class="row"><span class="grow muted">${tr("Oral allergy syndrome")}</span><b>${tr("Raw-safe list on")}</b></div>`:""}
     <button class="btn ghost block" data-edit="1">Edit profile</button></div>
-   ${patchesHTML()}
+   ${patchesHTML()}${passportHTML()}
    ${canEdit&&CONFIG.appLink?`<div class="card stack"><span class="eyebrow">Share with athletes · editors only</span><div class="row"><span class="copybox grow" id="app-link">${esc(CONFIG.appLink)}</span><button class="btn ghost sm" data-copy="app-link">Copy</button></div></div>`:""}
    ${canEdit?`<button class="editlink" data-tab="edit"><b>Edit announcements</b><span>Only you and other editors see this. Last published ${fmtDate(DATA.updated)}.</span></button>`:""}
    <section><h2>Color scheme</h2><div class="schemes">${SCHEMES.map(x=>`<button class="scheme" data-scheme="${x.k}" aria-pressed="${prefs.scheme===x.k}"><span class="sch-sw" aria-hidden="true">${x.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${x.n}</b><span>${x.d}</span></button>`).join("")}</div></section>
@@ -3223,6 +3289,7 @@ function _render(){
   if(!profile.consentAt&&profile.position!=="Staff"){app.innerHTML=vConsent();renderTabs();return}
   if((myAllergens().length||profile.other||oas())&&!profile.ack&&tab!=="edit"){app.innerHTML=vStop();renderTabs();return}
   if(tab==="edit"&&!canEdit)tab="me";
+  app.dataset.tab=tab;
   app.innerHTML={welcome:vWelcome,feedback:vFeedback,ready:vReady,sky:vSky,at:vAT,home:vHome,hydrate:vHydrate,recover:vRecover,cycle:vCycle,sc:vSC,fuel:vFuel,season:vSeason,journal:vJournal,learn:vLearn,me:vMe,edit:vEdit}[tab]();
   app.querySelectorAll(".seg").forEach(s=>{const on=s.querySelector('[aria-pressed="true"]');if(on&&s.scrollWidth>s.clientWidth)s.scrollLeft=on.offsetLeft-s.offsetLeft-(s.clientWidth-on.offsetWidth)/2});
   renderTabs();scheduleInstall();checkPatches();if(tab==="home")gdTick();
@@ -3335,6 +3402,8 @@ document.addEventListener("submit",e=>{
     location.href=`mailto:${CONFIG.feedbackEmail}?subject=${encodeURIComponent("LA Orbit app · "+type)}&body=${encodeURIComponent(body)}`;
     draft.appFbNote="";draft.appFbType="";setTimeout(render,400);toast("Opening your email app");return}
 });
+document.addEventListener("click",e=>{const f=e.target.closest&&e.target.closest("[data-flip]");if(f&&!e.target.closest("button,a")){profFlip=!profFlip;f.classList.toggle("flipped",profFlip)}});
+document.addEventListener("keydown",e=>{const f=e.target.closest&&e.target.closest("[data-flip]");if(f&&(e.key==="Enter"||e.key===" ")){e.preventDefault();profFlip=!profFlip;f.classList.toggle("flipped",profFlip)}});
 document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.planpick){const [iso,type,pt,i,bank]=e.target.dataset.planpick.split("|"),j=+e.target.value;
   const day=Math.round(new Date(iso+"T12:00:00")/864e5);PLANPREF.sel[iso+":"+type+":"+pt+":"+i]=j-(+i)-planRot(bank,day);savePlan();render();return}if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
