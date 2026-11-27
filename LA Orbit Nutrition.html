@@ -2658,13 +2658,13 @@ const MEALBANK={
   {n:"Popcorn and string cheese",a:["Dairy"],v:1,g:["popcorn","stringcheese"],r:"A bag of light popcorn and a string cheese."},
   {n:"Pão de queijo and fruit",a:["Dairy","Egg"],v:1,g:["paodequeijo","fruit"],r:"Bake 4–6 frozen cheese breads for 20 minutes; fruit on the side. Gluten-free."}],
  prebed:[
-  {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1,g:["yogurt","berries"],r:"About a cup, topped with berries."},
-  {n:"Glass of milk and a banana",a:["Dairy"],v:1,g:["milk","banana"],r:"Simple and effective."},
+  {n:"Greek yogurt or cottage cheese with berries",a:["Dairy"],v:1,hp:1,g:["yogurt","berries"],r:"About 1½ cups Greek yogurt or 1¼ cups cottage cheese (30–35 g protein), topped with berries."},
+  {n:"Glass of milk and a banana",a:["Dairy"],v:1,g:["milk","banana"],r:"A glass of milk has about 8–10 g protein. Make it a big glass (16 oz) and add a string cheese or Greek yogurt cup to reach 30 g before bed."},
   {n:"Soy milk and toast with peanut butter",a:["Soy","Wheat/Gluten","Peanut"],v:1,g:["soymilk","bread","pb"],r:"A glass of soy milk and a slice of toast with peanut butter."},
-  {n:"Protein shake",a:[],v:1,g:["plantprotein"],r:"One scoop of third-party-tested protein powder in water or a milk you tolerate. Pick a powder that fits your allergies."},
-  {n:"Cottage cheese with pineapple",a:["Dairy"],v:1,g:["cottage","pineapple"],r:"About a cup of cottage cheese with pineapple."},
+  {n:"Protein shake",a:[],v:1,hp:1,g:["plantprotein"],r:"One scoop of third-party-tested protein powder shaken with 8–12 oz of milk you tolerate (about 30 g protein). Pick a powder that fits your allergies."},
+  {n:"Cottage cheese with pineapple",a:["Dairy"],v:1,hp:1,g:["cottage","pineapple"],r:"About 1¼ cups cottage cheese (about 35 g protein) with pineapple."},
   {n:"Turkey and cheese on rice cakes",a:["Dairy"],g:["deliturkey","cheese","ricecakes"],r:"Two rice cakes topped with turkey and a slice of cheese."},
-  {n:"A cup of edamame",a:["Soy"],v:1,g:["edamame"],r:"Microwave frozen edamame 3 minutes; salt lightly."},
+  {n:"A cup of edamame",a:["Soy"],v:1,g:["edamame"],r:"Microwave frozen edamame 3 minutes; salt lightly. About 17 g protein: add a Greek yogurt cup or a glass of milk to reach 30 g."},
   {n:"Hard-boiled eggs and toast",a:["Egg","Wheat/Gluten"],v:1,g:["eggs","bread"],r:"Two hard-boiled eggs and a slice of toast."}]
 };
 const BANKNOTE={breakfast:"Carbs + protein + fruit.",pre:"Quick, familiar carbs.",recovery:"Carbs + protein within an hour.",
@@ -2739,7 +2739,10 @@ function mealOptions(bank){const al=myAllergens(),L=(MEALBANK[bank]||[]).filter(
 function pickFor(type,i,bank,iso){iso=iso||isoToday();const L=mealOptions(bank);if(!L.length)return null;
   const k=iso+":"+type+":"+PLANPREF.pt+":"+i, day=Math.round(new Date(iso+"T12:00:00")/864e5);
   const R=L.filter(isRec);if(R.length&&PLANPREF.sel[k]==null)return R[(i+Math.floor(day/2))%R.length];
-  const n=(PLANPREF.sel[k]||0)+i+Math.floor(day/2)*(bank==="pre"||bank==="prebed"?0:1);return L[(n%L.length+L.length)%L.length]}
+  if(bank==="prebed"&&PLANPREF.sel[k]==null){const H=L.filter(x=>x.hp);if(H.length)return H[(day%H.length+H.length)%H.length]}
+  const n=(PLANPREF.sel[k]||0)+i+planRot(bank,day);return L[(n%L.length+L.length)%L.length]}
+/* Lunch and dinner change every two days (cook once, eat the leftovers); breakfast, snacks and pre-sleep change daily */
+function planRot(bank,day){return bank==="main"||bank==="recovery"?Math.floor(day/2):day}
 function loggedOn(iso,text){return jGet(iso).entries.some(e=>e.what===text)}
 /* Match days shop for the game-day pattern: breakfast, lunch, pre-match meal, snack, recovery, late dinner */
 function matchSlots(){return [["breakfast",0],["main",1],["main",2],["pre",3],["recovery",4],["main",5]]}
@@ -3322,7 +3325,7 @@ document.addEventListener("submit",e=>{
     draft.appFbNote="";draft.appFbType="";setTimeout(render,400);toast("Opening your email app");return}
 });
 document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.planpick){const [iso,type,pt,i,bank]=e.target.dataset.planpick.split("|"),j=+e.target.value;
-  const day=Math.round(new Date(iso+"T12:00:00")/864e5),rot=bank==="pre"||bank==="prebed"?0:1;PLANPREF.sel[iso+":"+type+":"+pt+":"+i]=j-(+i)-Math.floor(day/2)*rot;savePlan();render();return}if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
+  const day=Math.round(new Date(iso+"T12:00:00")/864e5);PLANPREF.sel[iso+":"+type+":"+pt+":"+i]=j-(+i)-planRot(bank,day);savePlan();render();return}if(e.target.dataset&&e.target.dataset.areapick){profile.area=e.target.value;store.set("profile",profile);render();toast(myArea()?"Showing picks near "+myArea().short:"Area saved");return}if(e.target.id==="f-pos"){const w=document.getElementById("role-wrap");if(w)w.hidden=e.target.value!=="Staff";return}if(e.target.id==="j-photo"&&e.target.files&&e.target.files[0])jPhoto(e.target.files[0])});
 document.addEventListener("input",e=>{const t=e.target;
   if(t.dataset&&t.dataset.ed&&ED){const [i,k]=t.dataset.ed.split(".");ED.announcements[+i][k]=t.value;edStatus();return}
   if(t.id==="q"){draft.q=t.value;clearTimeout(askT);askT=setTimeout(()=>{const f=$("#askres");if(f){f.innerHTML=askResultsHTML();translateDOM(f)}},180)}});
