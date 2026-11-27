@@ -319,6 +319,13 @@ label.consent input{width:22px;height:22px;flex:none;margin-top:1px;accent-color
 .dismissed{display:grid;place-items:center;gap:4px;padding:20px 12px;border-radius:10px;background:#fff;color:#15803D;text-align:center;box-shadow:inset 0 0 0 2px #C9D0DA}
 .dismissed b{font:700 1.7rem/1 "Marker Felt","Chalkboard SE","Comic Sans MS",var(--display);transform:rotate(-2deg)}
 .dismissed span{font:700 .6rem var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#56607E}
+.barbell .pl.slide.r{animation:plateR .7s cubic-bezier(.22,1.3,.36,1) .15s both}
+.barbell .pl.slide.l{animation:plateL .7s cubic-bezier(.22,1.3,.36,1) .15s both}
+@keyframes plateR{from{transform:translateX(70px);opacity:0}60%{opacity:1}}
+@keyframes plateL{from{transform:translateX(-70px);opacity:0}60%{opacity:1}}
+.rack:has(.pl.slide) .barbell{animation:barThunk .25s ease .8s}
+@keyframes barThunk{40%{transform:translateY(2px)}}
+@media (prefers-reduced-motion:reduce){.barbell .pl.slide,.rack .barbell{animation:none!important}}
 .recmeal{border:1px solid var(--line);border-radius:12px;padding:0 10px;background:var(--surface)}
 .recbtn{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 0;font-weight:700;font-size:.9rem}
 .recbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -1686,10 +1693,11 @@ function vSC(){const S=scSessions(),t=isoToday(),wd=weekDone(),R=scRows();
    :`<div class="card stack rack">${barbellHTML(["Lift 1","Lift 2","Lift 3","Lift 4","Conditioning"],[])}<p class="muted">${tr("The rack is empty.")} ${CONFIG.scName?esc(CONFIG.scName)+"'s":"Your strength coach's"} ${tr("program loads here: four lifts and one conditioning session a week, set for your position.")}</p></div>`}</div>`}
 /* Weight room: sessions are bumper plates; the bar loads up as the week's sessions get done */
 const PLATES=["#D7263D","#2F6FDE","#F2C230","#2BA84A"];
+let justLoaded=null;
 function plateColor(s,S){if(isCond(s))return "#FF5E1A";const L=S.filter(x=>!isCond(x));return PLATES[Math.max(0,L.indexOf(s))%4]}
 function barbellHTML(S,wd){const n=S.length,W=320,H=96,cy=48,step=17,inner=W/2+58;let pl="";
   S.forEach((s,i)=>{const on=wd.includes(s),c=plateColor(s,S),cond=isCond(s),h=cond?50:76,w=cond?12:14,xr=inner+i*step,xl=W-xr-w,lab=cond?"C":String(i+1);
-   [xr,xl].forEach(x=>{pl+=on?`<rect x="${x}" y="${cy-h/2}" width="${w}" height="${h}" rx="3" fill="${c}"/><rect x="${x+2}" y="${cy-h/2+4}" width="2" height="${h-8}" rx="1" fill="rgb(255 255 255 / .28)"/>`:`<rect x="${x+.75}" y="${cy-h/2+.75}" width="${w-1.5}" height="${h-1.5}" rx="3" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-dasharray="3 3"/>`});
+   [xr,xl].forEach((x,si)=>{pl+=`<g class="pl ${si?"l":"r"} ${on&&s===justLoaded?"slide":""}" style="--d:${Math.max(0,(i))*0}ms">`;pl+=on?`<rect x="${x}" y="${cy-h/2}" width="${w}" height="${h}" rx="3" fill="${c}"/><rect x="${x+2}" y="${cy-h/2+4}" width="2" height="${h-8}" rx="1" fill="rgb(255 255 255 / .28)"/>`:`<rect x="${x+.75}" y="${cy-h/2+.75}" width="${w-1.5}" height="${h-1.5}" rx="3" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-dasharray="3 3"/>`;pl+=`</g>`});
    pl+=`<text x="${xr+w/2}" y="${cy+h/2+11}" text-anchor="middle" class="bl">${lab}</text>`});
   const done=S.filter(s=>wd.includes(s)).length;
   return `<svg class="barbell" viewBox="0 0 ${W} ${H+8}" role="img" aria-label="${done} of ${n} sessions loaded on the bar this week"><rect x="6" y="${cy-3}" width="${W-12}" height="6" rx="3" fill="currentColor" fill-opacity=".55"/><rect x="${W/2-50}" y="${cy-4}" width="100" height="8" rx="2" fill="currentColor" fill-opacity=".25"/><rect x="${W/2+50}" y="${cy-9}" width="7" height="18" rx="2" fill="currentColor" fill-opacity=".7"/><rect x="${W/2-57}" y="${cy-9}" width="7" height="18" rx="2" fill="currentColor" fill-opacity=".7"/>${pl}</svg>`}
@@ -1708,7 +1716,7 @@ function scClick(b){const ds=b.dataset;
  if(ds.scdone!==undefined){const t=isoToday(),s=ds.scdone,L=SCDONE[t]||[];if(L.includes(s)){SCDONE[t]=L.filter(x=>x!==s);if(SHARE.lift&&isCond(s))staffSend({t:"conddel",date:t,session:s})}else{SCDONE[t]=[...L,s];
    if(isCond(s)){const m=parseInt(($("#sc-min")||{}).value,10);const d=jGet(t);d.cond={rpe:scRPE,min:m||null,load:scRPE&&m?scRPE*m:null};jPut(t,d);if(SHARE.lift)staffSend({t:"cond",date:t,session:s,rpe:scRPE||"",min:m||"",load:scRPE&&m?scRPE*m:""})}
    const d=jGet(t);d.training=d.training||[];if(!d.training.includes("Lift")&&!isCond(s)){d.training.push("Lift");jPut(t,d)}}
-   store.set("scdone",SCDONE);const fin=(SCDONE[t]||[]).includes(s);if(fin){scSel=null;scRPE=null}render();if(fin){scrollTo({top:0});logStamp(s+" logged")}return true}
+   store.set("scdone",SCDONE);const fin=(SCDONE[t]||[]).includes(s);if(fin){scSel=null;scRPE=null;justLoaded=s}render();justLoaded=null;if(fin){scrollTo({top:0});logStamp(s+" logged")}return true}
  const su=b.closest("[data-scunit]");if(su){SCUNIT=ds.v;store.set("scunit",SCUNIT);render();return true}
  if(ds.scopen){scOpen=scOpen===ds.scopen?null:ds.scopen;render();return true}
  return false}
