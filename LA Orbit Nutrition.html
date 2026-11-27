@@ -2644,7 +2644,7 @@ function launchCard(m,compact){
 }
 function vHome(){
   const first=profile.first;
-  const allAnns=[...teamAnns(),...nutNotes().map(x=>({...x,tag:x.tag||"Nutrition"}))].sort((a,b)=>(b.when||"").localeCompare(a.when||""));const [feat,...rest]=allAnns;
+  const allAnns=[...teamAnns(),...nutNotes().slice(0,1).map(x=>({...x,tag:x.tag||"Nutrition"}))].sort((a,b)=>(b.when||"").localeCompare(a.when||""));const [feat,...rest]=allAnns;
   const dateLine=new Date().toLocaleDateString(LOCALE(),{weekday:"long",month:"long",day:"numeric"});
   const pre=jGet(isoToday()).prehab||[];
   const go=[
