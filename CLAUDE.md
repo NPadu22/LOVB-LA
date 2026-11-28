@@ -16,7 +16,7 @@ Owner: Nick, sports dietitian. Wants honest, evidence-based answers, detail, and
 
 ## Google Sheets
 - **Public sheet "I LOVB LA"** is read by the app through gviz CSV. Tab gids are Emma 0, Team 1, How to use 2, Programs 3, Lifts 4, Roster 5, Nutrition 6 and Lists 7 (hidden). Anyone with the link can read it, so never put athlete names, injuries or medical details there.
-- **Private sheet "Orbit Staff Data"** must stay Restricted. It has the tabs Recovery, Lifts, Conditioning, Nutrition and Hydration, and the Apps Script writes athlete logs to it.
+- **Private sheet "Orbit Staff Data"** must stay Restricted. It has the tabs Team summary (formulas only, don't overwrite), Questions, Recovery, Lifts, Conditioning, Nutrition and Hydration, and the Apps Script writes athlete logs to it. The deployed script matches `scripts/roster-apps-script.gs` (Questions support verified Nov 27).
 - gviz drops text values in columns it infers are numeric. Keep the Sets, Reps and Lifts F–I columns formatted as plain TEXT.
 
 ## Key behaviours
