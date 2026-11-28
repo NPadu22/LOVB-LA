@@ -29,9 +29,9 @@ Owner: Nick, sports dietitian. Wants honest, evidence-based answers, detail, and
 - **Oral allergy syndrome:** `profile.oas` (raw-safe fruit/veg, never, milks; phone only). `oasCheck` filters MEALBANK by ingredient keys, `oasPrep` adds swaps to MEALPREP. Defaults (`OAS_DEF`) are one athlete's list.
 - **Offline:** `sw.js` (repo root) caches the app shell on GitHub Pages; bump `V` in sw.js if you change which files it caches. Not registered inside the Claude artifact.
 - **10:30 team snack** uses the `bridge` bank (carbs + 5–15 g protein); pre-sleep defaults to `hp:1` options (30 g+ protein).
+- **Staff accounts never send logs** (`staffSend` returns early for position Staff). Match-day reminders (`matchRemItems`) and jet-lag cards (`jetlagHTML`, east-of-LA road trips) live in the road/home game plans.
 - **Translations:** `addT([[en, ja, pt]])` takes exact, trimmed keys. Write any JS generated from Python with `json.dumps(ensure_ascii=False)`.
 
 ## Open items
 - Athlete handouts live in `handouts/` (see its README to rebuild after app changes). Emma's briefing deck (artifact https://claude.ai/artifact/2oeVbQfHtzvksPiqdtfp5n) is staff-facing and kept out of the repo; its source was only in the session scratchpad.
-- Option: stop staff accounts sending data to the staff sheet.
 - Ideas not taken up yet: a Team summary tab, higher-protein vegetarian options, and removing "Dose" from Emma deck slide 8.
